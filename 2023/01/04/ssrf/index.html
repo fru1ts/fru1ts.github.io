@@ -29,7 +29,7 @@
 <meta property="og:image" content="https://fru1ts.github.io/2023/01/04/ssrf/4.png">
 <meta property="og:image" content="https://fru1ts.github.io/2023/01/04/ssrf/5.png">
 <meta property="article:published_time" content="2023-01-04T02:36:41.000Z">
-<meta property="article:modified_time" content="2023-01-04T09:18:15.006Z">
+<meta property="article:modified_time" content="2023-01-04T12:09:08.562Z">
 <meta property="article:author" content="fru1ts">
 <meta property="article:tag" content="ctf,ssrf">
 <meta name="twitter:card" content="summary_large_image">
@@ -243,7 +243,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          8.9k 字
+          9.1k 字
         
       </span>
     
@@ -254,7 +254,7 @@
         
         
         
-          74 分钟
+          76 分钟
         
       </span>
     
@@ -305,7 +305,7 @@
               <p class="note note-info">
                 
                   
-                    本文最后更新于：2023年1月4日 下午
+                    本文最后更新于：2023年1月4日 晚上
                   
                 
               </p>
@@ -331,12 +331,24 @@
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs PHP"><span class="hljs-meta">&lt;?php</span> <br><span class="hljs-keyword">if</span> (<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$_POST</span>[<span class="hljs-string">&#x27;url&#x27;</span>])) &#123;<br>    <span class="hljs-variable">$link</span> = <span class="hljs-variable">$_POST</span>[<span class="hljs-string">&#x27;url&#x27;</span>];<br>    <span class="hljs-variable">$curlobj</span> = <span class="hljs-title function_ invoke__">curl_init</span>();<br>    <span class="hljs-title function_ invoke__">curl_setopt</span>(<span class="hljs-variable">$curlobj</span>, CURLOPT_POST, <span class="hljs-number">0</span>);<br>    <span class="hljs-title function_ invoke__">curl_setopt</span>(<span class="hljs-variable">$curlobj</span>,CURLOPT_URL,<span class="hljs-variable">$link</span>);<br>    <span class="hljs-title function_ invoke__">curl_setopt</span>(<span class="hljs-variable">$curlobj</span>, CURLOPT_RETURNTRANSFER, <span class="hljs-number">1</span>);<br>    <span class="hljs-variable">$result</span>=<span class="hljs-title function_ invoke__">curl_exec</span>(<span class="hljs-variable">$curlobj</span>);<br>    <span class="hljs-title function_ invoke__">curl_close</span>(<span class="hljs-variable">$curlobj</span>);<br><br>    <span class="hljs-variable">$filename</span> = <span class="hljs-string">&#x27;./curled/&#x27;</span>.<span class="hljs-title function_ invoke__">rand</span>().<span class="hljs-string">&#x27;.txt&#x27;</span>;<br>    <span class="hljs-title function_ invoke__">file_put_contents</span>(<span class="hljs-variable">$filename</span>, <span class="hljs-variable">$result</span>); <br>    <span class="hljs-keyword">echo</span> <span class="hljs-variable">$result</span>;<br>&#125;<br><span class="hljs-meta">?&gt;</span><br></code></pre></td></tr></table></figure>
 
 <p>使用 <code>curl</code> 获取数据。</p>
+<h2 id="常见协议利用"><a href="#常见协议利用" class="headerlink" title="常见协议利用"></a>常见协议利用</h2><p>1.Dict 协议</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">dict:<span class="hljs-regexp">//</span>host:<span class="hljs-number">8080</span>/helo:dict<br></code></pre></td></tr></table></figure>
+
+<p>2.Gopher 协议</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">gopher:<span class="hljs-regexp">//</span>host:<span class="hljs-number">8080</span>/gopher<br></code></pre></td></tr></table></figure>
+
+<p>3.File 协议</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">file:<span class="hljs-regexp">//</span><span class="hljs-regexp">/etc/</span>passwd<br></code></pre></td></tr></table></figure>
+
+
+
 <h1 id="NISACTF-2022-easyssrf"><a href="#NISACTF-2022-easyssrf" class="headerlink" title="[NISACTF 2022]easyssrf"></a>[NISACTF 2022]easyssrf</h1><p>根据题目已经知道是ssrf</p>
 <img src="/2023/01/04/ssrf/1.png" srcset="/img/loading.gif" lazyload class="">
 
 <p>这里给了一个访问网站的快照</p>
 <p>应该就是通过这里访问本地</p>
-<p>尝试一下file协议读取flag</p>
+<p>尝试一下file协议:file:&#x2F;&#x2F;&#x2F;etc&#x2F;passwd ，提示其他路径</p>
+<p>尝试直接读取flag</p>
 <img src="/2023/01/04/ssrf/2.png" srcset="/img/loading.gif" lazyload class="">
 
 <p>接着访问&#x2F;fl4g</p>
@@ -399,6 +411,14 @@
 <p>回到&#x2F;De1ta路径下，Task类中，</p>
 <p>action传参readscan</p>
 <img src="/2023/01/04/ssrf/5.png" srcset="/img/loading.gif" lazyload class="">
+
+
+
+
+
+
+
+<h6 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h6><p><a target="_blank" rel="noopener" href="https://ctf-wiki.org/web/ssrf/?h=ssrf">https://ctf-wiki.org/web/ssrf/?h=ssrf</a></p>
 
                 
               </div>

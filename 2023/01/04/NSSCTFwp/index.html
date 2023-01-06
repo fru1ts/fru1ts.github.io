@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://fru1ts.github.io/2023/01/04/NSSCTFwp/1.png">
 <meta property="article:published_time" content="2023-01-04T02:15:04.000Z">
-<meta property="article:modified_time" content="2023-01-05T08:47:50.713Z">
+<meta property="article:modified_time" content="2023-01-05T13:37:52.258Z">
 <meta property="article:author" content="fru1ts">
 <meta property="article:tag" content="ctf">
 <meta name="twitter:card" content="summary_large_image">
@@ -239,7 +239,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          582 字
+          1.8k 字
         
       </span>
     
@@ -250,7 +250,7 @@
         
         
         
-          5 分钟
+          15 分钟
         
       </span>
     
@@ -301,7 +301,7 @@
               <p class="note note-info">
                 
                   
-                    本文最后更新于：2023年1月5日 下午
+                    本文最后更新于：2023年1月5日 晚上
                   
                 
               </p>
@@ -325,6 +325,20 @@
 <p>代码审计，直接php:&#x2F;&#x2F;input  再post 一个I want flag 搞定</p>
 <img src="/2023/01/04/NSSCTFwp/1.png" srcset="/img/loading.gif" lazyload class="">
 
+<h3 id="HUBUCTF-2022-新生赛-checkin"><a href="#HUBUCTF-2022-新生赛-checkin" class="headerlink" title="[HUBUCTF 2022 新生赛]checkin"></a>[HUBUCTF 2022 新生赛]checkin</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br><span class="hljs-title function_ invoke__">show_source</span>(<span class="hljs-keyword">__FILE__</span>);<br><span class="hljs-variable">$username</span>  = <span class="hljs-string">&quot;this_is_secret&quot;</span>; <br><span class="hljs-variable">$password</span>  = <span class="hljs-string">&quot;this_is_not_known_to_you&quot;</span>; <br><span class="hljs-keyword">include</span>(<span class="hljs-string">&quot;flag.php&quot;</span>);<span class="hljs-comment">//here I changed those two </span><br><span class="hljs-variable">$info</span> = <span class="hljs-keyword">isset</span>(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;info&#x27;</span>])? <span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;info&#x27;</span>]: <span class="hljs-string">&quot;&quot;</span> ;<br><span class="hljs-variable">$data_unserialize</span> = <span class="hljs-title function_ invoke__">unserialize</span>(<span class="hljs-variable">$info</span>);<br><span class="hljs-keyword">if</span> (<span class="hljs-variable">$data_unserialize</span>[<span class="hljs-string">&#x27;username&#x27;</span>]==<span class="hljs-variable">$username</span>&amp;&amp;<span class="hljs-variable">$data_unserialize</span>[<span class="hljs-string">&#x27;password&#x27;</span>]==<span class="hljs-variable">$password</span>)&#123;<br>    <span class="hljs-keyword">echo</span> <span class="hljs-variable">$flag</span>;<br>&#125;<span class="hljs-keyword">else</span>&#123;<br>    <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;username or password error!&quot;</span>;<br><br>&#125;<br><br><span class="hljs-meta">?&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p>username和password都会被修改成不知道的值，所以不可能给他们赋上真实的值</p>
+<p>这里用<code>==</code>是弱比较</p>
+<p>并且用了反序列化</p>
+<p>因此，构造info如下</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br><span class="hljs-variable">$info</span>=<span class="hljs-keyword">array</span>(<br>    <span class="hljs-string">&#x27;username&#x27;</span>=&gt;<span class="hljs-literal">true</span>,<br>    <span class="hljs-string">&#x27;password&#x27;</span>=&gt;<span class="hljs-literal">true</span><br>);<br><span class="hljs-title function_ invoke__">var_dump</span>(<span class="hljs-title function_ invoke__">serialize</span>(<span class="hljs-variable">$info</span>));<br><span class="hljs-comment">#a:2:&#123;s:8:&quot;username&quot;;b:1;s:8:&quot;password&quot;;b:1;&#125;</span><br><span class="hljs-meta">?&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p>因为上面用的是键名访问，所以这里要用数组</p>
+<p>简单介绍弱类型比较</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br><span class="hljs-title function_ invoke__">var_dump</span>(<span class="hljs-string">&quot;admin&quot;</span>==<span class="hljs-number">0</span>);  <span class="hljs-comment">//true</span><br><span class="hljs-title function_ invoke__">var_dump</span>(<span class="hljs-string">&quot;1admin&quot;</span>==<span class="hljs-number">1</span>); <span class="hljs-comment">//true</span><br><span class="hljs-title function_ invoke__">var_dump</span>(<span class="hljs-string">&quot;admin1&quot;</span>==<span class="hljs-number">1</span>) <span class="hljs-comment">//false</span><br><span class="hljs-title function_ invoke__">var_dump</span>(<span class="hljs-string">&quot;admin1&quot;</span>==<span class="hljs-number">0</span>) <span class="hljs-comment">//true</span><br><span class="hljs-title function_ invoke__">var_dump</span>(<span class="hljs-string">&quot;a&quot;</span>==<span class="hljs-literal">true</span>)  <span class="hljs-comment">//true</span><br><span class="hljs-title function_ invoke__">var_dump</span>(<span class="hljs-string">&quot;a&quot;</span>==<span class="hljs-literal">false</span>)  <span class="hljs-comment">//false</span><br><span class="hljs-title function_ invoke__">var_dump</span>(<span class="hljs-string">&quot;0e123456&quot;</span>==<span class="hljs-string">&quot;0e4456789&quot;</span>); <span class="hljs-comment">//true </span><br><span class="hljs-meta">?&gt;</span>  <br><br></code></pre></td></tr></table></figure>
+
+<p><code>NSSCTF&#123;881620fb-c01a-4eda-bbfa-baef4a333f9e&#125;</code></p>
+
                 
               </div>
             
@@ -342,7 +356,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/ctf/" class="category-chain-item">ctf</a>
+  <a href="/categories/wp/" class="category-chain-item">wp</a>
   
   
 

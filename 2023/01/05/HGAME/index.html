@@ -29,8 +29,10 @@
 <meta property="og:image" content="https://fru1ts.github.io/2023/01/05/HGAME/5.png">
 <meta property="og:image" content="https://fru1ts.github.io/2023/01/05/HGAME/1.png">
 <meta property="og:image" content="https://fru1ts.github.io/2023/01/05/HGAME/2.png">
+<meta property="og:image" content="https://fru1ts.github.io/2023/01/05/HGAME/7.png">
+<meta property="og:image" content="https://fru1ts.github.io/2023/01/05/HGAME/8.png">
 <meta property="article:published_time" content="2023-01-05T12:36:48.000Z">
-<meta property="article:modified_time" content="2023-01-10T03:47:28.173Z">
+<meta property="article:modified_time" content="2023-01-11T15:26:33.739Z">
 <meta property="article:author" content="fru1ts">
 <meta property="article:tag" content="CTF,WP">
 <meta name="twitter:card" content="summary_large_image">
@@ -244,7 +246,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          7.3k 字
+          8.3k 字
         
       </span>
     
@@ -255,7 +257,7 @@
         
         
         
-          61 分钟
+          70 分钟
         
       </span>
     
@@ -306,7 +308,7 @@
               <p class="note note-info">
                 
                   
-                    本文最后更新于：2023年1月10日 中午
+                    本文最后更新于：2023年1月11日 晚上
                   
                 
               </p>
@@ -377,8 +379,21 @@
 
 <img src="/2023/01/05/HGAME/2.png" srcset="/img/loading.gif" lazyload class="">
 
+<h3 id="神秘的海报"><a href="#神秘的海报" class="headerlink" title="神秘的海报"></a>神秘的海报</h3><p>附件是一张HGAME比赛的海报</p>
+<img src="/2023/01/05/HGAME/7.png" srcset="/img/loading.gif" lazyload class="">
 
+<p>用Stegsolve打开,尝试LSB隐写</p>
+<img src="/2023/01/05/HGAME/8.png" srcset="/img/loading.gif" lazyload class="">
 
+<p>整段话提取出来是</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs pgsql">Sure enough, you still remember  what we  talked a bout at  that <span class="hljs-type">time</span>! This  <span class="hljs-keyword">is</span> part  <span class="hljs-keyword">of</span> the secret: ` hgame&#123;U_ Kn0w_LSB&amp;W`.I put the rest <span class="hljs-keyword">of</span> th e content here,  https://drive.google.com/file/d/<span class="hljs-number">13</span>kBos3Ixlfwkf3e0z0kJTEqBxm7RUk-G/<span class="hljs-keyword">view</span>?usp=sharing, <span class="hljs-keyword">if</span> you directly <span class="hljs-keyword">access</span> the g oogle drive cloud disk download  <span class="hljs-keyword">in</span> China, it will be very slow,  you can try <span class="hljs-keyword">to</span> u se Scientific Internet <span class="hljs-keyword">access</span> solves the problem <span class="hljs-keyword">of</span> slow <span class="hljs-keyword">or</span> inaccessible <span class="hljs-keyword">access</span>  <span class="hljs-keyword">to</span> <span class="hljs-keyword">external</span> network resources. This <span class="hljs-keyword">is</span> my favorite music, there  <span class="hljs-keyword">is</span> another part  <span class="hljs-keyword">of</span> the secret <span class="hljs-keyword">in</span>  the music, I use Steghide <span class="hljs-keyword">to</span> encrypt, the <span class="hljs-keyword">password</span> <span class="hljs-keyword">is</span> <span class="hljs-keyword">also</span> the  <span class="hljs-number">6</span>-digit <span class="hljs-keyword">password</span>  we agreed at the <span class="hljs-type">time</span>, even <span class="hljs-keyword">if</span>  someone <span class="hljs-keyword">else</span> finds <span class="hljs-keyword">out</span> here, it  should <span class="hljs-keyword">not</span> be so  easy <span class="hljs-keyword">to</span><br></code></pre></td></tr></table></figure>
+
+<p>这里给了一半的flag，另一半要访问网站<a target="_blank" rel="noopener" href="https://drive.google.com/file/d/13kBos3Ixlfwkf3e0z0kJTEqBxm7RUk-G/view?usp=sharing">https://drive.google.com/file/d/13kBos3Ixlfwkf3e0z0kJTEqBxm7RUk-G/view?usp=sharing</a> ，下载音频（要有梯子，不然下不来）</p>
+<p>里面说了用Steghide加密的，直接上网搜一下Steghide的用法<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/c3679f805a0c">https://www.jianshu.com/p/c3679f805a0c</a></p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm">sudo apt <span class="hljs-keyword">install </span>steghide   <span class="hljs-comment">#安装</span><br>steghide info <span class="hljs-keyword">Bossanova.wav </span>  <span class="hljs-comment">#查看隐藏的文件</span><br>steghide <span class="hljs-keyword">extract </span>-sf <span class="hljs-keyword">Bossanova.wav </span> <span class="hljs-comment">#提取隐藏的文件</span><br></code></pre></td></tr></table></figure>
+
+<p>得到flag2.txt <code>恭喜你解到这里，剩下的Flag是 av^Mp3_Stego&#125;，我们Week2见！</code></p>
+<p><code>hgame&#123;U_ Kn0w_LSB&amp;Wav^Mp3_Stego&#125;</code></p>
 <h3 id="test-nc"><a href="#test-nc" class="headerlink" title="test_nc"></a>test_nc</h3><p>直接nc week-1.hgame.lwsec.cn 31750</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">ls</span><br><span class="hljs-comment">#bin</span><br><span class="hljs-comment">#dev</span><br><span class="hljs-comment">#flag</span><br><span class="hljs-comment">#lib</span><br><span class="hljs-comment">#lib32</span><br><span class="hljs-comment">#lib64</span><br><span class="hljs-comment">#vuln</span><br><span class="hljs-built_in">cat</span> flag<br><span class="hljs-comment">#hgame&#123;1b32ad7a265058ea9f2ccc866b97085bb10c4f14&#125;</span><br></code></pre></td></tr></table></figure>
 

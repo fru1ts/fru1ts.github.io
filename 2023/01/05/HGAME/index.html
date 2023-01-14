@@ -26,13 +26,20 @@
 <meta property="og:image" content="https://fru1ts.github.io/2023/01/05/HGAME/3.png">
 <meta property="og:image" content="https://fru1ts.github.io/2023/01/05/HGAME/6.png">
 <meta property="og:image" content="https://fru1ts.github.io/2023/01/05/HGAME/4.png">
+<meta property="og:image" content="https://fru1ts.github.io/2023/01/05/HGAME/15.png">
+<meta property="og:image" content="https://fru1ts.github.io/2023/01/05/HGAME/16.png">
 <meta property="og:image" content="https://fru1ts.github.io/2023/01/05/HGAME/5.png">
 <meta property="og:image" content="https://fru1ts.github.io/2023/01/05/HGAME/1.png">
 <meta property="og:image" content="https://fru1ts.github.io/2023/01/05/HGAME/2.png">
 <meta property="og:image" content="https://fru1ts.github.io/2023/01/05/HGAME/7.png">
 <meta property="og:image" content="https://fru1ts.github.io/2023/01/05/HGAME/8.png">
+<meta property="og:image" content="https://fru1ts.github.io/2023/01/05/HGAME/11.jpg">
+<meta property="og:image" content="https://fru1ts.github.io/2023/01/05/HGAME/12.png">
+<meta property="og:image" content="https://fru1ts.github.io/2023/01/05/HGAME/13.png">
+<meta property="og:image" content="https://fru1ts.github.io/2023/01/05/HGAME/14.png">
+<meta property="og:image" content="https://fru1ts.github.io/2023/01/05/HGAME/9.png">
 <meta property="article:published_time" content="2023-01-05T12:36:48.000Z">
-<meta property="article:modified_time" content="2023-01-11T15:26:33.739Z">
+<meta property="article:modified_time" content="2023-01-14T06:28:15.697Z">
 <meta property="article:author" content="fru1ts">
 <meta property="article:tag" content="CTF,WP">
 <meta name="twitter:card" content="summary_large_image">
@@ -72,6 +79,11 @@
     <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
   
 
+
+
+  
+<link rel="stylesheet" href="/css/mouse.css">
+<link rel="stylesheet" href="/css/scroll.css">
 
 
 
@@ -246,7 +258,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          8.3k 字
+          14k 字
         
       </span>
     
@@ -257,7 +269,7 @@
         
         
         
-          70 分钟
+          121 分钟
         
       </span>
     
@@ -308,7 +320,7 @@
               <p class="note note-info">
                 
                   
-                    本文最后更新于：2023年1月11日 晚上
+                    本文最后更新于：2023年1月14日 下午
                   
                 
               </p>
@@ -371,6 +383,26 @@
 <p><code>-----/..---/..---/...--/./..--.-/.--./.-./../../-.../.-../-.--/..--.-/..--.-/..../---/-./.--/.-/..--.-/.---/--/--./..../..--.-/..-./--./-.-/-.-./--.-/.-/---/--.-/-/--/..-./.-.</code></p>
 <p><a target="_blank" rel="noopener" href="https://mosimima.hwcha.com/">在线解码</a> 并转小写<code>0223e_priibly__honwa_jmgh_fgkcqaoqtmfr</code></p>
 <p>“倒着翻过十八层篱笆”应该是栅栏加密，但是搞不出来😭~~~</p>
+<p>wp出来啦，继续补充一下</p>
+<p>没想到“北欧神话”对应维吉尼亚密码….</p>
+<p>“逆序”-&gt;”18层栅栏解密”-&gt;”密钥为vidar的维吉尼亚解密”</p>
+<p><code>hgame&#123;welcome_to_hgame2023_and_enjoy_hacking&#125;</code></p>
+<h3 id="兔兔的车票"><a href="#兔兔的车票" class="headerlink" title="兔兔的车票"></a>兔兔的车票</h3><p>由于没有看到题目的注解<code>注：flag.png已经提前保存在source文件夹下，并且命名为picture&#123;x&#125;.png</code></p>
+<p>导致没有思路，官方wp已经出了还是记录一下加深理解</p>
+<p>题⽬的流程是先随机⽣成3张噪声图⽚作为nonce，然后把flag.png和picture{xx}.png打乱再与nonce</p>
+<p>进⾏XOR。因为只有三张nonce，⽽picture有15张，所以⼤概率有picture跟flag.png重⽤了同⼀张</p>
+<p>nonce。就可以⽤这两张加密图⽚进⾏XOR，得到</p>
+<p><em>flag</em>.<em>png</em> ⊕ <em>picturex</em>.<em>png</em></p>
+<img src="/2023/01/05/HGAME/15.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>原题代码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> PIL <span class="hljs-keyword">import</span> Image<br><span class="hljs-keyword">from</span> Crypto.Util.number <span class="hljs-keyword">import</span> *<br><span class="hljs-keyword">from</span> random <span class="hljs-keyword">import</span> shuffle, randint, getrandbits<br><br>flagImg = Image.<span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;flag.png&#x27;</span>)<br>width = flagImg.width  <span class="hljs-comment">#379</span><br>height = flagImg.height <span class="hljs-comment">#234</span><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">makeSourceImg</span>():<br>    colors = long_to_bytes(getrandbits(width * height * <span class="hljs-number">24</span>))[::-<span class="hljs-number">1</span>]<br>    img = Image.new(<span class="hljs-string">&#x27;RGB&#x27;</span>, (width, height))<br>    x = <span class="hljs-number">0</span><br>    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(height):<br>        <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(width):<br>            img.putpixel((j, i), (colors[x], colors[x + <span class="hljs-number">1</span>], colors[x + <span class="hljs-number">2</span>]))<br>            x += <span class="hljs-number">3</span><br>    <span class="hljs-keyword">return</span> img<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">xorImg</span>(<span class="hljs-params">keyImg, sourceImg</span>):<br>    img = Image.new(<span class="hljs-string">&#x27;RGB&#x27;</span>, (width, height))<br>    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(height):<br>        <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(width):<br>            p1, p2 = keyImg.getpixel((j, i)), sourceImg.getpixel((j, i))<br>            img.putpixel((j, i), <span class="hljs-built_in">tuple</span>([(p1[k] ^ p2[k]) <span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">3</span>)]))<br>    <span class="hljs-keyword">return</span> img<br><br>n1 = makeSourceImg()<br>n2 = makeSourceImg()<br>n3 = makeSourceImg()<br>nonce = [n1, n2, n3]<br><br>index = <span class="hljs-built_in">list</span>(<span class="hljs-built_in">range</span>(<span class="hljs-number">16</span>))<br>shuffle(index)<br>e=<span class="hljs-number">0</span><br><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> index:<br>    im = Image.<span class="hljs-built_in">open</span>(<span class="hljs-string">f&quot;source/picture<span class="hljs-subst">&#123;i&#125;</span>.png&quot;</span>)<br>    key = nonce[randint(<span class="hljs-number">0</span>, <span class="hljs-number">2</span>)]<br>    encImg = xorImg(key, im)<br>    encImg.save(<span class="hljs-string">f&#x27;pics/enc<span class="hljs-subst">&#123;e&#125;</span>.png&#x27;</span>)<br>    e+=<span class="hljs-number">1</span><br></code></pre></td></tr></table></figure>
+
+<p>只有16张图片，直接爆破</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> PIL <span class="hljs-keyword">import</span> Image<br>width=<span class="hljs-number">379</span>   <span class="hljs-comment">#宽度和高度查看图片属性可知</span><br>height=<span class="hljs-number">234</span><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">xorImg</span>(<span class="hljs-params">keyImg, sourceImg</span>):<br>    img = Image.new(<span class="hljs-string">&#x27;RGB&#x27;</span>, (width, height))<br>    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(height):<br>        <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(width):<br>            p1, p2 = keyImg.getpixel((j, i)), sourceImg.getpixel((j, i))<br>            img.putpixel((j, i), <span class="hljs-built_in">tuple</span>([(p1[k] ^ p2[k]) <span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">3</span>)]))<br>    <span class="hljs-keyword">return</span> img<br><span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">16</span>):<br>    key = Image.<span class="hljs-built_in">open</span>(<span class="hljs-string">f&quot;pics/enc<span class="hljs-subst">&#123;j&#125;</span>.png&quot;</span>)<br>    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">16</span>):<br>        encimg=Image.<span class="hljs-built_in">open</span>(<span class="hljs-string">f&quot;pics/enc<span class="hljs-subst">&#123;i&#125;</span>.png&quot;</span>)<br><br>        im=xorImg(key,encimg)<br>        im.save(<span class="hljs-string">f&quot;source/picture<span class="hljs-subst">&#123;j&#125;</span>.<span class="hljs-subst">&#123;i&#125;</span>.png&quot;</span>)<br></code></pre></td></tr></table></figure>
+
+<img src="/2023/01/05/HGAME/16.png" srcset="/img/loading.gif" lazyload class="">
+
 <h3 id="test-your-IDA"><a href="#test-your-IDA" class="headerlink" title="test your IDA"></a>test your IDA</h3><p>查一下64位，IDA打开看到flag</p>
 <img src="/2023/01/05/HGAME/5.png" srcset="/img/loading.gif" lazyload class="">
 
@@ -394,9 +426,66 @@
 
 <p>得到flag2.txt <code>恭喜你解到这里，剩下的Flag是 av^Mp3_Stego&#125;，我们Week2见！</code></p>
 <p><code>hgame&#123;U_ Kn0w_LSB&amp;Wav^Mp3_Stego&#125;</code></p>
+<h3 id="Where-am-I"><a href="#Where-am-I" class="headerlink" title="Where am I"></a>Where am I</h3><p>给了一个流量包</p>
+<p>因为图片是上传到网盘，所以导出HTTP对象,得到两个文件,一个里面只写了<code>upload successful</code></p>
+<p>另一个则有含有压缩包，<code>binwalk -e file </code>分离，用winhex打开，把头尾多余的文字删除</p>
+<img src="/2023/01/05/HGAME/11.jpg" srcset="/img/loading.gif" lazyload class="">
+
+<img src="/2023/01/05/HGAME/12.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>打开发现文件头错误，应该是伪加密</p>
+<p>将24修改为20</p>
+<img src="/2023/01/05/HGAME/13.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>解压得到图片，linux下用exfitool查看信息</p>
+<img src="/2023/01/05/HGAME/14.png" srcset="/img/loading.gif" lazyload class="">
+
+<p><code>hgame&#123;116_24_1488E_39_54_5418N&#125;</code></p>
 <h3 id="test-nc"><a href="#test-nc" class="headerlink" title="test_nc"></a>test_nc</h3><p>直接nc week-1.hgame.lwsec.cn 31750</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">ls</span><br><span class="hljs-comment">#bin</span><br><span class="hljs-comment">#dev</span><br><span class="hljs-comment">#flag</span><br><span class="hljs-comment">#lib</span><br><span class="hljs-comment">#lib32</span><br><span class="hljs-comment">#lib64</span><br><span class="hljs-comment">#vuln</span><br><span class="hljs-built_in">cat</span> flag<br><span class="hljs-comment">#hgame&#123;1b32ad7a265058ea9f2ccc866b97085bb10c4f14&#125;</span><br></code></pre></td></tr></table></figure>
 
+<h2 id="Week-2"><a href="#Week-2" class="headerlink" title="Week 2"></a>Week 2</h2><h3 id="Git-Leakage"><a href="#Git-Leakage" class="headerlink" title="Git Leakage"></a>Git Leakage</h3><p>题目直接说了是Git 泄露</p>
+<p>那就直接<code>python3 Githack.py http://week-2.hgame.lwsec.cn:32140/.git</code></p>
+<p>得到文件Th1s_1s-flag</p>
+<p><code>hgame&#123;Don&#39;t^put*Git-in_web_directory&#125;</code></p>
+<h3 id="v2board"><a href="#v2board" class="headerlink" title="v2board"></a>v2board</h3><p>需要越权获得admin的权限，查看admin订阅的token</p>
+<p>先随便注册个邮箱进去看看，都没有什么有用的信息</p>
+<p>猜测是v2board的漏洞，查看源码知道是1.6.1版本的</p>
+<p>上网搜<a target="_blank" rel="noopener" href="https://www.ctfiot.com/86202.html">v2board越权访问漏洞</a></p>
+<p>这里的漏洞是</p>
+<figure class="highlight nsis"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs nsis">鉴权方式变为从Redis中获取缓存判定是否存在可以调用接口，导致任意用户都可以调用管理员权限的接口获取后台权限<br> <span class="hljs-literal">Admin</span>.php 文件中只验证了 authrization 是否在 Redis的缓存中，所以当注册任意一个用户进行登陆后获取到 auth_data 就可以任意调用 管理员的接口<br></code></pre></td></tr></table></figure>
+
+<p>先随意注册一个邮箱</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs pgsql">email:<span class="hljs-keyword">admin</span>@qq.com<br><span class="hljs-keyword">password</span>:<span class="hljs-keyword">admin</span>@qq.com<br></code></pre></td></tr></table></figure>
+
+<p>登录后会返回一个auth_data字段<code>YWRtaW4xMjNAcXEuY29tOiQyeSQxMCQ4aU1wd2pPZWx2aUlMQS8yVE9SWHhPSEc3TDVaUkJjWWpvdnJZS2ZvNDdmM012cHR3eUplMg==</code></p>
+<p>然后访问&#x2F;api&#x2F;v1&#x2F;admin&#x2F;user&#x2F;fetch ,并在请求头加上<code>authorization:YWRtaW4xMjNAcXEuY29tOiQyeSQxMCQ4aU1wd2pPZWx2aUlMQS8yVE9SWHhPSEc3TDVaUkJjWWpvdnJZS2ZvNDdmM012cHR3eUplMg==</code>,</p>
+<p>访问得到</p>
+<img src="/2023/01/05/HGAME/9.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>可以发现有一个<code>admin@example.com</code>不是我们注册的，那就是admin了，订阅链接的token&#x3D;<code>39d580e71705f6abac9a414def74c466</code></p>
+<h3 id="Rabin"><a href="#Rabin" class="headerlink" title="Rabin"></a>Rabin</h3><p>Rabin加密方案：<br>选择两个大素数p和q做为私钥</p>
+<p>计算n &#x3D; p * q做为公钥</p>
+<p>若明文为m，则密文为$c ≡ m^{2}(mod n)$</p>
+<p>实际做题中，加密指数e不仅限于2，所有和n不互素的都有可能</p>
+<p>加密算法</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> Crypto.Util.number <span class="hljs-keyword">import</span> *<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">gen_key</span>(<span class="hljs-params">kbits</span>):<br>    <span class="hljs-keyword">while</span> <span class="hljs-literal">True</span>:<br>        p = getPrime(kbits)<br>        q = getPrime(kbits)<br>        <span class="hljs-keyword">if</span> p % <span class="hljs-number">4</span> == <span class="hljs-number">3</span> <span class="hljs-keyword">and</span> q % <span class="hljs-number">4</span>== <span class="hljs-number">3</span>:<br>            <span class="hljs-keyword">break</span><br>    <span class="hljs-keyword">return</span> p, q<br><br>p ,q = gen_key(<span class="hljs-number">256</span>)<br>flag =  <span class="hljs-built_in">open</span>(<span class="hljs-string">&quot;flag&quot;</span>, <span class="hljs-string">&#x27;rb&#x27;</span>).read()<br>pt = bytes_to_long(flag)<br>c = <span class="hljs-built_in">pow</span>(pt, <span class="hljs-number">2</span>, p*q)<br><br><span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;p=<span class="hljs-subst">&#123;p&#125;</span>\nq=<span class="hljs-subst">&#123;q&#125;</span>&quot;</span>)<br><span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;c=<span class="hljs-subst">&#123;<span class="hljs-built_in">hex</span>(c)[<span class="hljs-number">2</span>:]&#125;</span>&quot;</span>)<br><br><span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">p=65428327184555679690730137432886407240184329534772421373193521144693375074983</span><br><span class="hljs-string">q=98570810268705084987524975482323456006480531917292601799256241458681800554123</span><br><span class="hljs-string">c=4e072f435cbffbd3520a283b3944ac988b98fb19e723d1bd02ad7e58d9f01b26d622edea5ee538b2f603d5bf785b0427de27ad5c76c656dbd9435d3a4a7cf556</span><br><span class="hljs-string">&quot;&quot;&quot;</span><br><br></code></pre></td></tr></table></figure>
+
+<p>使用<a target="_blank" rel="noopener" href="https://sagecell.sagemath.org/">sagemath</a>求解</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs python">p =<span class="hljs-number">65428327184555679690730137432886407240184329534772421373193521144693375074983</span><br>q =<span class="hljs-number">98570810268705084987524975482323456006480531917292601799256241458681800554123</span><br>c =<span class="hljs-number">0x4e072f435cbffbd3520a283b3944ac988b98fb19e723d1bd02ad7e58d9f01b26d622edea5ee538b2f603d5bf785b0427de27ad5c76c656dbd9435d3a4a7cf556</span><br>e = <span class="hljs-number">2</span><br>R.&lt;x&gt; = Zmod(p)[] <span class="hljs-comment">#将x作为需要求得的未知数，p为素数</span><br>f = x^e-c<br>r1 = [<span class="hljs-built_in">int</span>(i[<span class="hljs-number">0</span>]) <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> f.roots()] <span class="hljs-comment">#f.roots()返回求解出来的所有解的列表</span><br>R.&lt;x&gt; = Zmod(q)[]<br>f = x^e-c<br>r2 = [<span class="hljs-built_in">int</span>(i[<span class="hljs-number">0</span>]) <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> f.roots()]<br>m = []<br><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> r1:<br>    <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> r2:<br>        m.append(crt([i,j],[p,q])) <span class="hljs-comment">#crt求解中国剩余定理，第一个参数为余数列表，第二个参数为模数列表</span><br><span class="hljs-built_in">print</span>(m) <span class="hljs-comment">#将所有可能的m输出，复制到python里long_to_bytes()</span><br><br></code></pre></td></tr></table></figure>
+
+<p>到Python中</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> Crypto.Util.number <span class="hljs-keyword">import</span> *<br>flag=[<span class="hljs-number">2372237455851842898349117425227584430588749791480564189568122389688124352290664541063989455711371754963358673223097609351443007448201859216160320647129068</span>, <span class="hljs-number">202822073494981439416400155064048668390596366869305553433016288033759387909443994349181</span>, <span class="hljs-number">6449323225107597053933443750923454260964062647115639999185223478236408615216462580775151285384372189740266233875418656692511620093103204244355042080455728</span>, <span class="hljs-number">4077085769255754155584326325695869830375312855635075809617101088548487084999293021150578229828064483445298157019190352894501628932935104416104165427675841</span>]<br><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> flag:<br>    <span class="hljs-built_in">print</span>(long_to_bytes(i))<br></code></pre></td></tr></table></figure>
+
+<p><code>hgame&#123;That&#39;5_s0_3asy_to_s@lve_r@bin&#125;</code></p>
+<h3 id="Sign-In-Pro-Max"><a href="#Sign-In-Pro-Max" class="headerlink" title="Sign In Pro Max"></a>Sign In Pro Max</h3><p>附件如下</p>
+<figure class="highlight vhdl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs vhdl">Part1, <span class="hljs-keyword">is</span> seems like baseXX: QVl5Y3BNQjE1ektibnU3SnN6M0tGaQ==	<br>Part2, a hash <span class="hljs-keyword">function</span> <span class="hljs-keyword">with</span> <span class="hljs-number">128</span><span class="hljs-built_in">bit</span> digest size <span class="hljs-keyword">and</span> <span class="hljs-number">512</span><span class="hljs-built_in">bit</span> <span class="hljs-keyword">block</span> size: c629d83ff9804fb62202e90b0945a323<br>Part3, a hash <span class="hljs-keyword">function</span> <span class="hljs-keyword">with</span> <span class="hljs-number">160</span><span class="hljs-built_in">bit</span> digest size <span class="hljs-keyword">and</span> <span class="hljs-number">512</span><span class="hljs-built_in">bit</span> <span class="hljs-keyword">block</span> size: <span class="hljs-number">99</span>f3b3ada2b4675c518ff23cbd9539da05e2f1f8<br>Part4, the <span class="hljs-keyword">next</span> generation hash <span class="hljs-keyword">function</span> <span class="hljs-keyword">of</span> part3 <span class="hljs-keyword">with</span> <span class="hljs-number">256</span><span class="hljs-built_in">bit</span> <span class="hljs-keyword">block</span> size <span class="hljs-keyword">and</span> <span class="hljs-number">64</span> rounds: <span class="hljs-number">1838</span>f8d5b547c012404e53a9d8c76c56399507a2b017058ec7f27428fda5e7db<br>Ufwy5 nx <span class="hljs-number">0</span>gh0jf61i21h, stb uzy fqq ymj ufwyx ytljymjw, its<span class="hljs-symbol">&#x27;y</span> ktwljy ymj ktwrfy.<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight vhdl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs vhdl">Part1是base加密：base32+base58+base64	f51d3a18<br>Part2,a hash <span class="hljs-keyword">function</span> <span class="hljs-keyword">with</span> <span class="hljs-number">128</span><span class="hljs-built_in">bit</span> digest size <span class="hljs-keyword">and</span> <span class="hljs-number">512</span><span class="hljs-built_in">bit</span> <span class="hljs-keyword">block</span> size 是md5	f91c<br>Part3,a hash <span class="hljs-keyword">function</span> <span class="hljs-keyword">with</span> <span class="hljs-number">160</span><span class="hljs-built_in">bit</span> digest size <span class="hljs-keyword">and</span> <span class="hljs-number">512</span><span class="hljs-built_in">bit</span> <span class="hljs-keyword">block</span> size 是sha-<span class="hljs-number">1</span>	<span class="hljs-number">4952</span><br>Part4,the <span class="hljs-keyword">next</span> generation hash <span class="hljs-keyword">function</span> <span class="hljs-keyword">of</span> part3是sha-<span class="hljs-number">2</span>，<span class="hljs-number">256</span><span class="hljs-built_in">bit</span> <span class="hljs-keyword">block</span> size <span class="hljs-keyword">and</span> <span class="hljs-number">64</span> rounds是sha-<span class="hljs-number">256</span>	a3ed<br>最后一句是凯撒加密，位移<span class="hljs-number">5</span>，Part5 <span class="hljs-keyword">is</span> <span class="hljs-number">0</span>bc0ea61d21c, now put <span class="hljs-keyword">all</span> the parts together, don<span class="hljs-symbol">&#x27;t</span> forget the format<br></code></pre></td></tr></table></figure>
+
+<p>以为flag就是hgame{f51d3a18f91c4952a3ed0bc0ea61d21c}</p>
+<p>结果交上去是错的，发现part5后面还有一句don’t forget format,尝试每部分之间加<code>_</code>,发现还是错误，换成<code>-</code>就对了</p>
+<p><code>hgame&#123;f51d3a18-f91c-4952-a3ed-0bc0ea61d21c&#125;</code></p>
 
                 
               </div>
@@ -644,7 +733,7 @@
     <div class="footer-inner">
   
     <div class="footer-content">
-       <a href="https://fru1ts.github.io" target="_self" rel="nofollow noopener"><span>fru1ts</span></a>
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="js/duration.js"></script> </div> 
     </div>
   
   
@@ -865,6 +954,12 @@
   <script  src="/js/local-search.js" ></script>
 
 
+
+
+  
+<script src="/js/DynamicLine.js"></script>
+<script src="/js/star.js"></script>
+<script src="/js/love.js"></script>
 
 
 

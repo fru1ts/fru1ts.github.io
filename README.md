@@ -1,4 +1,4 @@
-本站点是使用hexo+fluid搭建的个人博客
+本站点是使用hexo+fluid搭建的个人博客，用于存放个人学习笔记，方便自己和有需要的师傅查看
 
 搭建教程：https://blog.csdn.net/yaorongke/article/details/119089190
 

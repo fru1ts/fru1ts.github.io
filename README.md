@@ -4,5 +4,7 @@
 
 Hexo Fluid 用户手册：https://hexo.fluid-dev.com/docs/guide/#%E8%A6%86%E7%9B%96%E9%85%8D%E7%BD%AE
 
+美化教程：https://emoryhuang.cn/blog/1729600336.html
+
 个人博客地址：https://fru1ts.github.io
 

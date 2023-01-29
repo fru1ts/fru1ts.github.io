@@ -16,15 +16,15 @@
   <meta name="author" content="fru1ts">
   <meta name="keywords" content="fru1ts">
   
-    <meta name="description" content="前端游戏局对于游戏是纯前端制作的，所以的游戏数据都会存储在客户端，所以flag其实就存在网页的某个文件中，一般都是被混淆或加密的 游戏局的思路一般是通过就可以获得flag 总结几个方法 1231.直接干，把游戏打通了2.在js文件看通过逻辑，找到通过时调用的函数(一般flag就在这个函数中)，可以将函数在控制台调用一下；也有一些是需要判断分数之类的，这就需要手动修改函数再调用3.根据源代码逻辑设置">
+    <meta name="description" content="前端游戏局 对于游戏是纯前端制作的，所以的游戏数据都会存储在客户端，所以flag其实就存在网页的某个文件中，一般都是被混淆或加密的 游戏局的思路一般是通过就可以获得flag 总结几个方法 1231.直接干，把游戏打通了2.在js文件看通过逻辑，找到通过时调用的函数(一般flag就在这个函数中)，可以将函数在控制台调用一下；也有一些是需要判断分数之类的，这就需要手动修改函数再调用3.根据源代码逻辑">
 <meta property="og:type" content="article">
 <meta property="og:title" content="前端js">
 <meta property="og:url" content="https://fru1ts.github.io/2023/01/14/%E5%89%8D%E7%AB%AFjs/index.html">
 <meta property="og:site_name" content="fru1ts的故酒">
-<meta property="og:description" content="前端游戏局对于游戏是纯前端制作的，所以的游戏数据都会存储在客户端，所以flag其实就存在网页的某个文件中，一般都是被混淆或加密的 游戏局的思路一般是通过就可以获得flag 总结几个方法 1231.直接干，把游戏打通了2.在js文件看通过逻辑，找到通过时调用的函数(一般flag就在这个函数中)，可以将函数在控制台调用一下；也有一些是需要判断分数之类的，这就需要手动修改函数再调用3.根据源代码逻辑设置">
+<meta property="og:description" content="前端游戏局 对于游戏是纯前端制作的，所以的游戏数据都会存储在客户端，所以flag其实就存在网页的某个文件中，一般都是被混淆或加密的 游戏局的思路一般是通过就可以获得flag 总结几个方法 1231.直接干，把游戏打通了2.在js文件看通过逻辑，找到通过时调用的函数(一般flag就在这个函数中)，可以将函数在控制台调用一下；也有一些是需要判断分数之类的，这就需要手动修改函数再调用3.根据源代码逻辑">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-01-14T01:55:30.000Z">
-<meta property="article:modified_time" content="2023-01-14T08:36:07.265Z">
+<meta property="article:modified_time" content="2023-01-29T02:07:13.495Z">
 <meta property="article:author" content="fru1ts">
 <meta property="article:tag" content="web,js">
 <meta name="twitter:card" content="summary_large_image">
@@ -42,6 +42,8 @@
   <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/KaTeX/0.16.2/katex.min.css" />
 
 
 
@@ -105,7 +107,11 @@
 
 
   
-<meta name="generator" content="Hexo 6.3.0"></head>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/katex@0.11.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
 
 
 <body>
@@ -305,7 +311,7 @@
               <p class="note note-info">
                 
                   
-                    本文最后更新于：2023年1月14日 下午
+                    本文最后更新于：2023年1月29日 上午
                   
                 
               </p>
@@ -313,11 +319,11 @@
             
               <div class="markdown-body">
                 
-                <h3 id="前端游戏局"><a href="#前端游戏局" class="headerlink" title="前端游戏局"></a>前端游戏局</h3><p>对于游戏是纯前端制作的，所以的游戏数据都会存储在客户端，所以flag其实就存在网页的某个文件中，一般都是被混淆或加密的</p>
+                <h3 id="前端游戏局"><a class="markdownIt-Anchor" href="#前端游戏局"></a> 前端游戏局</h3>
+<p>对于游戏是纯前端制作的，所以的游戏数据都会存储在客户端，所以flag其实就存在网页的某个文件中，一般都是被混淆或加密的</p>
 <p>游戏局的思路一般是通过就可以获得flag</p>
 <p>总结几个方法</p>
 <figure class="highlight gcode"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs gcode"><span class="hljs-number">1.</span>直接干，把游戏打通了<br><span class="hljs-number">2.</span>在js文件看通过逻辑，找到通过时调用的函数<span class="hljs-comment">(一般flag就在这个函数中)</span>，可以将函数在控制台调用一下；也有一些是需要判断分数之类的，这就需要手动修改函数再调用<br><span class="hljs-number">3.</span>根据源代码逻辑设置断点，运行游戏，调试时可修改值<br></code></pre></td></tr></table></figure>
-
 
                 
               </div>
@@ -517,7 +523,6 @@
 
   
   
-
 
 
 
@@ -737,49 +742,6 @@
 
 
   <script>Fluid.plugins.imageCaption();</script>
-
-  
-      <script>
-        if (!window.MathJax) {
-          window.MathJax = {
-            tex    : {
-              inlineMath: { '[+]': [['$', '$']] }
-            },
-            loader : {
-              load: ['ui/lazy']
-            },
-            options: {
-              renderActions: {
-                insertedScript: [200, () => {
-                  document.querySelectorAll('mjx-container').forEach(node => {
-                    let target = node.parentNode;
-                    if (target.nodeName.toLowerCase() === 'li') {
-                      target.parentNode.classList.add('has-jax');
-                    }
-                  });
-                }, '', false]
-              }
-            }
-          };
-        } else {
-          MathJax.startup.document.state(0);
-          MathJax.texReset();
-          MathJax.typeset();
-          MathJax.typesetPromise();
-        }
-
-        Fluid.events.registerRefreshCallback(function() {
-          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
-            MathJax.startup.document.state(0);
-            MathJax.texReset();
-            MathJax.typeset();
-            MathJax.typesetPromise();
-          }
-        });
-      </script>
-    
-
-  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
 
   <script defer src="/js/leancloud.js" ></script>
 

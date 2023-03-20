@@ -1,0 +1,807 @@
+
+
+<!DOCTYPE html>
+<html lang="en" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/gc.jpg">
+  <link rel="icon" href="/img/gc.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="fru1ts">
+  <meta name="keywords" content="fru1ts">
+  
+    <meta name="description" content="0x00	findme 重定向页面有base64编码：cGljb0NURntwcm94aWVzX2FsbF90aGVfd2F5XzM5Mjg2Yzk3fQ&#x3D;&#x3D;  （要两次才能凑齐） 解码后得到picoCTF&amp;#123;proxies_all_the_way_39286c97&amp;#125;   0x01	MatchTheRegex 考一个正则匹配，查看页面源码可以看到匹配内容 12345678910">
+<meta property="og:type" content="article">
+<meta property="og:title" content="picoCTF2023">
+<meta property="og:url" content="https://fru1ts.github.io/2023/03/20/picoCTF2023/index.html">
+<meta property="og:site_name" content="fru1ts&#39; Blog">
+<meta property="og:description" content="0x00	findme 重定向页面有base64编码：cGljb0NURntwcm94aWVzX2FsbF90aGVfd2F5XzM5Mjg2Yzk3fQ&#x3D;&#x3D;  （要两次才能凑齐） 解码后得到picoCTF&amp;#123;proxies_all_the_way_39286c97&amp;#125;   0x01	MatchTheRegex 考一个正则匹配，查看页面源码可以看到匹配内容 12345678910">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://fru1ts.github.io/2023/03/20/picoCTF2023/1.png">
+<meta property="og:image" content="https://fru1ts.github.io/2023/03/20/picoCTF2023/2.png">
+<meta property="og:image" content="https://fru1ts.github.io/2023/03/20/picoCTF2023/3.png">
+<meta property="og:image" content="https://fru1ts.github.io/2023/03/20/picoCTF2023/4.png">
+<meta property="og:image" content="https://fru1ts.github.io/2023/03/20/picoCTF2023/5.png">
+<meta property="og:image" content="https://fru1ts.github.io/2023/03/20/picoCTF2023/6.png">
+<meta property="og:image" content="https://fru1ts.github.io/2023/03/20/picoCTF2023/7.png">
+<meta property="og:image" content="https://fru1ts.github.io/2023/03/20/picoCTF2023/8.png">
+<meta property="og:image" content="https://fru1ts.github.io/2023/03/20/picoCTF2023/atbash.jpg">
+<meta property="og:image" content="https://fru1ts.github.io/2023/03/20/picoCTF2023/9.png">
+<meta property="og:image" content="https://fru1ts.github.io/2023/03/20/picoCTF2023/10.png">
+<meta property="og:image" content="https://fru1ts.github.io/2023/03/20/picoCTF2023/11.png">
+<meta property="og:image" content="https://fru1ts.github.io/2023/03/20/picoCTF2023/12.png">
+<meta property="og:image" content="https://fru1ts.github.io/2023/03/20/picoCTF2023/13.png">
+<meta property="og:image" content="https://fru1ts.github.io/2023/03/20/picoCTF2023/14.png">
+<meta property="og:image" content="https://fru1ts.github.io/2023/03/20/picoCTF2023/15.png">
+<meta property="og:image" content="https://fru1ts.github.io/2023/03/20/picoCTF2023/16.png">
+<meta property="og:image" content="https://fru1ts.github.io/2023/03/20/picoCTF2023/17.png">
+<meta property="og:image" content="https://fru1ts.github.io/2023/03/20/picoCTF2023/18.png">
+<meta property="og:image" content="https://fru1ts.github.io/2023/03/20/picoCTF2023/19.png">
+<meta property="og:image" content="https://fru1ts.github.io/2023/03/20/picoCTF2023/20.png">
+<meta property="article:published_time" content="2023-03-20T10:08:40.000Z">
+<meta property="article:modified_time" content="2023-03-20T12:09:26.642Z">
+<meta property="article:author" content="fru1ts">
+<meta property="article:tag" content="CTF,WP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://fru1ts.github.io/2023/03/20/picoCTF2023/1.png">
+  
+  
+  
+  <title>picoCTF2023 - fru1ts&#39; Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/KaTeX/0.16.2/katex.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/mouse.css">
+<link rel="stylesheet" href="/css/scroll.css">
+<link rel="stylesheet" href="/css/macpanel.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"fru1ts.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"WEdmoCOkNdSUMsONpu72ngCo-gzGzoHsz","app_key":"PSBkctB8cKrR97yZLNXnJ0nj","server_url":"https://wedmocok.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/katex@0.11.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>fru1ts&#39; Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archives</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Categories</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tags</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="picoCTF2023"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-03-20 18:08" pubdate>
+          March 20, 2023 pm
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          7.2k words
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          60 mins
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> views
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">picoCTF2023</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    Last updated on March 20, 2023 pm
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h3 id="0x00findme"><a class="markdownIt-Anchor" href="#0x00findme"></a> 0x00	findme</h3>
+<p>重定向页面有base64编码：cGljb0NURntwcm94aWVzX2FsbF90aGVfd2F5XzM5Mjg2Yzk3fQ==  （要两次才能凑齐）</p>
+<p>解码后得到<code>picoCTF&#123;proxies_all_the_way_39286c97&#125;</code></p>
+<img src="/2023/03/20/picoCTF2023/1.png" srcset="/img/loading.gif" lazyload class="">
+<h3 id="0x01matchtheregex"><a class="markdownIt-Anchor" href="#0x01matchtheregex"></a> 0x01	MatchTheRegex</h3>
+<p>考一个正则匹配，查看页面源码可以看到匹配内容</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">send_request</span>(<span class="hljs-params"></span>) &#123;<br>	<span class="hljs-keyword">let</span> val = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&quot;name&quot;</span>).<span class="hljs-property">value</span>;<br>	<span class="hljs-comment">// ^p.....F!?</span><br>	<span class="hljs-title function_">fetch</span>(<span class="hljs-string">`/flag?input=<span class="hljs-subst">$&#123;val&#125;</span>`</span>)<br>		.<span class="hljs-title function_">then</span>(<span class="hljs-function"><span class="hljs-params">res</span> =&gt;</span> res.<span class="hljs-title function_">text</span>())<br>		.<span class="hljs-title function_">then</span>(<span class="hljs-function"><span class="hljs-params">res</span> =&gt;</span> &#123;<br>			<span class="hljs-keyword">const</span> res_json = <span class="hljs-title class_">JSON</span>.<span class="hljs-title function_">parse</span>(res);<br>			<span class="hljs-title function_">alert</span>(res_json.<span class="hljs-property">flag</span>)<br>			<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>		&#125;)<br>	<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+<p>输入<code>picoCTF</code>即可</p>
+<img src="/2023/03/20/picoCTF2023/2.png" srcset="/img/loading.gif" lazyload class="">
+<h3 id="0x02soap"><a class="markdownIt-Anchor" href="#0x02soap"></a> 0x02	SOAP</h3>
+<p>提示是XML外部实体注入,并且要读取/etc/passwd文件</p>
+<p>抓包可以发现点击<code>Details</code>之后有xml</p>
+<p>直接进行注入</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-keyword">data</span>[</span><br><span class="hljs-meta"><span class="hljs-meta">&lt;!ENTITY <span class="hljs-keyword">xxe</span> <span class="hljs-keyword">SYSTEM</span> <span class="hljs-string">&quot;file:///etc/passwd&quot;</span>&gt;</span></span><br><span class="hljs-meta">]&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">data</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">ID</span>&gt;</span><br>        <span class="hljs-symbol">&amp;xxe;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">ID</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">data</span>&gt;</span><br></code></pre></td></tr></table></figure>
+<img src="/2023/03/20/picoCTF2023/3.png" srcset="/img/loading.gif" lazyload class="">
+<h3 id="0x03more-sqli"><a class="markdownIt-Anchor" href="#0x03more-sqli"></a> 0x03	More SQLi</h3>
+<p>sql注入,常规试一下</p>
+<img src="/2023/03/20/picoCTF2023/4.png" srcset="/img/loading.gif" lazyload class="">
+<p>发现是password and username,所以注入点应该在password</p>
+<img src="/2023/03/20/picoCTF2023/5.png" srcset="/img/loading.gif" lazyload class="">
+<h3 id="0x04java-code-analysis"><a class="markdownIt-Anchor" href="#0x04java-code-analysis"></a> 0x04	Java Code Analysis!?!</h3>
+<p>把源码下载下来</p>
+<p>提示要找到<code> the JWT Signing Key (&quot;secret key&quot;)</code></p>
+<p>可以在源文件中找到<code>JwtService.java</code>,</p>
+<p>有这样一段源码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Autowired</span><br> <span class="hljs-keyword">public</span> <span class="hljs-title function_">JwtService</span><span class="hljs-params">(SecretGenerator secretGenerator)</span>&#123;<br>     <span class="hljs-built_in">this</span>.SECRET_KEY = secretGenerator.getServerSecret();<br> &#125;<br></code></pre></td></tr></table></figure>
+<p><code>secret key</code> 是由<code>secretGenerator</code>产生，看到<code>SecretGenerator.java</code></p>
+<p>密钥放在<code>server_secret.txt</code>里面，当没有这个文件时密钥为<code>1234</code></p>
+<p>先抓一下包，发现JWT,<a target="_blank" rel="noopener" href="https://jwt.io/">JWT解码</a></p>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs avrasm"><span class="hljs-symbol">Authorization:</span> Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiRnJlZSIsImlzcyI6ImJvb2tzaGVsZiIsImV4cCI6MTY3OTkxNDQ1MCwiaWF0IjoxNjc5MzA5NjUwLCJ1c2VySWQiOjEsImVtYWlsIjoidXNlciJ9.Y5f4P9ivWsO5AqnXstKtUKyY02s8y8PL9L2msCAkhiI<br></code></pre></td></tr></table></figure>
+<img src="/2023/03/20/picoCTF2023/6.png" srcset="/img/loading.gif" lazyload class="">
+<p>根据提示要修改 ‘role’ and ‘userId’，而且要使用密钥<code>1234</code></p>
+<img src="/2023/03/20/picoCTF2023/7.png" srcset="/img/loading.gif" lazyload class="">
+<p><code>eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiRnJlZSIsImlzcyI6ImJvb2tzaGVsZiIsImV4cCI6MTY3OTkxNDQ1MCwiaWF0IjoxNjc5MzA5NjUwLCJ1c2VySWQiOjIsImVtYWlsIjoiYWRtaW4ifQ.g7dC751n3puM1TmnXbihfTGNED5EHyq6EmiQ9Gl4Dzs</code></p>
+<p>接下来只要访问到flag对应的pdf就应该可以了</p>
+<p>试了几次发现直接访问flag访问不到</p>
+<p>第一个是user就能访问的，可以发现pdf所在路径为<code>/base/books/pdf/3</code></p>
+<p>顺过去flag应该就是访问<code>/base/books/pdf/5</code></p>
+<p>然后就出flag啦</p>
+<img src="/2023/03/20/picoCTF2023/8.png" srcset="/img/loading.gif" lazyload class="">
+<h3 id="0x05hidetosee"><a class="markdownIt-Anchor" href="#0x05hidetosee"></a> 0x05	HideToSee</h3>
+<img src="/2023/03/20/picoCTF2023/atbash.jpg" srcset="/img/loading.gif" lazyload class="">
+<p>提示<code>ectract</code>，想到linux有一个工具<code>strghide</code></p>
+<p><code>steghide extract -sf atbash.jpg</code></p>
+<p>提取到<code>xqkwKBN&#123;z0bib1wv_l3kzgxb3l_k34ijli2&#125;</code></p>
+<p>然后利用<a target="_blank" rel="noopener" href="https://www.dcode.fr/atbash-cipher">在线网站</a>或者手动解密</p>
+<p><code>picoCTF&#123;atbash_crack_1f84d779&#125;</code></p>
+<h3 id="0x06readmycert"><a class="markdownIt-Anchor" href="#0x06readmycert"></a> 0x06	ReadMyCert</h3>
+<p>下载源件是一个证书</p>
+<p>用openssl</p>
+<p><code>openssl req -noout -text -in readmycert.csr</code></p>
+<p>flag<code>picoCTF&#123;read_mycert_aac33761&#125;</code></p>
+<h3 id="0x07rotation"><a class="markdownIt-Anchor" href="#0x07rotation"></a> 0x07	rotation</h3>
+<p>凯撒加密</p>
+<img src="/2023/03/20/picoCTF2023/9.png" srcset="/img/loading.gif" lazyload class="">
+<h3 id="0x08reverse"><a class="markdownIt-Anchor" href="#0x08reverse"></a> 0x08	Reverse</h3>
+<h3 id="0x09safe-opener-2"><a class="markdownIt-Anchor" href="#0x09safe-opener-2"></a> 0x09	Safe Opener 2</h3>
+<p>这两道ida打开直接可以看到flag</p>
+<h3 id="0x0a-hideme"><a class="markdownIt-Anchor" href="#0x0a-hideme"></a> 0x0A hideme</h3>
+<p>binwalk 一下发现有隐藏多个文件</p>
+<p>foremost一下出flag</p>
+<img src="/2023/03/20/picoCTF2023/10.png" srcset="/img/loading.gif" lazyload class="">
+<h3 id="0x0bpcappoisoning"><a class="markdownIt-Anchor" href="#0x0bpcappoisoning"></a> 0x0B	PcapPoisoning</h3>
+<p>直接搜pico就看到了</p>
+<img src="/2023/03/20/picoCTF2023/11.png" srcset="/img/loading.gif" lazyload class="">
+<h3 id="0x0cwho-is-it"><a class="markdownIt-Anchor" href="#0x0cwho-is-it"></a> 0x0C	who is it</h3>
+<p>下载到一封邮件，直接看邮件头</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br></pre></td><td class="code"><pre><code class="hljs applescript">Delivered-To: francismanzi@gmail.com<br>Received: <span class="hljs-keyword">by</span> <span class="hljs-number">2002</span>:ab0:<span class="hljs-number">638</span>a:<span class="hljs-number">0</span>:<span class="hljs-number">0</span>:<span class="hljs-number">0</span>:<span class="hljs-number">0</span>:<span class="hljs-number">0</span> <span class="hljs-keyword">with</span> SMTP <span class="hljs-built_in">id</span> y10csp123720uao;<br>        Thu, <span class="hljs-number">7</span> Jul <span class="hljs-number">2022</span> <span class="hljs-number">23</span>:<span class="hljs-number">19</span>:<span class="hljs-number">48</span> <span class="hljs-number">-0700</span> (PDT)<br>X-Google-Smtp-Source: AGRyM1u8MgQ0wT0JmPs4nZbKyuwluXeP+mglR/hb66VElgQnwB8M2ofwYUFsHj+eMYBFAVDPITJc<br>X-Received: <span class="hljs-keyword">by</span> <span class="hljs-number">2002</span>:a5d:<span class="hljs-number">6</span>d06:<span class="hljs-number">0</span>:b0:<span class="hljs-number">21</span>b:c434:d99e <span class="hljs-keyword">with</span> SMTP <span class="hljs-built_in">id</span> e6<span class="hljs-number">-20020</span>a5d6d06000000b0021bc434d99emr1524437wrq<span class="hljs-number">.148</span><span class="hljs-number">.1657261188086</span>;<br>        Thu, <span class="hljs-number">07</span> Jul <span class="hljs-number">2022</span> <span class="hljs-number">23</span>:<span class="hljs-number">19</span>:<span class="hljs-number">48</span> <span class="hljs-number">-0700</span> (PDT)<br>ARC-Seal: i=<span class="hljs-number">1</span>; a=rsa-sha256; t=<span class="hljs-number">1657261188</span>; cv=none;<br>        d=google.com; s=arc<span class="hljs-number">-20160816</span>;<br>        b=FJZQS4geDnyabQ7SUhA2v3roEqcufLmysXkLoRZd3yNXiNQFBFmwm5v5yANvDyyebA<br>         Jfjqv5X8Gujll585xj/MHlVhlEMg0edNWuwnLXj8SmNuPI1Jon9N+fokhSMxy2WxSACE<br>         <span class="hljs-number">4</span>MruPo5QBlHdrFq8WNBAFgC1VtO0nR+BQYY18wqotLIQPvkXo3yOUUhx0D+ZjUwXvTKV<br>         yUFGdYulF58Lg7wAH/cLWROIHrraWTSsmaGWoYv577nztzueoG5RC5uUAGIAyzsJRqsV<br>         dCsapFxCUlbYbAgIVraylksCA+veFXfil6ocym8KKnls3j40Vojv0VLhHHZxXruG5x/K<br>         M5cQ==<br>ARC-Message-Signature: i=<span class="hljs-number">1</span>; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc<span class="hljs-number">-20160816</span>;<br>        h=mime-<span class="hljs-built_in">version</span>:message-<span class="hljs-built_in">id</span>:<span class="hljs-built_in">date</span>:subject:<span class="hljs-keyword">to</span>:<span class="hljs-keyword">from</span>:dkim-signature;<br>        bh=RneTbuEOZUlwei4ZNPvzjmZpQE92irBmuzImA33zPEc=;<br>        b=RUd+ycq1YWbRNn9wB8UgJ8dZz0tHpvmqcEGQkWqzLy/<span class="hljs-number">6</span>j3aFzaf7dwdoCtXjTTtrrE<br>         z9g498cmB55fs0x1CAjtzI+Nctb1cbPcnfMCrfsF3LwgYhCErFRnbBbOgqw4eeEB+hk0<br>         sKBN0QVpSLs1HlF8ZK3XiMKA2p3vSgHlbhMDPGnFTLHEQjlM63d/L30Rt8mpQsT77ni/<br>         f6X0TqTi4Y8ARIuEELMa6m5E5wQcfUxeUU5WAssz46tQyHKR6xg/g8K2zES+gSNymASk<br>         c5Eaq55k4Zi8dXWaPIwg4IdhVLVxe4llMx8c46GTdh8tvdMtmjME3wIaFR6Q2SLWRSZA<br>         o0hw==<br>ARC-Authentication-Results: i=<span class="hljs-number">1</span>; mx.google.com;<br>       dkim=pass header.i=@onionmail.org header.s=jan2022 header.b=<span class="hljs-number">4</span>sU2nk5Z;<br>       spf=pass (google.com: domain <span class="hljs-keyword">of</span> lpage@onionmail.org designates <span class="hljs-number">173.249</span><span class="hljs-number">.33</span><span class="hljs-number">.206</span> <span class="hljs-keyword">as</span> permitted sender) smtp.mailfrom=lpage@onionmail.org;<br>       dmarc=pass (p=NONE sp=NONE dis=NONE) header.<span class="hljs-keyword">from</span>=onionmail.org<br>Return-Path: &lt;lpage@onionmail.org&gt;<br>Received: <span class="hljs-keyword">from</span> mail.onionmail.org (mail.onionmail.org. [<span class="hljs-number">173.249</span><span class="hljs-number">.33</span><span class="hljs-number">.206</span>])<br>        <span class="hljs-keyword">by</span> mx.google.com <span class="hljs-keyword">with</span> ESMTPS <span class="hljs-built_in">id</span> f16<span class="hljs-number">-20020</span>a05600c4e9000b003a1947873d6si1882702wmq<span class="hljs-number">.224</span><span class="hljs-number">.2022</span><span class="hljs-number">.07</span><span class="hljs-number">.07</span><span class="hljs-number">.23</span><span class="hljs-number">.19</span><span class="hljs-number">.47</span><br>        <span class="hljs-keyword">for</span> &lt;francismanzi@gmail.com&gt;<br>        (<span class="hljs-built_in">version</span>=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=<span class="hljs-number">256</span>/<span class="hljs-number">256</span>);<br>        Thu, <span class="hljs-number">07</span> Jul <span class="hljs-number">2022</span> <span class="hljs-number">23</span>:<span class="hljs-number">19</span>:<span class="hljs-number">47</span> <span class="hljs-number">-0700</span> (PDT)<br>Received-SPF: pass (google.com: domain <span class="hljs-keyword">of</span> lpage@onionmail.org designates <span class="hljs-number">173.249</span><span class="hljs-number">.33</span><span class="hljs-number">.206</span> <span class="hljs-keyword">as</span> permitted sender) client-ip=<span class="hljs-number">173.249</span><span class="hljs-number">.33</span><span class="hljs-number">.206</span>;<br>Authentication-Results: mx.google.com;<br>       dkim=pass header.i=@onionmail.org header.s=jan2022 header.b=<span class="hljs-number">4</span>sU2nk5Z;<br>       spf=pass (google.com: domain <span class="hljs-keyword">of</span> lpage@onionmail.org designates <span class="hljs-number">173.249</span><span class="hljs-number">.33</span><span class="hljs-number">.206</span> <span class="hljs-keyword">as</span> permitted sender) smtp.mailfrom=lpage@onionmail.org;<br>       dmarc=pass (p=NONE sp=NONE dis=NONE) header.<span class="hljs-keyword">from</span>=onionmail.org<br>DKIM-Signature: v=<span class="hljs-number">1</span>; a=rsa-sha256; c=relaxed/relaxed; d=onionmail.org;<br> q=dns/txt; s=jan2022; bh=RneTbuEOZUlwei4ZNPvzjmZpQE92irBmuzImA33zPEc=;<br> h=<span class="hljs-keyword">from</span>:subject:<span class="hljs-built_in">date</span>:message-<span class="hljs-built_in">id</span>:<span class="hljs-keyword">to</span>:mime-<span class="hljs-built_in">version</span>:content-type;<br> b=<span class="hljs-number">4</span>sU2nk5ZG4F9+lCtCPU4nat6ovALqfOHOUM1/wTskeMdmMAa2yOMXy0GkqolIioL8nG0mRG45<br> OD8b/nHZZEiA0aQppYHECSmXE7IFIFm/MP9wmXIlC/cDF1t9mEwumdDbes7hRhiO6q3A0wYWK+J<br> C+qwHI99irsPhWZOptVVh0HV/HJPAtkzg7OBMX/oPDUSG3xo7dJvT5MCYUm2+<span class="hljs-number">4</span>CBVjvLmEPUVTO<br> uuVEU3HjVjumry5zw1H4s+o9jxCOwpT41uL94NM64Aki4+KIlS75W8Uo1YStqciHSHoEPLMvBhK<br> OMfwhI02u5oLFbk6ZvmhyK5juc54lGbWgk277N0hB0Aw==<br>Received: <span class="hljs-keyword">from</span> localhost<br> <span class="hljs-keyword">by</span> mail.onionmail.org (ZoneMTA) <span class="hljs-keyword">with</span> API <span class="hljs-built_in">id</span> <span class="hljs-number">181</span>dc76dff2000ccee<span class="hljs-number">.001</span><br> <span class="hljs-keyword">for</span> &lt;francismanzi@gmail.com&gt;;<br> Fri, <span class="hljs-number">08</span> Jul <span class="hljs-number">2022</span> <span class="hljs-number">06</span>:<span class="hljs-number">19</span>:<span class="hljs-number">47</span> +<span class="hljs-number">0000</span><br>X-Zone-Loop: <span class="hljs-number">83440723</span>a48cf749c9e7702024ee772d7cb2fb7cab7a<br>Content-Type: multipart/mixed; boundary=<span class="hljs-string">&quot;--_NmP-426c22a2e0d8fc9a-Part_1&quot;</span><br>From: Larry Page &lt;lpage@onionmail.org&gt;<br>To: francismanzi@gmail.com<br>Subject: One million Prize<br>Date: Fri, <span class="hljs-number">08</span> Jul <span class="hljs-number">2022</span> <span class="hljs-number">06</span>:<span class="hljs-number">19</span>:<span class="hljs-number">47</span> +<span class="hljs-number">0000</span><br>Message-ID: &lt;<span class="hljs-number">03</span>c11cd1<span class="hljs-number">-8</span>fd9<span class="hljs-number">-584</span>e-c9d7-e53df0faeccc@onionmail.org&gt;<br>MIME-Version: <span class="hljs-number">1.0</span><br><br><span class="hljs-comment">----_NmP-426c22a2e0d8fc9a-Part_1</span><br>Content-Type: multipart/alternative;<br> boundary=<span class="hljs-string">&quot;--_NmP-426c22a2e0d8fc9a-Part_2&quot;</span><br><br><span class="hljs-comment">----_NmP-426c22a2e0d8fc9a-Part_2</span><br>Content-Type: <span class="hljs-built_in">text</span>/plain; charset=utf<span class="hljs-number">-8</span><br>Content-Transfer-Encoding: quoted-printable<br><br>Hello dear user, I am Larry Page <span class="hljs-keyword">and</span> I am delighted <span class="hljs-keyword">to</span> announce <span class="hljs-keyword">to</span> you <span class="hljs-keyword">that</span>=<br> you<br>are <span class="hljs-keyword">the</span> <span class="hljs-number">99999999</span>th GMAIL account <span class="hljs-keyword">and</span> <span class="hljs-keyword">for</span> <span class="hljs-keyword">that</span> we want <span class="hljs-keyword">to</span> reward you. =<br>You&#x27;ve<br>earned $<span class="hljs-number">1</span>,<span class="hljs-number">000</span>,<span class="hljs-number">000.</span> To claim your prize open <span class="hljs-keyword">the</span> attached <span class="hljs-built_in">file</span>.<br><span class="hljs-comment">----_NmP-426c22a2e0d8fc9a-Part_2</span><br>Content-Type: <span class="hljs-built_in">text</span>/html; charset=utf<span class="hljs-number">-8</span><br>Content-Transfer-Encoding: quoted-printable<br><br>&lt;p&gt;Hello dear user, I am Larry Page <span class="hljs-keyword">and</span> I am delighted <span class="hljs-keyword">to</span> announce <span class="hljs-keyword">to</span> you =<br><span class="hljs-keyword">that</span> you are <span class="hljs-keyword">the</span> <span class="hljs-number">99999999</span>th GMAIL account <span class="hljs-keyword">and</span> <span class="hljs-keyword">for</span> <span class="hljs-keyword">that</span> we want <span class="hljs-keyword">to</span> reward =<br>you. You&#x27;ve earned $<span class="hljs-number">1</span>,<span class="hljs-number">000</span>,<span class="hljs-number">000.</span> To claim your prize open <span class="hljs-keyword">the</span> attached <span class="hljs-built_in">file</span>.=<br>&lt;br&gt;&lt;/p&gt;<br><span class="hljs-comment">----_NmP-426c22a2e0d8fc9a-Part_2--</span><br><br><span class="hljs-comment">----_NmP-426c22a2e0d8fc9a-Part_1</span><br>Content-Type: <span class="hljs-built_in">text</span>/plain; <span class="hljs-built_in">name</span>=attachment.txt<br>Content-Transfer-Encoding: base64<br>Content-Disposition: attachment; filename=attachment.txt<br><br>QW1vdW50OiAgJDEsMDAwLDAwMAo=<br><span class="hljs-comment">----_NmP-426c22a2e0d8fc9a-Part_1--</span><br></code></pre></td></tr></table></figure>
+<p>分析一下发现邮件是来自ip<code>173.249.33.206</code></p>
+<p>用<code>whois</code>命令</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-attribute">whois</span> <span class="hljs-number">173.249.33.206</span><br></code></pre></td></tr></table></figure>
+<img src="/2023/03/20/picoCTF2023/12.png" srcset="/img/loading.gif" lazyload class="">
+<h3 id="0x0dfindandopen"><a class="markdownIt-Anchor" href="#0x0dfindandopen"></a> 0x0D	FindAndOpen</h3>
+<p>在第48个数据包发现base64编码</p>
+<img src="/2023/03/20/picoCTF2023/13.png" srcset="/img/loading.gif" lazyload class="">
+<p>解码<code>This is the secret: picoCTF&#123;R34DING_LOKd_</code></p>
+<p>把这一半当做压缩包密码解码得到flag<code>picoCTF&#123;R34DING_LOKd_fil56_succ3ss_cbf2ebf6&#125;</code></p>
+<h3 id="0x0emsb"><a class="markdownIt-Anchor" href="#0x0emsb"></a> 0x0E	MSB</h3>
+<p>发现图片在各个颜色第七管道变化</p>
+<img src="/2023/03/20/picoCTF2023/14.png" srcset="/img/loading.gif" lazyload class="">
+<p>直接全部复制下来，然后查找pico</p>
+<img src="/2023/03/20/picoCTF2023/15.png" srcset="/img/loading.gif" lazyload class="">
+<h3 id="0x0fchrono"><a class="markdownIt-Anchor" href="#0x0fchrono"></a> 0x0F	chrono</h3>
+<img src="/2023/03/20/picoCTF2023/16.png" srcset="/img/loading.gif" lazyload class="">
+<h3 id="0x10money-ware"><a class="markdownIt-Anchor" href="#0x10money-ware"></a> 0x10	money-ware</h3>
+<p>提示借助google</p>
+<img src="/2023/03/20/picoCTF2023/17.png" srcset="/img/loading.gif" lazyload class="">
+<img src="/2023/03/20/picoCTF2023/18.png" srcset="/img/loading.gif" lazyload class="">
+<h3 id="0x11permissions"><a class="markdownIt-Anchor" href="#0x11permissions"></a> 0x11	Permissions</h3>
+<p>步骤同chrono</p>
+<h3 id="0x12repetitions"><a class="markdownIt-Anchor" href="#0x12repetitions"></a> 0x12	repetitions</h3>
+<p>连续的base64编码</p>
+<p>连续解码后得到<code>picoCTF&#123;base64_n3st3d_dic0d!n8_d0wnl04d3d_4557ec3e&#125;</code></p>
+<h3 id="0x13rules-2023"><a class="markdownIt-Anchor" href="#0x13rules-2023"></a> 0x13	Rules 2023</h3>
+<p>直接页面源码搜<code>picoCTF&#123;</code></p>
+<img src="/2023/03/20/picoCTF2023/19.png" srcset="/img/loading.gif" lazyload class="">
+<h3 id="0x14two-sum"><a class="markdownIt-Anchor" href="#0x14two-sum"></a> 0x14	two-sum</h3>
+<p>下载C语言源码，输入两个数，满足<code>n1 &gt; n1 + n2 OR n2 &gt; n1 + n2</code></p>
+<p>属于整数溢出</p>
+<p>c语言int类型溢出是大于<code>2147483647</code></p>
+<p>所以输入 <code>2147483647</code>和<code>1</code></p>
+<img src="/2023/03/20/picoCTF2023/20.png" srcset="/img/loading.gif" lazyload class="">
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <p class="note note-warning">
+                <strong>本文作者: </strong><a href="/">fru1ts</a> <br>
+                <strong>本文链接: </strong><a href="https://fru1ts.github.io/2023/03/20/picoCTF2023/">https://fru1ts.github.io/2023/03/20/picoCTF2023/</a> <br>
+                <strong>版权声明: </strong>本站均采用BY-SA协议，除特别声明外，转载请注明出处!
+                   </p>
+                   
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/03/07/github%E9%A1%B9%E7%9B%AE%E6%89%98%E7%AE%A1/" title="github项目托管">
+                        <span class="hidden-mobile">github项目托管</span>
+                        <span class="visible-mobile">Next</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"WEdmoCOkNdSUMsONpu72ngCo-gzGzoHsz","appKey":"PSBkctB8cKrR97yZLNXnJ0nj","path":"window.location.pathname","placeholder":null,"avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>Table of Contents</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">Keyword</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        Total number of visits 
+        <span id="leancloud-site-pv"></span>
+         
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        Total number of visitors 
+        <span id="leancloud-site-uv"></span>
+         
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+  
+<script src="/js/DynamicLine.js"></script>
+<script src="/js/star.js"></script>
+<script src="/js/love.js"></script>
+<script src="/js/duration.js"></script>
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">Blog works best with JavaScript enabled</div>
+  </noscript>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/assets/wanko.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7},"log":false});</script></body>
+</html>

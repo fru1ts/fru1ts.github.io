@@ -254,15 +254,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2023/01/20/%E6%AD%A3%E5%88%99%E7%BB%95%E8%BF%87/" target="_self">
-          正则绕过
+        <a href="/2023/04/23/%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2/" target="_self">
+          信息泄露
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/01/20/%E6%AD%A3%E5%88%99%E7%BB%95%E8%BF%87/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/04/23/%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2/" target="_self">
         <div>
-          1.换行符绕过(%0a) 1234567891011121314&lt;?phpinclude(&quot;flag.php&quot;);highlight_file(__FILE__);$c = $_GET[&#x27;c&#x27;];if (preg_match(&#x27;/^flag$/i&#x27;, $c) &amp;&amp; $c !== &#x27;flag&#x27;)
+          基础 敏感信息指不为公众所知悉，具有实际和潜在利用价值，丢失、不当使用或未经授权访问对社会、企业或个人造成危害的信息。包括：个人隐私信息、业务经营信息、财务信息、人事信息、IT 运维信息等。 泄露途径包括 Github、百度文库、Google code、网站目录等。  类型 （以ctfshow题目为例）  1.源码泄露 在页面源码可看到一些信息  2.HTTP请求头泄露 把信息藏在请求头，根据提
         </div>
       </a>
 
@@ -270,8 +270,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2023-01-20 17:08" pubdate>
-              2023-01-20
+            <time datetime="2023-04-23 21:37" pubdate>
+              2023-04-23
             </time>
           </div>
         
@@ -315,15 +315,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2023/01/20/hash%E7%BB%95%E8%BF%87/" target="_self">
-          hash绕过
+        <a href="/2023/04/22/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%B9%B6%E5%8F%91/" target="_self">
+          
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/01/20/hash%E7%BB%95%E8%BF%87/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/04/22/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%B9%B6%E5%8F%91/" target="_self">
         <div>
-          做题遇到了hash函数的绕过问题，之前总结得不全，重新整理一下  弱类型绕过  md5 1if($a!=$b&amp;&amp;md5($a)==md5($b) PHP在处理哈希字符串时，它把每个以‘0E’开头的哈希值都解释为0，所以只要a，b的md5的值以0E开头即可，得到的md5的值就都是0 例如 1a=QNKCDZO&amp;b=240610708 一些常见的md5的值以0e开头的例子 12
+          多线程 多个线程运行可以是程序运行得更快 直接从 threading.Thread 继承创建一个新的子类，并实例化后调用 start() 方法启动新线程 1234def sing(x):	passthreading.thread(target=sing,arg=(x,).start() target指定要执行的任务，即函数 arg给函数传送参数，注意最后有个, 12345678910111213
         </div>
       </a>
 
@@ -331,8 +331,41 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2023-01-20 16:33" pubdate>
-              2023-01-20
+            <time datetime="2023-04-22 20:47" pubdate>
+              2023-04-22
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/04/02/crypto/" target="_self">
+          crypto
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/04/02/crypto/" target="_self">
+        <div>
+          进制转换 进制转换  十六进制转二进制 1234c=&#x27;十六进制&#x27;for i in range(0,len(c)-1,2):    b2+=(8-len(bin(int(c[i:i+2],16))[2:]))*&#x27;0&#x27;+bin((int(c[i:i+2],16)))[2:]print(b2)      二进制转十六进制 123b=&#x27;111111111
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-04-02 22:22" pubdate>
+              2023-04-02
             </time>
           </div>
         
@@ -362,7 +395,7 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/web/">#web</a>
+              <a href="/tags/crypto/">#crypto</a>
             
           </div>
         
@@ -376,15 +409,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2023/01/19/Q-Learning/" target="_self">
-          Q_Learning
+        <a href="/2023/03/20/picoCTF2023/" target="_self">
+          picoCTF2023
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/01/19/Q-Learning/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/20/picoCTF2023/" target="_self">
         <div>
-          简介Q-Learning 是强化学习一种无模型的基于值的学习算法，也可看做异步动态规划的一种方法。 Q-table:用于存放每个状态采取某种行为后最大的奖励期望 原理目的：利用Q函数寻找最优的策略，即最大化Q函数的值（给定一个状态和动作时的未来奖励期望） 方法：采取一个行为后就根性Q-table 算法流程：   算法  实例代码https://github.com/fru1ts/fru1ts.gi
+          0x00	findme 重定向页面有base64编码：cGljb0NURntwcm94aWVzX2FsbF90aGVfd2F5XzM5Mjg2Yzk3fQ==  （要两次才能凑齐） 解码后得到picoCTF&#123;proxies_all_the_way_39286c97&#125;   0x01	MatchTheRegex 考一个正则匹配，查看页面源码可以看到匹配内容 12345678910
         </div>
       </a>
 
@@ -392,313 +425,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2023-01-19 14:48" pubdate>
-              2023-01-19
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" class="category-chain-item">强化学习</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/">#强化学习</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2023/01/14/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" target="_self">
-          动态规划
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/01/14/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" target="_self">
-        <div>
-          参考资料《强化学习》 作者：邹伟, 鬲玲, 刘昱杓，出版社：清华大学出版社，出版时间：2020
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-01-14 14:33" pubdate>
-              2023-01-14
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" class="category-chain-item">强化学习</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/">#强化学习</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2023/01/14/%E5%89%8D%E7%AB%AFjs/" target="_self">
-          前端js
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/01/14/%E5%89%8D%E7%AB%AFjs/" target="_self">
-        <div>
-          前端游戏局 对于游戏是纯前端制作的，所以的游戏数据都会存储在客户端，所以flag其实就存在网页的某个文件中，一般都是被混淆或加密的 游戏局的思路一般是通过就可以获得flag 总结几个方法 1231.直接干，把游戏打通了2.在js文件看通过逻辑，找到通过时调用的函数(一般flag就在这个函数中)，可以将函数在控制台调用一下；也有一些是需要判断分数之类的，这就需要手动修改函数再调用3.根据源代码逻辑
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-01-14 09:55" pubdate>
-              2023-01-14
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/ctf/" class="category-chain-item">ctf</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/web/">#web</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2023/01/12/%E9%A9%AC%E5%B0%94%E5%8F%AF%E5%A4%AB%E5%86%B3%E7%AD%96%E8%BF%87%E7%A8%8B/" target="_self">
-          马尔可夫决策过程
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/01/12/%E9%A9%AC%E5%B0%94%E5%8F%AF%E5%A4%AB%E5%86%B3%E7%AD%96%E8%BF%87%E7%A8%8B/" target="_self">
-        <div>
-          参考资料《强化学习》 作者：邹伟, 鬲玲, 刘昱杓，出版社：清华大学出版社，出版时间：2020
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-01-12 10:59" pubdate>
-              2023-01-12
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" class="category-chain-item">强化学习</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/">#强化学习</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2023/01/11/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E6%A6%82%E8%BF%B0/" target="_self">
-          强化学习概述
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/01/11/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E6%A6%82%E8%BF%B0/" target="_self">
-        <div>
-          参考资料《强化学习》 作者：邹伟, 鬲玲, 刘昱杓，出版社：清华大学出版社，出版时间：2020 https://www.zhihu.com/question/59122948
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-01-11 16:36" pubdate>
-              2023-01-11
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" class="category-chain-item">强化学习</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/">#强化学习</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2023/01/05/HGAME/" target="_self">
-          HGAME
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/01/05/HGAME/" target="_self">
-        <div>
-          Week 1  Sign In 签到题 1234import base64flag=&quot;aGdhbWV7V2VsY29tZV9Ub19IR0FNRTIwMjMhfQ==&quot;print(base64.b64decode(flag))#b&#x27;hgame&#123;Welcome_To_HGAME2023!&#125;&#x27;  Classic Childhood Game
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-01-05 20:36" pubdate>
-              2023-01-05
+            <time datetime="2023-03-20 18:08" pubdate>
+              2023-03-20
             </time>
           </div>
         
@@ -742,15 +470,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2023/01/05/RCE/" target="_self">
-          RCE
+        <a href="/2023/03/07/github%E9%A1%B9%E7%9B%AE%E6%89%98%E7%AE%A1/" target="_self">
+          github项目托管
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/01/05/RCE/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/07/github%E9%A1%B9%E7%9B%AE%E6%89%98%E7%AE%A1/" target="_self">
         <div>
-          RCE基础 RCE(remote command/code execute)漏洞，可以让攻击者直接向后台服务器远程注入操作系统命令或者代码，从而控制后台系统。 一般出现这种漏洞，是因为应用系统从设计上需要给用户提供指定的远程命令操作的接口 比如我们常见的路由器、防火墙、入侵检测等设备的web管理界面上 在CTF中，命令执行一般发生在远程，故被称为远程命令执行 通常情况下，在开发者使用一些执行命令
+          第一次学习github项目托管，浅浅记录一下~~  1.下载git git下载地址   2.github上创建仓库 github主页左上角点new,之后填写仓库名，点击创建  3.git配置 1git config --global user.name &quot;github上的用户名&quot; 1git config --global user.email &quot;github注册的邮箱
         </div>
       </a>
 
@@ -758,8 +486,130 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2023-01-05 11:34" pubdate>
-              2023-01-05
+            <time datetime="2023-03-07 10:31" pubdate>
+              2023-03-07
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%85%B6%E4%BB%96/" class="category-chain-item">其他</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/github/">#github</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/02/19/VNCTF2023/" target="_self">
+          VNCTF2023
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/02/19/VNCTF2023/" target="_self">
+        <div>
+          象棋王子 前端JS游戏，按照之前发过的一篇前端JS的思路，直接看js文件 可以发现play.js有结束的判断 12345678play.showWin = function (my)&#123;	play.isPlay = false;	if (my===1)&#123;		[][(![]+[])[+[]]+(![]+[])[!+[]+!+[]]+(![]+[])[+!+[]]+(!![]+[]
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-02-19 11:13" pubdate>
+              2023-02-19
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/wp/" class="category-chain-item">wp</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/CTF-WP/">#CTF,WP</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/02/11/php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" target="_self">
+          php反序列化
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/02/11/php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" target="_self">
+        <div>
+          基础  介绍 类是定义一系列属性和操作的模板，而对象，就是把属性进行实例化，完事交给类里面的方法，进行处理。 序列化就是将一个对象转换成字符串。字符串包括，属性名，属性值，属性类型和该对象对应的类名。 反序列化则相反将字符串重新恢复成对象 123456789101112&lt;?php    class animal&#123;    public $name=&#x27;dahuang&#x2
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-02-11 14:24" pubdate>
+              2023-02-11
             </time>
           </div>
         
@@ -803,15 +653,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2023/01/04/ssrf/" target="_self">
-          SSRF
+        <a href="/2023/02/08/%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/" target="_self">
+          原型链污染
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/01/04/ssrf/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/02/08/%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/" target="_self">
         <div>
-          SSRF基础 SSRF，Server-Side Request Forgery，服务端请求伪造，是一种由攻击者构造形成由服务器端发起请求的一个漏洞。一般情况下，SSRF 攻击的目标是从外网无法访问的内部系统。 漏洞形成的原因大多是因为服务端提供了从其他服务器应用获取数据的功能且没有对目标地址作过滤和限制。  攻击者可以利用 SSRF 实现的攻击主要有 5 种： 123451.可以对外网、服务器所
+          简介  javascript原型 12345678function Person(name,age,gender)&#123;    this.name=name;    this.age=age;    this.gender=gender;&#125;var person=new Person(&#x27;ccc&#x27;,20,&#x27;male&#x27;);console.log(
         </div>
       </a>
 
@@ -819,8 +669,130 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2023-01-04 10:36" pubdate>
-              2023-01-04
+            <time datetime="2023-02-08 15:51" pubdate>
+              2023-02-08
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ctf/" class="category-chain-item">ctf</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/web/">#web</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/02/07/ChatGPT%E5%9B%BD%E5%86%85%E8%AE%BF%E9%97%AE/" target="_self">
+          ChatGPT国内访问
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/02/07/ChatGPT%E5%9B%BD%E5%86%85%E8%AE%BF%E9%97%AE/" target="_self">
+        <div>
+          最近国外的ChatGPT玩得非常火爆，充分体现了AI智能的强大魅力 ChatGPT是由美国人工智能研究实验室OpenAI在2022年11月30日发布的全新聊天机器人模型，一款人工智能技术驱动的自然语言处理工具。它能够通过学习和理解人类的语言来进行对话，还能根据聊天的上下文进行互动，真正像人类一样来聊天交流，甚至能完成撰写邮件、视频脚本、文案、翻译、代码等任务。 可惜该项目却不对国内开放😭 所以记
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-02-07 10:34" pubdate>
+              2023-02-07
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%85%B6%E4%BB%96%E5%A5%BD%E7%8E%A9/" class="category-chain-item">其他好玩</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/ChatGPT/">#ChatGPT</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/02/04/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/" target="_self">
+          文件上传
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/02/04/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/" target="_self">
+        <div>
+          基础 在网站的运营过程中，不可避免地要对网站的某些页面或者内容进行更新，这时便需要使用到网站的文件上传的功能。如果不对被上传的文件进行限制或者限制被绕过，该功能便有可能会被利用于上传可执行文件、脚本到服务器上，进而进一步导致服务器沦陷。 文件上传漏洞是指用户上传了一个可执行脚本文件，并通过此文件获得了执行服器端命令的能力。在大多数情况下，文件上传漏洞一般是指上传 WEB 脚本能够被服务器解析的问
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-02-04 20:26" pubdate>
+              2023-02-04
             </time>
           </div>
         

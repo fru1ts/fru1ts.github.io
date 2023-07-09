@@ -254,15 +254,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2023/04/02/crypto/" target="_self">
-          crypto
+        <a href="/2023/07/07/php%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/" target="_self">
+          php文件包含
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/04/02/crypto/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/07/07/php%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/" target="_self">
         <div>
-          进制转换  十六进制转二进制 1234c=&#x27;十六进制&#x27;for i in range(0,len(c)-1,2):    b2+=(8-len(bin(int(c[i:i+2],16))[2:]))*&#x27;0&#x27;+bin((int(c[i:i+2],16)))[2:]print(b2)      二进制转十六进制 123b=&#x27;111111111111111
+          基础： 一个php文件包含另一个php文件，可以提升代码的复用性。 若包含不当会导致安全漏洞。 php常见的文件包含函数 1234include &#x27;a.php&#x27;include_once &#x27;a.php&#x27; #只包含一次require &#x27;a.php&#x27;require_once &#x27;a.php&#x27; #只包含一次 require 包
         </div>
       </a>
 
@@ -270,8 +270,496 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2023-04-02 22:22" pubdate>
-              2023-04-02
+            <time datetime="2023-07-07 22:01" pubdate>
+              2023-07-07
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ctf/" class="category-chain-item">ctf</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/web/">#web</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/07/07/%E5%8F%98%E9%87%8F%E8%A6%86%E7%9B%96/" target="_self">
+          变量覆盖
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/07/07/%E5%8F%98%E9%87%8F%E8%A6%86%E7%9B%96/" target="_self">
+        <div>
+          php变量覆盖 当PHP开发者在编写代码时，很多时候为了方便会直接完全信任用户的输入，不做校验地赋值到自己程序中的变量中。如果这时变量被传到某些危险函数上，就会产生一些意想不到的后果。变量覆盖就是通过间接地修改以有的变量值，然后利用一些写在程序中的函数实现攻击。  变量覆盖方式  PHP语法导致的变量覆盖 12345678&lt;?php$a=&quot;ctfer&quot;;$b=&quot
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-07-07 13:34" pubdate>
+              2023-07-07
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ctf/" class="category-chain-item">ctf</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/web/">#web</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/06/12/python%E7%9A%84%E5%A5%87%E5%A5%87%E6%80%AA%E6%80%AA%E6%93%8D%E4%BD%9C/" target="_self">
+          python的奇奇怪怪操作
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/06/12/python%E7%9A%84%E5%A5%87%E5%A5%87%E6%80%AA%E6%80%AA%E6%93%8D%E4%BD%9C/" target="_self">
+        <div>
+          连字 连字就是把多个字母连字一个字符，长度只占一位 做了一道n00bzCTF题，就是利用连字（完全没想到），直接看题 12345678910111213141516171819202122from flask import Flask, request, render_template, render_template_string, redirectimport subprocessimpor
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-06-12 09:48" pubdate>
+              2023-06-12
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ctf/" class="category-chain-item">ctf</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/web/">#web</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/06/11/SSTI/" target="_self">
+          SSTI
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/06/11/SSTI/" target="_self">
+        <div>
+          SSTI简介 SSTI(server-side template injection) 服务端模板注入。当攻击者能够使用本地模板语法将恶意负载注入模板，然后在服务器端执行时，就会发生服务器端模板注入。 直接将用户的输入写入到模板中就会导致模板注入。 SSTI第一步是要找到注入的位置，然后识别模板引擎，只有模板引擎判断正确了，才能找相应的payload，以下是判断模板引擎类型的方法，  通过测试使
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-06-11 22:36" pubdate>
+              2023-06-11
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ctf/" class="category-chain-item">ctf</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/web/">#web</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/06/04/Cookie%E4%BC%AA%E9%80%A0/" target="_self">
+          Cookie伪造
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/06/04/Cookie%E4%BC%AA%E9%80%A0/" target="_self">
+        <div>
+          JWT(JSON Web Token)  原理 JWT（Json Web Token）是一种服务端向客户端发放令牌的认证方式。客户端用户名密码登录时，服务端会生成一个令牌返回给客户端；客户端随后在向服务端请求时只需携带这个令牌，服务端通过校验令牌来验证是否是来自合法的客户端，进而决定是否向客户端返回应答。从机制可以看到，这种基于请求中携带令牌来维护认证的客户端连接的方式解决了早期服务端存储会话的
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-06-04 22:45" pubdate>
+              2023-06-04
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ctf/" class="category-chain-item">ctf</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/web/">#web</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/06/03/%E7%88%AC%E8%99%AB%E6%96%87%E6%9C%AC%E5%A4%84%E7%90%86/" target="_self">
+          爬虫文本处理
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/06/03/%E7%88%AC%E8%99%AB%E6%96%87%E6%9C%AC%E5%A4%84%E7%90%86/" target="_self">
+        <div>
+          获取html页面a标签的内容 12345678910111213import requestsfrom bs4 import BeautifulSoup#url=&#x27;&#x27;r=requests.get(url=url)# 使用BeautifulSoup解析HTMLsoup = BeautifulSoup(r.text, &#x27;html.parser&#x27;)# 查找所有的&
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-06-03 17:54" pubdate>
+              2023-06-03
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ctf/" class="category-chain-item">ctf</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/web/">#web</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/05/20/php%E5%87%BD%E6%95%B0%E6%BC%8F%E6%B4%9E%E6%94%B6%E9%9B%86/" target="_self">
+          php函数漏洞收集
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/05/20/php%E5%87%BD%E6%95%B0%E6%BC%8F%E6%B4%9E%E6%94%B6%E9%9B%86/" target="_self">
+        <div>
+          1.assert() (php5) 1assert(&quot;strpos(&#x27;$file&#x27;, &#x27;..&#x27;) === false&quot;) 如果参数没有做过滤，只要将assert的函数闭合，再使assert执行自己要的函数就可以实现rce 例如 12让file=&#x27;) or system(&#x27;cat flag&#x27;);//套进去变成
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-05-20 19:15" pubdate>
+              2023-05-20
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ctf/" class="category-chain-item">ctf</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/web/">#web</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/05/15/GraphQL-Batching-Attack/" target="_self">
+          GraphQL_Batching_Attack
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/05/15/GraphQL-Batching-Attack/" target="_self">
+        <div>
+          在单个网络调用中允许多个查询或请求多个对象实例被滥用，从而导致大量数据泄露或拒绝服务(DoS)。 一些GraphQL服务器，如Apollo，提出了称为查询批处理的特性:“在一个请求中发送尽可能多的GraphQL查询的能力，并声明两者之间的依赖关系”。 大多数GraphQL服务器请求以以下形式发送: 1234&#123;  &quot;query&quot;: &quot;&lt; query st
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-05-15 18:45" pubdate>
+              2023-05-15
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/ctf/" class="category-chain-item">ctf</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/web/">#web</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/05/08/AES-ECB/" target="_self">
+          AES-ECB
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/05/08/AES-ECB/" target="_self">
+        <div>
+          一道AES的电子密码本模式的题  San Diego CTF 2023  Lake of Pseudo Random Fire 源码 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-05-08 19:19" pubdate>
+              2023-05-08
             </time>
           </div>
         
@@ -315,15 +803,15 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2023/03/20/picoCTF2023/" target="_self">
-          picoCTF2023
+        <a href="/2023/04/28/CMS/" target="_self">
+          CMS
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/20/picoCTF2023/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2023/04/28/CMS/" target="_self">
         <div>
-          0x00	findme 重定向页面有base64编码：cGljb0NURntwcm94aWVzX2FsbF90aGVfd2F5XzM5Mjg2Yzk3fQ==  （要两次才能凑齐） 解码后得到picoCTF&#123;proxies_all_the_way_39286c97&#125;   0x01	MatchTheRegex 考一个正则匹配，查看页面源码可以看到匹配内容 12345678910
+          CMS（内容管理系统） 根据系统的类型，上网搜索存在的漏洞，拿payload直接打
         </div>
       </a>
 
@@ -331,191 +819,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2023-03-20 18:08" pubdate>
-              2023-03-20
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/wp/" class="category-chain-item">wp</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/CTF-WP/">#CTF,WP</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2023/03/07/github%E9%A1%B9%E7%9B%AE%E6%89%98%E7%AE%A1/" target="_self">
-          github项目托管
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/03/07/github%E9%A1%B9%E7%9B%AE%E6%89%98%E7%AE%A1/" target="_self">
-        <div>
-          第一次学习github项目托管，浅浅记录一下~~  1.下载git git下载地址   2.github上创建仓库 github主页左上角点new,之后填写仓库名，点击创建  3.git配置 1git config --global user.name &quot;github上的用户名&quot; 1git config --global user.email &quot;github注册的邮箱
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-03-07 10:31" pubdate>
-              2023-03-07
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/%E5%85%B6%E4%BB%96/" class="category-chain-item">其他</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/github/">#github</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2023/02/19/VNCTF2023/" target="_self">
-          VNCTF2023
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/02/19/VNCTF2023/" target="_self">
-        <div>
-          象棋王子 前端JS游戏，按照之前发过的一篇前端JS的思路，直接看js文件 可以发现play.js有结束的判断 12345678play.showWin = function (my)&#123;	play.isPlay = false;	if (my===1)&#123;		[][(![]+[])[+[]]+(![]+[])[!+[]+!+[]]+(![]+[])[+!+[]]+(!![]+[]
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-02-19 11:13" pubdate>
-              2023-02-19
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/wp/" class="category-chain-item">wp</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/CTF-WP/">#CTF,WP</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2023/02/11/php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" target="_self">
-          php反序列化
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/02/11/php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" target="_self">
-        <div>
-          基础  介绍 类是定义一系列属性和操作的模板，而对象，就是把属性进行实例化，完事交给类里面的方法，进行处理。 序列化就是将一个对象转换成字符串。字符串包括，属性名，属性值，属性类型和该对象对应的类名。 反序列化则相反将字符串重新恢复成对象 123456789101112&lt;?php    class animal&#123;    public $name=&#x27;dahuang&#x2
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-02-11 14:24" pubdate>
-              2023-02-11
+            <time datetime="2023-04-28 14:07" pubdate>
+              2023-04-28
             </time>
           </div>
         
@@ -546,311 +851,6 @@
             <i class="iconfont icon-tags"></i>
             
               <a href="/tags/web/">#web</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2023/02/08/%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/" target="_self">
-          原型链污染
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/02/08/%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/" target="_self">
-        <div>
-          简介  javascript原型 12345678function Person(name,age,gender)&#123;    this.name=name;    this.age=age;    this.gender=gender;&#125;var person=new Person(&#x27;ccc&#x27;,20,&#x27;male&#x27;);console.log(
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-02-08 15:51" pubdate>
-              2023-02-08
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/ctf/" class="category-chain-item">ctf</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/web/">#web</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2023/02/07/ChatGPT%E5%9B%BD%E5%86%85%E8%AE%BF%E9%97%AE/" target="_self">
-          ChatGPT国内访问
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/02/07/ChatGPT%E5%9B%BD%E5%86%85%E8%AE%BF%E9%97%AE/" target="_self">
-        <div>
-          最近国外的ChatGPT玩得非常火爆，充分体现了AI智能的强大魅力 ChatGPT是由美国人工智能研究实验室OpenAI在2022年11月30日发布的全新聊天机器人模型，一款人工智能技术驱动的自然语言处理工具。它能够通过学习和理解人类的语言来进行对话，还能根据聊天的上下文进行互动，真正像人类一样来聊天交流，甚至能完成撰写邮件、视频脚本、文案、翻译、代码等任务。 可惜该项目却不对国内开放😭 所以记
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-02-07 10:34" pubdate>
-              2023-02-07
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/%E5%85%B6%E4%BB%96%E5%A5%BD%E7%8E%A9/" class="category-chain-item">其他好玩</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/ChatGPT/">#ChatGPT</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2023/02/04/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/" target="_self">
-          文件上传
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/02/04/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/" target="_self">
-        <div>
-          基础 在网站的运营过程中，不可避免地要对网站的某些页面或者内容进行更新，这时便需要使用到网站的文件上传的功能。如果不对被上传的文件进行限制或者限制被绕过，该功能便有可能会被利用于上传可执行文件、脚本到服务器上，进而进一步导致服务器沦陷。 文件上传漏洞是指用户上传了一个可执行脚本文件，并通过此文件获得了执行服器端命令的能力。在大多数情况下，文件上传漏洞一般是指上传 WEB 脚本能够被服务器解析的问
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-02-04 20:26" pubdate>
-              2023-02-04
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/ctf/" class="category-chain-item">ctf</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/web/">#web</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2023/01/31/SQL%E6%B3%A8%E5%85%A5/" target="_self">
-          SQL注入
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/01/31/SQL%E6%B3%A8%E5%85%A5/" target="_self">
-        <div>
-          基础  SQL 注入是一种将 SQL 代码插入或添加到应用（用户）的输入参数中，之后再将这些参数传递给后台的 SQL 服务器加以解析并执行的攻击。 攻击者能够修改 SQL 语句，该进程将与执行命令的组件（如数据库服务器、应用服务器或 WEB 服务器）拥有相同的权限。 如果 WEB 应用开发人员无法确保在将从 WEB 表单、cookie、输入参数等收到的值传递给 SQL 查询（该查询在数据库服务器
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-01-31 10:43" pubdate>
-              2023-01-31
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/ctf/" class="category-chain-item">ctf</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/web/">#web</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2023/01/29/ECC/" target="_self">
-          ECC
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/01/29/ECC/" target="_self">
-        <div>
-          ECC基础 ECC 全称为椭圆曲线加密，EllipseCurve Cryptography，是一种基于椭圆曲线数学的公钥密码。与传统的基于大质数因子分解困难性的加密方法不同，ECC 依赖于解决椭圆曲线离散对数问题的困难性。它的优势主要在于相对于其它方法，它可以在使用较短密钥长度的同时保持相同的密码强度。目前椭圆曲线主要采用的有限域有  以素数为模的整数域 GF(p)，通常在通用处理器上更为有效。
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-01-29 10:10" pubdate>
-              2023-01-29
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/ctf/" class="category-chain-item">ctf</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/crypto/">#crypto</a>
             
           </div>
         

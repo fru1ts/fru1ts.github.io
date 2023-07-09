@@ -24,7 +24,7 @@
 <meta property="og:description" content="做题遇到了hash函数的绕过问题，之前总结得不全，重新整理一下  弱类型绕过  md5 1if($a!&#x3D;$b&amp;&amp;md5($a)&#x3D;&#x3D;md5($b) PHP在处理哈希字符串时，它把每个以‘0E’开头的哈希值都解释为0，所以只要a，b的md5的值以0E开头即可，得到的md5的值就都是0 例如 1a&#x3D;QNKCDZO&amp;b&#x3D;240610708 一些常见的md5的值以0e开头的例子 12">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2023-01-20T08:33:02.000Z">
-<meta property="article:modified_time" content="2023-01-31T02:44:48.609Z">
+<meta property="article:modified_time" content="2023-07-07T03:29:32.536Z">
 <meta property="article:author" content="fru1ts">
 <meta property="article:tag" content="web">
 <meta name="twitter:card" content="summary_large_image">
@@ -249,7 +249,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          3.5k words
+          3.6k words
         
       </span>
     
@@ -260,7 +260,7 @@
         
         
         
-          30 mins
+          31 mins
         
       </span>
     
@@ -311,7 +311,7 @@
               <p class="note note-info">
                 
                   
-                    Last updated on January 31, 2023 am
+                    Last updated on July 7, 2023 am
                   
                 
               </p>
@@ -328,6 +328,10 @@
 <figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-attr">a</span>=QNKCDZO&amp;b=<span class="hljs-number">240610708</span><br></code></pre></td></tr></table></figure>
 <p>一些常见的md5的值以0e开头的例子</p>
 <figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs dns">QNKCDZO<br><span class="hljs-number">0</span>e830400451993494058<span class="hljs-number">024219903391</span><br> <br>s878926199a<br><span class="hljs-number">0</span>e5459932745177090343<span class="hljs-number">28855841020</span><br>  <br>s155964671a<br><span class="hljs-number">0</span>e342768416822451524<span class="hljs-number">974117254469</span><br>  <br>s214587387a<br><span class="hljs-number">0</span>e8482404488305379244<span class="hljs-number">65865611904</span><br>  <br>s214587387a<br><span class="hljs-number">0</span>e8482404488305379244<span class="hljs-number">65865611904</span><br>  <br>s878926199a<br><span class="hljs-number">0</span>e5459932745177090343<span class="hljs-number">28855841020</span><br>  <br>s1091221200a<br><span class="hljs-number">0</span>e9406242178565615578<span class="hljs-number">16327384675</span><br>  <br>s1885207154a<br><span class="hljs-number">0</span>e5093672134182067008<span class="hljs-number">42008763514</span><br><br></code></pre></td></tr></table></figure>
+<figure class="highlight arcade"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs arcade"><span class="hljs-symbol">$a</span>==md5(<span class="hljs-symbol">$a</span>);<br></code></pre></td></tr></table></figure>
+<p><code>a=0E462097431906509019562988736854</code></p>
+<figure class="highlight arcade"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs arcade"><span class="hljs-symbol">$a</span>=md5(md5(<span class="hljs-symbol">$a</span>));<br></code></pre></td></tr></table></figure>
+<p><code>a=0E545993274517709034328855841020</code></p>
 <h4 id="sha1"><a class="markdownIt-Anchor" href="#sha1"></a> sha1</h4>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-keyword">if</span>(<span class="hljs-variable">$a</span>!=<span class="hljs-variable">$b</span>&amp;&amp;<span class="hljs-title function_ invoke__">sha1</span>(<span class="hljs-variable">$a</span>)==<span class="hljs-title function_ invoke__">sha1</span>(<span class="hljs-variable">$b</span>)<br></code></pre></td></tr></table></figure>
 <figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-attr">a</span>=aaroZmOk&amp;b=aaK1STfY<br></code></pre></td></tr></table></figure>
@@ -373,9 +377,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/01/20/%E6%AD%A3%E5%88%99%E7%BB%95%E8%BF%87/" title="正则绕过">
+                      <a href="/2023/01/25/XSS/" title="XSS">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">正则绕过</span>
+                        <span class="hidden-mobile">XSS</span>
                         <span class="visible-mobile">Previous</span>
                       </a>
                     
@@ -383,8 +387,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/01/19/Q-Learning/" title="Q_Learning">
-                        <span class="hidden-mobile">Q_Learning</span>
+                      <a href="/2023/01/14/%E5%89%8D%E7%AB%AFjs/" title="前端js">
+                        <span class="hidden-mobile">前端js</span>
                         <span class="visible-mobile">Next</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

